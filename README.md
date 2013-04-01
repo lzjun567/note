@@ -11,4 +11,6 @@
 14. [每日一Vim14  标签页](./one_day_one_vim/14.md)
 15. [每日一Vim15 折叠](./one_day_one_vim/15折叠.md)
 16. [每日一Vim16 Visual 模式（0）](./one_day_one_vim/16.md)
-17. [每日一Vim17 Visual 模式（1）](./one_day_one_vim/16.md)
+17. [每日一Vim17 Visual 模式（1）](./one_day_one_vim/17.md)
+18. [每日一Vim18 Text-Objects](./one_day_one_vim/18.md)
+
