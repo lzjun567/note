@@ -14,4 +14,9 @@
 17. [每日一Vim17 Visual 模式（1）](./one_day_one_vim/17.md)
 18. [每日一Vim18 Text-Objects](./one_day_one_vim/18.md)
 19. [每日一Vim19 Visaul 模式（2）](./one_day_one_vim/19.md)
+20. [每日一Vim20 Taglist初体验](./one_day_one_vim/20.md)
+21. [每日一Vim21 又谈abbreviation](./one_day_one_vim/21.md)
+22. [每日一Vim22 编码设置](./one_day_one_vim/22.md)
+23. [每日一Vim23 filetype](./one_day_one_vim/23.md)
+24. [每日一Vim24 record、play](./one_day_one_vim/24.md)
 
