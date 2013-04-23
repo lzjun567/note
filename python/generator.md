@@ -6,6 +6,8 @@ yield：生成器
         while n > 0:
             yield n   #生成值：n
             n -= 1
+另外一种说法：生成器就是一个返回迭代器的函数，与普通函数的区别是生成器包含yield语句，更简单点理解生成器就是一个迭代器。   
+
 使用yield，可以让函数生成一个序列，该函数返回的对象类型是"generator"，通过该对象连续调用next()方法返回序列值。  
 
     c = count(5)
@@ -22,7 +24,7 @@ yield：生成器
             yield n   #生成值：n
             n -= 1
 
-在调用count函数时：c=count(5)，并不会打印"counting"只有等到调用c.next()时才真正执行里面的语句。每次调用next()方法时，count函数会运行到语句` yield n`处为止，next()的返回值就是生成值`n`，再次调用next()方法时，函数继续执行yield之后的语句，如：
+在调用count函数时：c=count(5)，并不会打印"counting"只有等到调用c.next()时才真正执行里面的语句。每次调用next()方法时，count函数会运行到语句` yield n`处为止，next()的返回值就是生成值`n`，再次调用next()方法时，函数继续执行yield之后的语句（熟悉Java的朋友肯定知道Thread.yield()方法，作用是暂停当前线程的运行，让其他线程执行），如：
 
     def count(n):
         print "cunting"
@@ -66,3 +68,20 @@ yield：生成器
     pylines = grep(flog,'python')
     for line in pylines:
         print line,
+
+用yield实现斐波那契数列：  
+
+    def fibonacci():
+        a=b=1
+        yield a
+        yield b
+        while True:
+            a,b = b,a+b
+            yield b
+
+调用：  
+
+    for num in fibonacci():
+        if num > 100:
+            break
+        print num,
