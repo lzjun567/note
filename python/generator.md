@@ -112,7 +112,7 @@ yield中return的作用：
 
 与yield有关的一个很重要的概念叫**协程**，下次好好研究研究。  
 
-参考：
+参考：  
 http://www.cnblogs.com/huxi/archive/2011/07/14/2106863.html  
 http://www.ibm.com/developerworks/cn/opensource/os-cn-python-yield/  
 《Python 参考手册》  
