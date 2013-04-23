@@ -85,3 +85,35 @@ yield：生成器
         if num > 100:
             break
         print num,
+
+yield中return的作用：  
+作为生成器，因为每次迭代就会返回一个值，所以不能显示的在生成器函数中return 某个值，包括None值也不行，否则会抛出“SyntaxError”的异常，但是在函数中可以出现单独的return，表示结束该语句。  
+通过固定长度的缓冲区不断读文件，防止一次性读取出现内存溢出的例子：  
+
+    def read_file(path):
+        size = 1024
+        with open(path,'r') as f:
+            while True:
+                block = f.read(SIZE)
+                if block:
+                    yield block
+                else:
+                    return
+
+如果是在函数中return 具体某个值，就直接抛异常了  
+
+    >>> def test_return():
+    ...      yield 4
+    ...      return 0
+    ...
+      File "<stdin>", line 3
+    SyntaxError: 'return' with argument inside generator
+
+
+与yield有关的一个很重要的概念叫**协程**，下次好好研究研究。  
+
+参考：
+http://www.cnblogs.com/huxi/archive/2011/07/14/2106863.html  
+http://www.ibm.com/developerworks/cn/opensource/os-cn-python-yield/
+《Python 参考手册》
+
