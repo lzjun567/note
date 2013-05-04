@@ -367,6 +367,10 @@ JSON的输出结果与DATA很相似，除了一些微妙的变化，如python的
     [{u'a': u'A', u'c': 3.0, u'b': [2, 4]}]
 
 
+参考：  
+http://docs.python.org/2/library/json.html  
+http://www.cnblogs.com/coser/archive/2011/12/14/2287739.html  
+http://pymotw.com/2/json/  
 
 
 
