@@ -1,17 +1,17 @@
-Python处理Json
+Python处理JSON
 ==================
 ####概念  
-序列化（Serialization）将对象的状态信息转换为可以存储或可以通过网络传输的过程，传输的格式可以是JSON、XML等。反序列化就是从存储区域（JSON，XML）读取反序列化对象的状态，重新创建该对象。   
+**序列化（Serialization）**：将对象的状态信息转换为可以存储或可以通过网络传输的过程，传输的格式可以是JSON、XML等。反序列化就是从存储区域（JSON，XML）读取反序列化对象的状态，重新创建该对象。   
 
-JSON（JavaScript Object Notation），一种轻量级数据交换格式，相对于XML而言更简单，也易于阅读和编写，机器也方便解析和生成，Json是JavaScript中的一个子集。  
+**JSON（JavaScript Object Notation）**：一种轻量级数据交换格式，相对于XML而言更简单，也易于阅读和编写，机器也方便解析和生成，Json是JavaScript中的一个子集。  
 
-Python2.6开始加入了JSON模块，无需另外下载，Python的Json模块序列化与反序列化的过程对象分别是**encoding**和**decoding**  
+Python2.6开始加入了JSON模块，无需另外下载，Python的Json模块序列化与反序列化的过程分别是 **encoding**和 **decoding**  
 
-encoding：把一个Python对象编码转换成Json  
-decoding：把Json格式字符串解码转换成Python对象  
+**encoding**：把一个Python对象编码转换成Json字符串  
+**decoding**：把Json格式字符串解码转换成Python对象  
 对于简单数据类型（string、unicode、int、float、list、tuple、dict），可以直接处理。  
 
-json.dumps方法对简单数据类型encoding：  
+#####json.dumps方法对简单数据类型encoding：  
 
     import json
     data = [{'a':"A",'b':(2,4),'c':3.0}]  #list对象
@@ -25,10 +25,10 @@ json.dumps方法对简单数据类型encoding：
     DATA: [{'a':'A','c':3.0,'b':(2,4)}] #python的dict类型的数据是没有顺序存储的
     JSON: [{"a":"A","c":3.0,"b":[2,4]}]  
 
-JSON的输出结果与DATA很相似，除了一些微妙的变化，如，python的元组类型变成了Json的数组，Python到Json的编码转换规则是：
+JSON的输出结果与DATA很相似，除了一些微妙的变化，如python的元组类型变成了Json的数组，Python到Json的编码转换规则是：
 ![python2json](../resource/image/python2json.png)
 
-json.loads方法处理简单数据类型的解码转换  
+#####json.loads方法处理简单数据类型的decoding（解码）转换  
 
     import json
     data = [{'a':"A",'b':(2,4),'c':3.0}]  #list对象
@@ -52,7 +52,7 @@ json.loads方法处理简单数据类型的解码转换
 解码过程中，json的数组最终转换成了python的list，而不是最初的tuple类型，Json到Python的解码规则是：
 ![json2python](../resource/image/json2python.png)  
 
-json的人文关怀  
+####json的人文关怀  
 编码后的json格式字符串紧凑的输出，而且也没有顺序，因此`dumps`方法提供了一些可选的参数，让输出的格式提高可读性，如`sort_keys`是告诉编码器按照字典排序(a到z)输出。  
 
     import json
