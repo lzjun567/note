@@ -139,3 +139,5 @@ form.is_valid()返回true后，表单数据都被存储在form.cleaned_data对�
 {{field.label\_tag}}，如： `<label for=id_email>Email address</label>`  
 {{field.value}} 如：someone.@gmail.com  
 {{field.error}}  
+
+参考：https://docs.djangoproject.com/en/dev/topics/forms/  
