@@ -11,13 +11,13 @@ Django 的Form表单的功能包括：
 与表单相关的对象包括：  
 **Widget**：用来渲染成HTML元素的工具，如：forms.Textarea对应HTML中的`<textarea>`标签  
 **Field**：代表一个Form对象中的一个字段，如：EmailField表示email字段，如果这个字段不是有效的email格式，就会产生错误。  
-**Form**：Form就是一系列Field的集合，负责验证和显示HTML元素
+**Form**：Form就是一系列Field的集合，负责验证和显示HTML元素  
 **Form Media**：用来渲染表单的CSS和JavaScript资源。  
 
 ####Form Objects
 Form对象封装了一系列Field和验证规则，Form类都必须继承制*django.forms.Form*，定义Form有两种方式:  
 
-方法一：直接继承From   
+方法一：直接继承Form   
 
     from django import forms
     class ContactForm(forms.Form):
@@ -69,7 +69,7 @@ contact.html:
 
 ####处理表单数据  
 
-form.is_valid()返回true后，表单数据都被存储在form.cleaned_data对象中（字典对象），而且数据会被自动转换为Python对象，如：在form中定义了DateTimeField，那么该字段将被转换为datetime类型，还有诸如：IntegerField、FloatField  
+form.is_valid()返回true后，表单数据都被存储在form.cleaned_data对象中（字典类型），而且数据会被自动转换为Python对象，如：在form中定义了DateTimeField，那么该字段将被转换为datetime类型，还有诸如：IntegerField、FloatField  
 
     if form.is_valid():
         subject = form.cleaned_data['subject']
