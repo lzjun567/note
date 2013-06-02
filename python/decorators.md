@@ -88,87 +88,101 @@ Well, that means that a function can return another function :-) Have a look:
             return word.lower()+"...";
     
         # Then we return one of them
-        # 返回一个函数
+        # 返回其中的一个函数
         if type == "shout":
             # We don't use "()", we are not calling the function,
+            # 这里没有使用"()"，我们不是调用这个函数，而是返回这个函数对象
             # we are returning the function object
             return shout  
         else:
             return whisper
     
     # How do you use this strange beast?
-    
+    # 怎么使用这个奇怪的东东呢？
     # Get the function and assign it to a variable
+    # 获取函数并赋值给变量
     talk = getTalk()      
     
     # You can see that "talk" is here a function object:
+      "talk"在这儿就是一个函数对象
     print talk
-    #outputs : <function shout at 0xb7ea817c>
+    #输出: <function shout at 0xb7ea817c>
     
     # The object is the one returned by the function:
+      这个对象就是由一个函数返回的 
     print talk()
-    #outputs : Yes!
+    #输出 : Yes!
     
     # And you can even use it directly if you feel wild:
+    你甚至能直接使用它
     print getTalk("whisper")()
-    #outputs : yes...
-    But wait, there is more. If you can return a function, then you can pass one as a parameter:
-    
+    #输出 : yes...
+
+But wait, there is more. If you can return a function, then you can pass one as a parameter:  
+等等，还有呢，如果能返回一个函数，那么这个函数还可以作为参数传递    
+
     def doSomethingBefore(func): 
         print "I do something before then I call the function you gave me"
         print func()
     
     doSomethingBefore(scream)
-    #outputs: 
+    #输出: 
     #I do something before then I call the function you gave me
     #Yes!
-Well, you just have everything needed to understand decorators. You see, decorators are wrappers which means that they let you execute code before and after the function they decorate without the need to modify the function itself.
 
-Handcrafted decorators
+Well, you just have everything needed to understand decorators. You see, decorators are wrappers which means that they let you execute code before and after the function they decorate without the need to modify the function itself.  
+好啦，终于可以开始理解装饰器了，你瞧，装饰器就是对函数进行一层包裹，能在函数运行前或运行后执行额外的代码，而不需要修改函数本身。  
+
+####Handcrafted decorators
+####纯手工装饰器
 How you would do it manually:
+你可以用手工方式如下实现：  
 
-# A decorator is a function that expects ANOTHER function as parameter
-def my_shiny_new_decorator(a_function_to_decorate):
+# A decorator is a function that expects ANOTHER function as parameter  
+# 装饰器是一个接受另一个函数作为参数的函数
 
-    # Inside, the decorator defines a function on the fly: the wrapper.
-    # This function is going to be wrapped around the original function
-    # so it can execute code before and after it.
-    def the_wrapper_around_the_original_function():
-
-        # Put here the code you want to be executed BEFORE the original 
-        # function is called
-        print "Before the function runs"
-
-        # Call the function here (using parentheses)
-        a_function_to_decorate()
-
-        # Put here the code you want to be executed AFTER the original 
-        # function is called
-        print "After the function runs"
-
-    # At this point, "a_function_to_decorate" HAS NEVER BEEN EXECUTED.
-    # We return the wrapper function we have just created.
-    # The wrapper contains the function and the code to execute before
-    # and after. It's ready to use!
-    return the_wrapper_around_the_original_function
-
-# Now imagine you create a function you don't want to ever touch again.
-def a_stand_alone_function():
-    print "I am a stand alone function, don't you dare modify me"
-
-a_stand_alone_function() 
-#outputs: I am a stand alone function, don't you dare modify me
-
-# Well, you can decorate it to extend its behavior.
-# Just pass it to the decorator, it will wrap it dynamically in 
-# any code you want and return you a new function ready to be used:
-
-a_stand_alone_function_decorated = my_shiny_new_decorator(a_stand_alone_function)
-a_stand_alone_function_decorated()
-#outputs:
-#Before the function runs
-#I am a stand alone function, don't you dare modify me
-#After the function runs
+    def my_shiny_new_decorator(a_function_to_decorate):
+    
+        # Inside, the decorator defines a function on the fly: the wrapper.
+        # This function is going to be wrapped around the original function
+        # so it can execute code before and after it.
+        # 
+        def the_wrapper_around_the_original_function():
+    
+            # Put here the code you want to be executed BEFORE the original 
+            # function is called
+            print "Before the function runs"
+    
+            # Call the function here (using parentheses)
+            a_function_to_decorate()
+    
+            # Put here the code you want to be executed AFTER the original 
+            # function is called
+            print "After the function runs"
+    
+        # At this point, "a_function_to_decorate" HAS NEVER BEEN EXECUTED.
+        # We return the wrapper function we have just created.
+        # The wrapper contains the function and the code to execute before
+        # and after. It's ready to use!
+        return the_wrapper_around_the_original_function
+    
+    # Now imagine you create a function you don't want to ever touch again.
+    def a_stand_alone_function():
+        print "I am a stand alone function, don't you dare modify me"
+    
+    a_stand_alone_function() 
+    #outputs: I am a stand alone function, don't you dare modify me
+    
+    # Well, you can decorate it to extend its behavior.
+    # Just pass it to the decorator, it will wrap it dynamically in 
+    # any code you want and return you a new function ready to be used:
+    
+    a_stand_alone_function_decorated = my_shiny_new_decorator(a_stand_alone_function)
+    a_stand_alone_function_decorated()
+    #outputs:
+    #Before the function runs
+    #I am a stand alone function, don't you dare modify me
+    #After the function runs
 Now, you probably want that every time you call a_stand_alone_function, a_stand_alone_function_decorated is called instead. That's easy, just overwrite a_stand_alone_function with the function returned by my_shiny_new_decorator:
 
 a_stand_alone_function = my_shiny_new_decorator(a_stand_alone_function)
