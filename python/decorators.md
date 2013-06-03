@@ -147,98 +147,122 @@ How you would do it manually:
         # This function is going to be wrapped around the original function
         # so it can execute code before and after it.
         # 
+        # 装饰器内定义了一个函数，该函数包裹原始函数，可以在原始函数前后执行代码
         def the_wrapper_around_the_original_function():
     
             # Put here the code you want to be executed BEFORE the original 
             # function is called
+            #在原始函数调用前执行代码
             print "Before the function runs"
     
             # Call the function here (using parentheses)
+            #调用函数（注意这里带括号）
             a_function_to_decorate()
     
             # Put here the code you want to be executed AFTER the original 
             # function is called
+            #调用完原始函数后执行代码
             print "After the function runs"
     
         # At this point, "a_function_to_decorate" HAS NEVER BEEN EXECUTED.
         # We return the wrapper function we have just created.
         # The wrapper contains the function and the code to execute before
         # and after. It's ready to use!
+        # 在这个地方，" a_function_to_decorate"函数从来没有被执行
+        #而是返回这个刚刚创建的包裹函数，该函数包含了函数的代码及前后代码段，这样准备使用了
         return the_wrapper_around_the_original_function
     
     # Now imagine you create a function you don't want to ever touch again.
+    # 现在假设你创建一个函数，而且又不想做任何修改了
     def a_stand_alone_function():
         print "I am a stand alone function, don't you dare modify me"
     
     a_stand_alone_function() 
     #outputs: I am a stand alone function, don't you dare modify me
+    #输出：I am a stand alone function, don't you dare modify me
     
     # Well, you can decorate it to extend its behavior.
     # Just pass it to the decorator, it will wrap it dynamically in 
     # any code you want and return you a new function ready to be used:
+
+    #嗯，你可以装饰这个函数扩展其行为
     
     a_stand_alone_function_decorated = my_shiny_new_decorator(a_stand_alone_function)
     a_stand_alone_function_decorated()
     #outputs:
+    #输出：
     #Before the function runs
     #I am a stand alone function, don't you dare modify me
     #After the function runs
-Now, you probably want that every time you call a_stand_alone_function, a_stand_alone_function_decorated is called instead. That's easy, just overwrite a_stand_alone_function with the function returned by my_shiny_new_decorator:
 
-a_stand_alone_function = my_shiny_new_decorator(a_stand_alone_function)
-a_stand_alone_function()
-#outputs:
-#Before the function runs
-#I am a stand alone function, don't you dare modify me
-#After the function runs
+Now, you probably want that every time you call a_stand_alone_function, a_stand_alone_function_decorated is called instead. That's easy, just overwrite a_stand_alone_function with the function returned by my_shiny_new_decorator:  
 
-# And guess what? That's EXACTLY what decorators do!
-Decorators demystified
-The previous example, using the decorator syntax:
+现在，你可能每次想每次调用*a_stand_alone_function*的时候，*a_stand_alone_function_decorated*就被调用，这很简单，只需重写*a_stand_alone_function*函数，通过*my_shiny_new_decorator*  
 
-@my_shiny_new_decorator
-def another_stand_alone_function():
-    print "Leave me alone"
+    a_stand_alone_function = my_shiny_new_decorator(a_stand_alone_function)
+    a_stand_alone_function()
+    #输出:
+    #Before the function runs
+    #I am a stand alone function, don't you dare modify me
+    #After the function runs
+    
+    # And guess what? That's EXACTLY what decorators do!
 
-another_stand_alone_function()  
-#outputs:  
-#Before the function runs
-#Leave me alone
-#After the function runs
-Yes, that's all, it's that simple. @decorator is just a shortcut to:
+####Decorators demystified
+####装饰器揭秘
 
-another_stand_alone_function = my_shiny_new_decorator(another_stand_alone_function)
-Decorators are just a pythonic variant of the decorator design pattern. There are several classic design patterns embedded in Python to ease development, like iterators.
+The previous example, using the decorator syntax:  
+前面的例子，使用装饰器语法如下：  
 
-Of course, you can cumulate decorators:
+    @my_shiny_new_decorator
+    def another_stand_alone_function():
+        print "Leave me alone"
+    
+    another_stand_alone_function()  
+    #输出:  
+    #Before the function runs
+    #Leave me alone
+    #After the function runs
 
-def bread(func):
-    def wrapper():
-        print "</''''''\>"
-        func()
-        print "<\______/>"
-    return wrapper
+Yes, that's all, it's that simple. @decorator is just a shortcut to:  
+没错，就这么简单，@装饰器 是下面代码的快捷方式：  
 
-def ingredients(func):
-    def wrapper():
-        print "#tomatoes#"
-        func()
-        print "~salad~"
-    return wrapper
+    another_stand_alone_function = my_shiny_new_decorator(another_stand_alone_function)
 
-def sandwich(food="--ham--"):
-    print food
+Decorators are just a pythonic variant of the decorator design pattern. There are several classic design patterns embedded in Python to ease development, like iterators.  
 
-sandwich()
-#outputs: --ham--
-sandwich = bread(ingredients(sandwich))
-sandwich()
-#outputs:
-#</''''''\>
-# #tomatoes#
-# --ham--
-# ~salad~
-#<\______/>
+装饰器是装饰器模式的一种pythonic方式，还有很多经典设计模式嵌在Python中简化开发，比如迭代器  
+
+Of course, you can cumulate decorators:  
+当然，你也可以累积装饰器  
+
+    def bread(func):
+        def wrapper():
+            print "</''''''\>"
+            func()
+            print "<\______/>"
+        return wrapper
+    
+    def ingredients(func):
+        def wrapper():
+            print "#tomatoes#"
+            func()
+            print "~salad~"
+        return wrapper
+    
+    def sandwich(food="--ham--"):
+        print food
+    
+    sandwich()
+    #outputs: --ham--
+    sandwich = bread(ingredients(sandwich))
+    sandwich()
+    #outputs:
+    #</''''''\>
+    # #tomatoes#
+    # --ham--
+    # ~salad~
+    #<\______/>
 Using the Python decorator syntax:
 
 @bread
