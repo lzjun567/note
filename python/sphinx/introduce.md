@@ -106,22 +106,109 @@ var目录存放索引数据和搜索日志
 
         /usr/local/sphinx/bin/indexer --all
 
-运行结果：
+    打印结果：
+
+        using config file '/usr/local/sphinx/etc/sphinx.conf'...
+        indexing index 'test1'...
+        collected 4 docs, 0.0 MB
+        sorted 0.0 Mhits, 100.0% done
+        total 4 docs, 193 bytes
+        total 0.045 sec, 4280 bytes/sec, 88.72 docs/sec
+        skipping non-plain index 'testrt'...
+        total 3 reads, 0.000 sec, 0.1 kb/call avg, 0.0 msec/call avg
+        total 9 writes, 0.000 sec, 0.1 kb/call avg, 0.0 msec/call avg
+
+4. 查询索引  
+
+        /usr/local/sphinx/bin/search test
+如果报错："index 'test1':search error" ，那么指定具体的index：   
+
+        /usr/local/sphinx/bin/search -i test1 -q  'test' 
+
+查询结果：  
 
     using config file '/usr/local/sphinx/etc/sphinx.conf'...
-    indexing index 'test1'...
-    collected 4 docs, 0.0 MB
-    sorted 0.0 Mhits, 100.0% done
-    total 4 docs, 193 bytes
-    total 0.045 sec, 4280 bytes/sec, 88.72 docs/sec
-    skipping non-plain index 'testrt'...
-    total 3 reads, 0.000 sec, 0.1 kb/call avg, 0.0 msec/call avg
-    total 9 writes, 0.000 sec, 0.1 kb/call avg, 0.0 msec/call avg
+    index 'test1': query 'test ': returned 3 matches of 3 total in 0.000 sec
+    
+    displaying matches:
+    1. document=1, weight=2421, group_id=1, date_added=Wed Jun  5 08:00:56 2013
+    2. document=2, weight=2421, group_id=1, date_added=Wed Jun  5 08:00:56 2013
+    3. document=4, weight=1442, group_id=2, date_added=Wed Jun  5 08:00:56 2013
+    
+    words:
+    1. 'test': 3 documents, 5 hits
 
+如果使用第三方客户端API请求，需要启动searchd进程：  
 
+    /usr/local/sphinx/bin/searchd
 
+####简单介绍Sphinx配置文件
+配置文件分成如下几部分：  
++ **source**：创建索引时需要用到的数据源  
 
+        source src1
+        {
+                type                    = mysql
+        
+                sql_host                = localhost
+                sql_user                = root
+                sql_pass                = cloud
+                sql_db                  = test
+                sql_port                = 3306  # optional, default is 3306
+        
+                sql_query               = \
+                        SELECT id, group_id, UNIX_TIMESTAMP(date_added) AS date_added, title, content \
+                        FROM documents
+        
+                sql_attr_uint           = group_id
+                sql_attr_timestamp      = date_added
+        
+                sql_query_info          = SELECT * FROM documents WHERE id=$id
+        }
+sql_query：第一次索引所有数据时执行的SQL语句  
 
++ **index**：指定索引数据的方法路径以及如何存放  
+
+        index test1
+        {
+                source                  = src1
+                path                    = /usr/local/sphinx/var/data/test1
+                docinfo                 = extern
+                charset_type            = sbcs
+        }
+
+charset_type：设置文档的编码，可以为sbcs（single-byte）和UTF-8  
++ **indexer**：indexer程序相关配置  
++ **searchd**：搜索索引时 searchd程序相关配置  
+
+        searchd
+        {
+                listen                  = 9312
+                listen                  = 9306:mysql41
+                log                     = /usr/local/sphinx/var/log/searchd.log
+                query_log               = /usr/local/sphinx/var/log/query.log
+                read_timeout            = 5
+                max_children            = 30
+                pid_file                = /usr/local/sphinx/var/log/searchd.pid
+                max_matches             = 1000
+                seamless_rotate         = 1
+                preopen_indexes         = 1
+                unlink_old              = 1
+                workers                 = threads # for RT to work
+                binlog_path             = /usr/local/sphinx/var/data
+        }
+
+执行indexer时错误提示：  
+
+    FATAL: failed to lock /usr/local/sphinx/var/data/test1.spl: Resource temporarily unavailable, will not index. Try --rotate option.
+
+如果searchd进程启动了，那么先关闭它。 
+
+####使用Sphinx全文检索的好处
++ 快速建立索引，比MySQL的全文检索快上50到100倍，比其他全文检索快4到10倍
++ 更高的检索速度
++ 相关性
++ 良好的扩展性
 
 创建配置文件  
 cd /usr/local/sphinx/etc
