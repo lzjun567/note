@@ -1,12 +1,126 @@
-1. 下载安装：http://sphinxsearch.com/downloads/beta/  
-wget http://sphinxsearch.com/files/sphinx-2.0.7-release.tar.gz
-tar -zvxf Sphinx-2.0.7-release.tar.gz  
-cd sphinx-2.0.7-release/
-./configure --prefix=/usr/local/sphinx --with-mysql  
-make  
-sudo make install  
+**Sphinx：SQL Phrase Index**
+####主要特性：
++ 高速建立索引（10MB/sec）  
++ 快速搜索（在2到4G的文本中只需0.1秒）  
++ 可扩展（上到100文本，10亿个文档，在单个CPU上面）  
++ 支持分布式  
++ 支持MySQL（MyIASAM和InnoDB），原生支持PostgreSQL  
++ 支持词语搜索  
++ 支持语法排名，相关度查询
++ 支持英语和俄语分词搜索  
++ 支持 文档组  
++ 支持任何数量的文档字段  
++ 支持不同的搜索模式（继承匹配，全部匹配，词语匹配，匹配任意）  
+####下载安装
+以下都是基于Linux环境下操作。
 
-2. 快速了解  
+    wget http://sphinxsearch.com/files/sphinx-2.0.7-release.tar.gz
+    tar -zvxf Sphinx-2.0.7-release.tar.gz  
+    cd sphinx-2.0.7-release/
+    ./configure --prefix=/usr/local/sphinx --with-mysql  
+    make  
+    sudo make install  
+
+--prefix=/path：该选项制定Sphinx的安装路径  
+--with-mysql=/path：Sphinx会自动检测MySQL的库文件，如果没有找到，你可以制定路径  
+--with-pgsql=/path：同上  
+安装时出现MySQL相关错误参考：http://stackoverflow.com/questions/3095040/help-setting-up-sphinx  
+
+####快速了解
+安装完后，在安装目录（/usr/local/sphinx）用`tree`命令可以看到如下目录结构，就代表安装成功了。  
+
+    root@60:/usr/local/sphinx# tree
+    ├── bin
+    │   ├── indexer
+    │   ├── indextool
+    │   ├── search
+    │   ├── searchd
+    │   └── spelldump
+    ├── etc
+    │   ├── example.sql
+    │   ├── sphinx.conf.dist
+    │   └── sphinx-min.conf.dist
+    ├── share
+    │   └── man
+    │       └── man1
+    │           ├── indexer.1
+    │           ├── indextool.1
+    │           ├── search.1
+    │           ├── searchd.1
+    │           └── spelldump.1
+    └── var
+        ├── data
+        └── log
+
+bin目录存放二进制执行文件  
+etc目录存放配置文件  
+var目录存放索引数据和搜索日志  
+
+相关度在搜索世界中是一个非常重要的概念。MySQL也支持全文检索，你只需要在指定的字段上添加“FULLTEXT” 索引。比如：在‘'post’表的'description'字段添加全文检索索引  
+
+    ALTER TABLE 'posts' ADD FULLTEXT(\`description\`);
+不过这里要注意的是只有MyISAM引擎才支持全文索引。添加索引后，就可以使用语句：  
+
+    SELECT * FROM posts WHERE MATCH (description) AGAINST('beautiful programming');
+返回结果会根据相关度排序，这比使用LIKE语句速度要快不少。
+
+####全文检索的优点
++ 相比传统搜索更快，它的优势来自于通过单词的索引查询记录取代全表扫描  
++ 查询结果可以根据相关度排序  
++ 在上百万条数据的数据库中性能表现非常好  
++ 他能跳过一些通用的词如：an for the 等等   
+
+####Sphinx的主要组件
+**indexer**：indexer用来建立或者重新建立全文本索引，默认情况Sphinx读取/usr/local/sphinx/etc/sphinx.conf配置文件。  
+**searchd**：它是用来搜索索引的进程，需要客户端访问Sphinx API。  
+
+####Sphinx简单实战
+
+1. 创建数据库,执行脚本  
+
+            mysql -uroot -proot test < /usr/localsphinx/etc/example.sq
+2. 创建配置文件：  
+
+            cd /usr/local/sphinx/etc
+            cp sphinx-min.conf.disk sphinx.conf
+配置文件内容：  
+
+    source src1
+    {
+      type         = mysql
+      sql_host        = localhost
+      sql_user        = test
+      sql_pass        =
+      sql_db          = test
+      sql_port        = 3306  # optional, default is 3306
+      sql_query        = \
+        SELECT id, group_id, UNIX_TIMESTAMP(date_added)
+          AS date_added, title, content \
+        FROM documents
+      sql_attr_uint      = group_id
+      sql_attr_timestamp    = date_added
+      sql_query_info      = SELECT * FROM documents WHERE id=$id
+    }
+3. 创建索引：  
+    
+    /usr/local/sphinx/bin/indexer --all
+运行结果：  
+
+    using config file '/usr/local/sphinx/etc/sphinx.conf'...
+    indexing index 'test1'...
+    collected 4 docs, 0.0 MB
+    sorted 0.0 Mhits, 100.0% done
+    total 4 docs, 193 bytes
+    total 0.045 sec, 4280 bytes/sec, 88.72 docs/sec
+    skipping non-plain index 'testrt'...
+    total 3 reads, 0.000 sec, 0.1 kb/call avg, 0.0 msec/call avg
+    total 9 writes, 0.000 sec, 0.1 kb/call avg, 0.0 msec/call avg
+
+
+
+
+
+
 创建配置文件  
 cd /usr/local/sphinx/etc
 cp sphinx.conf.disk sphinx.conf
