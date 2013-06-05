@@ -1,18 +1,19 @@
 **Sphinx：SQL Phrase Index**
 ####主要特性：
-+ 高速建立索引（10MB/sec）  
-+ 快速搜索（在2到4G的文本中只需0.1秒）  
-+ 可扩展（上到100文本，10亿个文档，在单个CPU上面）  
-+ 支持分布式  
-+ 支持MySQL（MyIASAM和InnoDB），原生支持PostgreSQL  
-+ 支持词语搜索  
++ 高速建立索引（10MB/sec）
++ 快速搜索（在2到4G的文本中只需0.1秒） 
++ 可扩展（上到100文本，10亿个文档，在单个CPU上面）
++ 支持分布式
++ 支持MySQL（MyIASAM和InnoDB），原生支持PostgreSQL
++ 支持词语搜索
 + 支持语法排名，相关度查询
-+ 支持英语和俄语分词搜索  
-+ 支持 文档组  
-+ 支持任何数量的文档字段  
-+ 支持不同的搜索模式（继承匹配，全部匹配，词语匹配，匹配任意）  
++ 支持英语和俄语分词搜索
++ 支持 文档组
++ 支持任何数量的文档字段
++ 支持不同的搜索模式（继承匹配，全部匹配，词语匹配，匹配任意）
+
 ####下载安装
-以下都是基于Linux环境下操作。
+以下都是基于Linux环境下操作。  
 
     wget http://sphinxsearch.com/files/sphinx-2.0.7-release.tar.gz
     tar -zvxf Sphinx-2.0.7-release.tar.gz  
@@ -58,7 +59,7 @@ var目录存放索引数据和搜索日志
 
 相关度在搜索世界中是一个非常重要的概念。MySQL也支持全文检索，你只需要在指定的字段上添加“FULLTEXT” 索引。比如：在‘'post’表的'description'字段添加全文检索索引  
 
-    ALTER TABLE 'posts' ADD FULLTEXT(\`description\`);
+    ALTER TABLE 'posts' ADD FULLTEXT(`description`);
 不过这里要注意的是只有MyISAM引擎才支持全文索引。添加索引后，就可以使用语句：  
 
     SELECT * FROM posts WHERE MATCH (description) AGAINST('beautiful programming');
@@ -78,33 +79,34 @@ var目录存放索引数据和搜索日志
 
 1. 创建数据库,执行脚本  
 
-            mysql -uroot -proot test < /usr/localsphinx/etc/example.sq
+            mysql -uroot -proot test < /usr/localsphinx/etc/example.sql
 2. 创建配置文件：  
 
             cd /usr/local/sphinx/etc
             cp sphinx-min.conf.disk sphinx.conf
-配置文件内容：  
+    配置文件内容：
 
-    source src1
-    {
-      type         = mysql
-      sql_host        = localhost
-      sql_user        = test
-      sql_pass        =
-      sql_db          = test
-      sql_port        = 3306  # optional, default is 3306
-      sql_query        = \
-        SELECT id, group_id, UNIX_TIMESTAMP(date_added)
-          AS date_added, title, content \
-        FROM documents
-      sql_attr_uint      = group_id
-      sql_attr_timestamp    = date_added
-      sql_query_info      = SELECT * FROM documents WHERE id=$id
-    }
-3. 创建索引：  
-    
-    /usr/local/sphinx/bin/indexer --all
-运行结果：  
+        source src1
+        {
+          type         = mysql
+          sql_host        = localhost
+          sql_user        = test
+          sql_pass        =
+          sql_db          = test
+          sql_port        = 3306  # optional, default is 3306
+          sql_query        = \
+            SELECT id, group_id, UNIX_TIMESTAMP(date_added)
+              AS date_added, title, content \
+            FROM documents
+          sql_attr_uint      = group_id
+          sql_attr_timestamp    = date_added
+          sql_query_info      = SELECT * FROM documents WHERE id=$id
+        }
+3. 创建索引：
+
+        /usr/local/sphinx/bin/indexer --all
+
+运行结果：
 
     using config file '/usr/local/sphinx/etc/sphinx.conf'...
     indexing index 'test1'...
