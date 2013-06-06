@@ -210,6 +210,103 @@ charset_type：设置文档的编码，可以为sbcs（single-byte）和UTF-8
 + 相关性
 + 良好的扩展性
 
+Sphinx的作者Andrew Aksyonoff 在5GB文本，3百50万条记录中做的性能测试结果：  
+
+    -------------------------------------------------------
+                             MySQL       Lucene      Sphinx
+    -------------------------------------------------------
+    Indexing time, min       1627        176         84
+    Index size, MB           3011        6328        2850
+    Match all, ms/q          286         30          22
+    Match phrase, ms/q       3692        29          21
+    Match bool top-20, ms/q  24          29          13
+    -------------------------------------------------------
+
+####Indexing
+索引在Sphinx中是最重要的组件之一。  
+#####什么数据库索引
+在数据库中，用于提高数据库表访问速度的数据库对象，虽然索引可以提高查询速度，但是它会导致数据库系统更新数据的性能下降，因为更新数据的时候同时要更新索引。  
+#####sphinx中的索引
+Sphinx中的索引与数据库索引有所区别，sphinx中的索引数据是结构化**文档**的集合，每个文档是字段（field）的集合。一行代表一个文档，每一列代表一个字段。索引还可以包含属性（attributes）用于过滤、排序、分组，这些属性不会被全文检索，仅仅是被存储在索引中。  
+
+举例：论坛帖子表中帖子的标题和内容这两个字段需要全文检索，但是检索结果需要限制在某个特定的作者，或者按照post_date对结果排序，实现这个功能可以将出了标题和内容的各列作为属性来做索引，之后使用API调用设置过滤、排序等操作。  
+sphinx.conf片段：  
+
+    sql_query = SELECT id, title, content, \
+    	author_id, forum_id, post_date FROM my_forum_posts
+    sql_attr_uint = author_id
+    sql_attr_uint = forum_id
+    sql_attr_timestamp = post_date
+
+应用程序代码：
+
+    // only search posts by author whose ID is 123
+    $cl->SetFilter ( "author_id", array ( 123 ) );
+    
+    // only search posts in sub-forums 1, 3 and 7
+    $cl->SetFilter ( "forum_id", array ( 1,3,7 ) );
+    
+    // sort found posts by posting date in descending order
+    $cl->SetSortMode ( SPH_SORT_ATTR_DESC, "post_date" );
+
+
+属性支持的数据类型包括：  
+
++ 无符号整数（1-32位宽）;
++ UNIX 时间戳（timestamps）;
++ 浮点值（32位，IEEE 754单精度）;
++ 字符串序列 (尤其是计算出的整数值);
++ 多值属性 MVA( multi-value attributes ) (32位无符号整型值的变长序列).
+
+不同的索引类型为不同的任务设计，基于磁盘的B-Tree存储结构的索引更新起来比较简单（容易向已有的索引中插入新的文档），但是搜索起来比较慢。Sphinx为了最优化建立索引和检索速度而设计，因此它更新索引时很慢的，理论上更新索引甚至比从头重建索引还要慢。不过大多数情况下可以通过建立多个索引来解决索引更新慢的问题，更多参考：**实时更新索引**  
+
+实时索引采用“主索引+增量索引”（main+delta）模式来实现“近实时”的索引更新。基本思路是设置两个数据源和两个索引，对更新或更本不更新的数据建立主索引，对新增文档建立增量索引。增量索引的更新频率可以非常快，文档可以在出现几分钟内就可以被检索到。  
+确定具体某一文档分属哪个索引的分类工作可以自动完成，一个可选方案是建立一个计数器，记录将文档集分成两部分和那个文档ID，每次重新构建主索引时，这个表都会被更新。 
+
+    CREATE TABLE sph_counter
+    (
+        counter_id INTEGER PRIMARY KEY NOT NULL,
+        max_doc_id INTEGER NOT NULL
+    );
+    # in sphinx.conf
+    source main
+    {
+        # ...
+        sql_query_pre = REPLACE INTO sph_counter SELECT 1, MAX(id) FROM documents
+        sql_query = SELECT id, title, body FROM documents \
+            WHERE id<=( SELECT max_doc_id FROM sph_counter WHERE counter_id=1 )
+    }
+    source delta : main
+    {
+        sql_query_pre =
+        sql_query = SELECT id, title, body FROM documents \
+            WHERE id>( SELECT max_doc_id FROM sph_counter WHERE counter_id=1 )
+    }
+    index main
+    {
+        source = main
+        path = /path/to/main
+        # ... all the other settings
+    }
+    # note how all other settings are copied from main,
+    # but source and path are overridden (they MUST be)
+    index delta : main
+    {
+        source = delta
+        path = /path/to/delta
+    }
+
+
+
+一个索引的数据可以来自多个数据源，这些数据将严格按照配置文件中定义的顺序进行处理，所有从这些数据源获取到的文档将被合并，合并索引一般比重新索引快。基本语法：  
+
+    indexer --merge des_index src_index [--rotate]
+src_index将被合并到des_index中去，如果des_index已经用于searrchd提供服务，则必须加参数--rotate。
+####多值属性
+
+
+
+
 创建配置文件  
 cd /usr/local/sphinx/etc
 cp sphinx.conf.disk sphinx.conf
