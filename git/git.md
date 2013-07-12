@@ -19,4 +19,9 @@ merge 的功能就是做分支合并，假如分支结构如下：
 
     $git merge issueFix
 
+ 统计代码行数
 
+    git ls-files | xargs wc -l
+统计python代码行数
+
+    git ls-files | grep .py | xargs wc -l

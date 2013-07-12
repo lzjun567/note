@@ -202,7 +202,7 @@ charset_type：设置文档的编码，可以为sbcs（single-byte）和UTF-8
 
     FATAL: failed to lock /usr/local/sphinx/var/data/test1.spl: Resource temporarily unavailable, will not index. Try --rotate option.
 
-如果searchd进程启动了，那么先关闭它。 
+如果searchd进程启动了，那么先关闭它。或者 使用在indexer后面加参数`--rotate`，但是该参数在windows(2.1.1)的版本下不起作用
 
 ####使用Sphinx全文检索的好处
 + 快速建立索引，比MySQL的全文检索快上50到100倍，比其他全文检索快4到10倍
@@ -258,9 +258,11 @@ sphinx.conf片段：
 + 字符串序列 (尤其是计算出的整数值);
 + 多值属性 MVA( multi-value attributes ) (32位无符号整型值的变长序列).
 
+属性的作用：过滤，排序，分组  
+
 不同的索引类型为不同的任务设计，基于磁盘的B-Tree存储结构的索引更新起来比较简单（容易向已有的索引中插入新的文档），但是搜索起来比较慢。Sphinx为了最优化建立索引和检索速度而设计，因此它更新索引时很慢的，理论上更新索引甚至比从头重建索引还要慢。不过大多数情况下可以通过建立多个索引来解决索引更新慢的问题，更多参考：**实时更新索引**  
 
-实时索引采用“主索引+增量索引”（main+delta）模式来实现“近实时”的索引更新。基本思路是设置两个数据源和两个索引，对更新或更本不更新的数据建立主索引，对新增文档建立增量索引。增量索引的更新频率可以非常快，文档可以在出现几分钟内就可以被检索到。  
+实时索引采用“主索引+增量索引”（main+delta）模式来实现“近实时”的索引更新。基本思路是设置两个数据源和两个索引，对更新或根本不更新的数据建立主索引，对新增文档建立增量索引。增量索引的更新频率可以非常快，文档可以在出现几分钟内就可以被检索到。  
 确定具体某一文档分属哪个索引的分类工作可以自动完成，一个可选方案是建立一个计数器，记录将文档集分成两部分和那个文档ID，每次重新构建主索引时，这个表都会被更新。 
 
     CREATE TABLE sph_counter
@@ -303,6 +305,17 @@ sphinx.conf片段：
     indexer --merge des_index src_index [--rotate]
 src_index将被合并到des_index中去，如果des_index已经用于searrchd提供服务，则必须加参数--rotate。
 ####多值属性
+定义的格式如下：  
+    
+    sql_attr_multi = unit tag_id form query;\
+                    SELECT subject_id,tag_id FROM subject_subject_tags
+程序中可以这样调用：  
+
+    int[] tags = {25770,5};
+	cl.SetFilter("tag_id", tags, false);
+只保留包含tags的subject
+    
+
 
 
 
@@ -346,7 +359,7 @@ searchd：
 
 http://davidx.me/2010/10/31/understanding-sphinx/
 
-找数据--> 建索引-->提i供服务
+找数据--> 建索引-->提供服务
 
 
 ####数据源
@@ -419,3 +432,48 @@ select * from posts where match(descriptioin) against ('beautiful programming');
 关于错误：  search test 出现的错误：
 index 'test1':search error: .
 解决的办法是：search -i test1 -q  'test'：指定具体的index
+
+
+####索引合并：  
+
+    indexer --merge DST_INDEX SRC_INDEX [--ratate]
+
+属性
+
+
+SPH_SORT_TIME_SEGMENTS 这种排序模式在windows平台好像不生效，搜出来的结果是空
+
+[中文分词核心配置](http://www.coreseek.cn/products-install/coreseek_mmseg/)
+
+####搜索c++,.net 等关键字时：
+在index中配置
+
+    exceptions:   /path/to/exception.txt
+执行命令：
+
+    mmseg -b /path/to/exception.txt
+
+生成的synonyms.dat 拷贝到uni.lib所在目录
+
+exception.txt:
+
+    C/C++ => cdpluspluscd
+    c/C++ => cdpluspluscd
+    c/c++ => cdpluspluscd
+    C/c++ => cdpluspluscd
+    C++ => dplusplusc
+    c++ => dplusplusc
+    C# => csharpcs
+    c# => csharpcs
+    J++ =>jshhdjs
+    j++ => jshhdjs
+    J# => jshhhejs
+    j# => jshhhejs
+    .NET => dotnet
+    .net => dotnet
+    * => asterisk
+    R&B => rhythmblues
+    VB.NET => vbdontnetvb
+    vB.NET => vbdotnetvb
+    vb.NET => vbdotnetvb
+
