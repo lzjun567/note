@@ -1,6 +1,6 @@
 ####JDBC为什么要使用PreparedStatement而不是Statement
 
-**PreparedStatement**是用来执行SQL查询语句的API之一，Java提供了**Statement**,**PreparedStatement**和**CallableStatement**三种方式来执行查询语句，其中**Statement**用于通用查询，**PreparedStatement**用于执行参数化查询，而**CallableStatement**则是用于存储过程。同时PreparedStatement还经常会在Java面试中被提及，譬如：*Statement与PreparedStatement的区别以及如何避免SQL注入式攻击？*这篇教程中我们会讨论为什么要用PreparedStatement？使用PreparedStatement有什么样的优势？PreparedStatement又是如何避免SQL注入攻击的？  
+**PreparedStatement**是用来执行SQL查询语句的API之一，Java提供了 **Statement** , **PreparedStatement** 和 **CallableStatement** 三种方式来执行查询语句，其中 **Statement** 用于通用查询，**PreparedStatement** 用于执行参数化查询，而 **CallableStatement** 则是用于存储过程。同时PreparedStatement还经常会在Java面试中被提及，譬如：*Statement与PreparedStatement的区别以及如何避免SQL注入式攻击？*这篇教程中我们会讨论为什么要用PreparedStatement？使用PreparedStatement有什么样的优势？PreparedStatement又是如何避免SQL注入攻击的？  
 
 ####PreparedStatement是什么？
 PreparedStatement是java.sql包下面的一个接口，用来执行SQL语句查询，通过调用connection.preparedStatement(sql)方法可以获得PreparedStatment对象。数据库系统会对sql语句进行预编译处理（如果JDBC驱动支持的话），预处理语句将被预先编译好，这条预编译的sql查询语句能在将来的查询中重用，这样一来，它比Statement对象生成的查询速度更快。下面是一个例子：  
@@ -25,7 +25,7 @@ PreparedStatement是java.sql包下面的一个接口，用来执行SQL语句查�
     Loan Type: Home Loan
     Loan Type: Gold Loan
 
-这个例子中，如果还是用**PreparedStatement**做同样的查询，哪怕参数值不一样，比如："Standard Chated" 或者"HSBC"作为参数值，数据库系统还是会去调用之前编译器编译好的执行语句（系统库系统初次会对查询语句做最大的性能优化）。默认会返回"TYPE_FORWARD_ONLY"类型的结果集（**ResultSet**）,当然你也可以使用preparedstatment()的重载方法返回不同类型的结果集。  
+这个例子中，如果还是用 **PreparedStatement** 做同样的查询，哪怕参数值不一样，比如："Standard Chated" 或者"HSBC"作为参数值，数据库系统还是会去调用之前编译器编译好的执行语句（系统库系统初次会对查询语句做最大的性能优化）。默认会返回"TYPE_FORWARD_ONLY"类型的结果集（ **ResultSet** ）,当然你也可以使用preparedstatment()的重载方法返回不同类型的结果集。  
 
 ####预处理语句的优势
 
@@ -38,8 +38,8 @@ PreparedStatement是java.sql包下面的一个接口，用来执行SQL语句查�
 
     现在你可以使用任何一种loan类型如："personal loan","home loan" 或者"gold loan"来查询，这个例子叫做参数化查询，因为它可以用不同的参数调用它，这里的"?"就是参数的占位符。  
 
-2. **PreparedStatement**比**Statement**更快  
-    使用**PreparedStatement**最重要的一点好处是它拥有更佳的性能优势，SQL语句会预编译在数据库系统中。执行计划同样会被缓存起来，它允许数据库做参数化查询。使用预处理语句比普通的查询更快，因为它做的工作更少（数据库对SQL语句的分析，编译，优化已经在第一次查询前完成了）。为了减少数据库的负载，生产环境中德JDBC代码你应该总是使用**PreparedStatement**。值得注意的一点是：为了获得性能上的优势，应该使用参数化sql查询而不是字符串追加的方式。下面两个SELECT 查询，第一个SELECT查询就没有任何性能优势。  
+2. **PreparedStatement**比 **Statement** 更快  
+    使用 **PreparedStatement** 最重要的一点好处是它拥有更佳的性能优势，SQL语句会预编译在数据库系统中。执行计划同样会被缓存起来，它允许数据库做参数化查询。使用预处理语句比普通的查询更快，因为它做的工作更少（数据库对SQL语句的分析，编译，优化已经在第一次查询前完成了）。为了减少数据库的负载，生产环境中德JDBC代码你应该总是使用 **PreparedStatement** 。值得注意的一点是：为了获得性能上的优势，应该使用参数化sql查询而不是字符串追加的方式。下面两个SELECT 查询，第一个SELECT查询就没有任何性能优势。  
     SQL Query 1:字符串追加形式的PreparedStatement  
 
         String loanType = getLoanType();
@@ -106,7 +106,7 @@ PreparedStatement是java.sql包下面的一个接口，用来执行SQL语句查�
 8. 不支持预编译SQL查询的JDBC驱动，在调用connection.prepareStatement(sql)的时候，它不会把SQL查询语句发送给数据库做预处理，而是等到执行查询动作的时候（调用executeQuery()方法时）才把查询语句发送个数据库，这种情况和使用Statement是一样的。  
 9. 占位符的索引位置从1开始而不是0，如果填入0会导致*java.sql.SQLException invalid column index*异常。所以如果PreparedStatement有两个占位符，那么第一个参数的索引时1，第二个参数的索引是2.  
 
-以上就是为什么要使用PreparedStatement的全部理由，不过你仍然可以使用Statement对象用来做做测试。但是在生产环境下你一定要考虑使用**PreparedStatement**。  
+以上就是为什么要使用PreparedStatement的全部理由，不过你仍然可以使用Statement对象用来做做测试。但是在生产环境下你一定要考虑使用 **PreparedStatement** 。  
 
 原文：[Why use PreparedStatement in Java JDBC](http://javarevisited.blogspot.com/2012/03/why-use-preparedstatement-in-java-jdbc.html#ixzz2YjEhPIis)  
 更多参考：  
