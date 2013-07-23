@@ -1,6 +1,6 @@
 ####JDBC为什么要使用PreparedStatement而不是Statement
 
-**PreparedStatement**是用来执行SQL查询语句的API之一，Java提供了 **Statement** , **PreparedStatement** 和 **CallableStatement** 三种方式来执行查询语句，其中 **Statement** 用于通用查询，**PreparedStatement** 用于执行参数化查询，而 **CallableStatement** 则是用于存储过程。同时PreparedStatement还经常会在Java面试中被提及，譬如：*Statement与PreparedStatement的区别以及如何避免SQL注入式攻击？*这篇教程中我们会讨论为什么要用PreparedStatement？使用PreparedStatement有什么样的优势？PreparedStatement又是如何避免SQL注入攻击的？  
+**PreparedStatement**是用来执行SQL查询语句的API之一，Java提供了 **Statement** , **PreparedStatement** 和 **CallableStatement** 三种方式来执行查询语句，其中 **Statement** 用于通用查询， **PreparedStatement** 用于执行参数化查询，而 **CallableStatement** 则是用于存储过程。同时PreparedStatement还经常会在Java面试被提及，譬如：Statement与PreparedStatement的区别以及如何避免SQL注入式攻击？这篇教程中我们会讨论为什么要用PreparedStatement？使用PreparedStatement有什么样的优势？PreparedStatement又是如何避免SQL注入攻击的？  
 
 ####PreparedStatement是什么？
 PreparedStatement是java.sql包下面的一个接口，用来执行SQL语句查询，通过调用connection.preparedStatement(sql)方法可以获得PreparedStatment对象。数据库系统会对sql语句进行预编译处理（如果JDBC驱动支持的话），预处理语句将被预先编译好，这条预编译的sql查询语句能在将来的查询中重用，这样一来，它比Statement对象生成的查询速度更快。下面是一个例子：  
@@ -55,31 +55,37 @@ PreparedStatement是java.sql包下面的一个接口，用来执行SQL语句查�
     如果你是做Java web应用开发的，那么必须熟悉那声名狼藉的SQL注入式攻击。去年Sony就遭受了SQL注入攻击，被盗用了一些Sony play station（PS机）用户的数据。在SQL注入攻击里，恶意用户通过SQL元数据绑定输入，比如：某个网站的登录验证SQL查询代码为：  
 
         strSQL = "SELECT * FROM users WHERE name = '" + userName + "' and pw = '"+ passWord +"';"
-    恶意填入：
+    恶意填入：  
+    
         userName = "1' OR '1'='1";
         passWord = "1' OR '1'='1";
     那么最终SQL语句变成了：
+    
         strSQL = "SELECT * FROM users WHERE name = '1' OR '1'='1' and pw = '1' OR '1'='1';"
-    因为WHERE条件恒为真，这就相当于执行：  
+    因为WHERE条件恒为真，这就相当于执行： 
+    
         strSQL = "SELECT * FROM users;"
-    因此可以达到无账号密码亦可登录网站。如果恶意用户要是更坏一点  
-    用户填入：
+    因此可以达到无账号密码亦可登录网站。如果恶意用户要是更坏一点，用户填入：
+    
         passWord = ';DROP TABLE users 
     SQL语句变成了：
+    
         strSQL = "SELECT * FROM users WHERE name = 'any_value' and pw = ''; DROP TABLE users"
     这样一来，虽然没有登录，但是数据表都被删除了。  
 
     然而使用PreparedStatement的参数化的查询可以阻止大部分的SQL注入。在使用参数化查询的情况下，数据库系统（eg:MySQL）不会将参数的内容视为SQL指令的一部分来处理，而是在数据库完成SQL指令的编译后，才套用参数运行，因此就算参数中含有破坏性的指令，也不会被数据库所运行。  
-    补充：避免SQL注入的第二种方式：
+    补充：避免SQL注入的第二种方式：  
     在组合SQL字符串的时候，先对所传入的参数做字符取代（将单引号字符取代为连续2个单引号字符，因为连续2个单引号字符在SQL数据库中会视为字符中的一个单引号字符，譬如：
 
         strSQL = "SELECT * FROM users WHERE name = '" + userName + "';"
     传入字符串：
 
         userName  = " 1' OR 1=1 " 
-    把userName做字符替换后变成：
+    把userName做字符替换后变成：  
+    
         userName = " 1'' OR 1=1"
     最后生成的SQL查询语句为：  
+    
         strSQL = "SELECT * FROM users WHERE name = '1'' OR 1=1'  
     这样数据库就会去系统查找name为“1' ' OR 1=1”的记录，而避免了SQL注入。  
 
