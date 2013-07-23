@@ -1,6 +1,25 @@
 ####JDBC批处理Select语句
 
-在网络上，你能做的最昂贵的资源就是客户端与服务器往返的请求与响应了，在JDBC中类似的一种情况就是对数据库的调用，如果你在做数据插入、更新、删除操作，你可以使用executeBatch()方法减少数据库调用次数，但不幸的是，对于批量查询，JDBC并没有内建（built-in）的方法。  
+在网络上开销最昂贵的资源就是客户端与服务器往返的请求与响应，JDBC中类似的一种情况就是对数据库的调用，如果你在做数据插入、更新、删除操作，你可以使用executeBatch()方法减少数据库调用次数，如：  
+
+    Statement pstmt = conn.createStatement();
+    pstmt.addBatch("insert into settings values(3,'liu')");
+    pstmt.addBatch("insert into settings values(4,'zhi')");
+    pstmt.addBatch("insert into settings values(5,'jun')");
+    pstmt.executeBatch();
+
+但不幸的是对于批量查询，JDBC并没有内建（built-in）的方法，而且JDBC执行批处理的时候也不能有SELECT语句，如：  
+
+    Statement pstmt = conn.createStatement();
+	pstmt.addBatch("select * from settings");
+	pstmt.executeBatch();
+
+会抛出异常：  
+
+    Exception in thread "main" java.sql.BatchUpdateException: Can not issue SELECT via executeUpdate().
+    	at com.mysql.jdbc.Statement.executeBatch(Statement.java:961)
+    	at test.SelectBatchTest.test2(SelectBatchTest.java:49)
+    	at test.SelectBatchTest.main(SelectBatchTest.java:12)
 
 假设你想从一系列指定的id列表中获取名字，逻辑上，我们要做的事情看起来应该是：  
 
@@ -8,7 +27,7 @@
         "select id, name from users where id in (?)");
     stmt.setString("1,2,3");
 
-但是这样做并不能得到预期的结果，JDBC只允许你用单个的字面值替换“？” 这么做是有必要的，因为如果SQL自身可以改变的话，JDBC驱动就没法预编译SQL语句了，另一方面它还能防止SQL注入攻击。  
+但是这样做并不能得到预期的结果，JDBC只允许你用单个的字面值来替换“？” JDBC之所以这么做是有必要的，因为如果SQL自身可以改变的话，JDBC驱动就没法预编译SQL语句了，另一方面它还能防止SQL注入攻击。  
 
 但有四种可替代的实现方法可供选择：  
 
@@ -23,16 +42,16 @@
 
     PreparedStatement stmt = conn.prepareStatement(
         "select id, name from users where id = ?");
-    for ( int i=0; i < 3; i++ ) {
+    for ( int i=0; i < 100; i++ ) {
       stmt.setInt(i);  // or whatever values you are trying to query by
 
       // execute statement and get result
     }
-这种方法写起来非常简单，但是性能非常慢。  
+这种方法写起来非常简单，但是性能非常慢，数据库往返要处理100次。  
 
-#####方法二：一个查询做完所有事  
+#####方法二：一个查询完成所有事  
 
-在运行时，你可以使用如下SQL语句：  
+在运行时，你可以使用一个循环来构建如下SQL语句：  
 
     PreparedStatement stmt = conn.prepareStatement(
         "select id, name from users where id in (?, ?, ?)");
@@ -40,7 +59,7 @@
     stmt.setInt(2);
     stmt.setInt(3);
 
-这种方案从代码上相比第一种方法算是第二简单的，它解决了来回多次请求数据库的问题，但是如果每次请求参数的个数不一样时预处理语句就必须重新编译，由于每次SQL字面值不匹配，因此如果分别用10个id、3个id、100个，这样会在缓存中产生三个预处理语句。除了重新编译预处理语句之外，先前缓存池中的预处理语句将被移除，最后导致重新编译已编译过的语句。最后，这是查询方式在内存溢出或磁盘分页操作时将会占用很长时间。  
+这种方案从代码相比第一种方法算是第二简单的，它解决了来回多次请求数据库的问题，但是如果每次请求参数的个数不一样时预处理语句就必须重新编译，由于每次SQL字面值不匹配，因此如果分别用10个id、3个id、100个，这样会在缓存中产生三个预处理语句。除了重新编译预处理语句之外，先前缓存池中的预处理语句将被移除（受限于缓存池大小），进而导致重新编译已编译过的语句。最后，这种查询方式在内存溢出或磁盘分页操作时查询会占用很长时间。  
 
 该方案的另一种变体就是在SQL语句中硬编码：
 
@@ -57,14 +76,14 @@
     stmt.setInt(2);
     stmt.setInt(3);
 
-这种方法的优点就是每次查询语句都一样，数据库不需要每次计算执行路径。然而，从数据库驱动的角度来说SQL每次都不一样，预处理语句每次必须预处理保存在缓存中。而且不是所有数据库系统都支持分号间隔的多个SQL语句的  
+这种方法的优点就是每次查询模版语句都一样，数据库不需要每次计算执行路径。然而，从数据库驱动的角度来说SQL每次都不一样，预处理语句每次必须预处理保存在缓存中。而且不是所有数据库系统都支持分号间隔的多个SQL语句的  
 
-####方法三：使用存储过程  
-存储过程在数据库系统中执行，因此它可以做很多查询而不需要太多网络负载，存储过程可以收集所有结果一次性返回。这是一种速度很快的解决方案。但是它对数据库的依赖比较强，不能随意的切换数据库，否则需要重写存储过程。你需要分离应用服务器与数据库服务器的逻辑。如果应用架构已经使用了存储过程，无疑这是只最佳方案。  
+#####方法三：使用存储过程  
+存储过程执行在数据库系统中，因此它可以做很多查询而不需要太多网络负载，存储过程可以收集所有结果一次性返回。这是一种速度很快的解决方案。但是它对数据库的依赖比较强，不能随意的切换数据库系统，否则需要重写存储过程而且需要你分离应用服务器与数据库服务器之间的逻辑。如果应用架构已经使用了存储过程，无疑这是只最佳方案。  
 
 #####方法四：批量查询
 
-批量查询就是方案一和方案二的折衷选择，它预先声明一些查询参数的数量的常量。然后用这些参数构建一批查询。因为这只会涉及到有限个查询量，所以它有预处理语句的优势（预编译不会与缓存中的预处理发生碰撞）。批处理多个值在相同的查询保留了服务器来回请求最小化的优势。最后你可以通过控制批处理的上限来避免大查询的内存问题。如果你有很关键的查询在性能方面又不想用存储过程，那么这是一种很好的解决办法，现在我们通过一个例子说明：  
+批量查询是方案一和方案二的折衷选择，它预先确定一批查询参数的常量，然后用这些参数构建一批查询。因为这只会涉及到有限个查询，所以它有预处理语句的优势（预编译不会与缓存中的预处理发生碰撞）。批处理多个值在相同的查询保留了服务器来回请求最小化的优势。最后你可以通过控制批处理的上限来避免大查询的内存问题。如果你有很关键的查询对性能方面有要求又不想用存储过程，那么这是一种很好的解决办法，现在我们通过一个例子说明：  
 
     public static final int SINGLE_BATCH = 1;
     public static final int SMALL_BATCH = 4;
