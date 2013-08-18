@@ -1,8 +1,8 @@
-**Sphinx：SQL Phrase Index**
+###Sphinx：SQL Phrase Index  基于SQL的全文检索引擎
 ####主要特性：
 + 高速建立索引（10MB/sec）
 + 快速搜索（在2到4G的文本中只需0.1秒） 
-+ 可扩展（上到100文本，10亿个文档，在单个CPU上面）
++ 可扩展（上到100文本，10亿个文，在单个CPU上面）
 + 支持分布式
 + 支持MySQL（MyIASAM和InnoDB），原生支持PostgreSQL
 + 支持词语搜索
@@ -13,7 +13,7 @@
 + 支持不同的搜索模式（继承匹配，全部匹配，词语匹配，匹配任意）
 
 ####下载安装
-以下都是基于Linux环境下操作。  
+以下都是基于Linux Ubuntu发行版环境下的操作。  
 
     wget http://sphinxsearch.com/files/sphinx-2.0.7-release.tar.gz
     tar -zvxf Sphinx-2.0.7-release.tar.gz  
@@ -26,6 +26,30 @@
 --with-mysql=/path：Sphinx会自动检测MySQL的库文件，如果没有找到，你可以制定路径  
 --with-pgsql=/path：同上  
 安装时出现MySQL相关错误参考：http://stackoverflow.com/questions/3095040/help-setting-up-sphinx  
+如果需要支持中文检索，建议参考下面这段  
+####基于Sphinx检索引擎的coorseek安装配置（适用于中文环境）
+
+1. 下载地址：[coreseek4.1](http://www.coreseek.cn/uploads/csft/4.0/coreseek-4.1-beta.tar.gz)
+2. 预安装包：
+
+        apt-get install make gcc g++ automake libtool mysql-client libmysqlclient15-dev   libxml2-dev libexpat1-dev
+
+3. 安装mmseg分词库
+
+        tar -zvxf coreseek
+        cd mmseg
+        ./bootstrap
+        ./configure --prefix=/usr/local/mmseg3
+        make
+        make install
+
+4. 安装coreseek 
+
+        cd csft
+        sh buildconf.sh
+        ./configure --prefix=/usr/local/coreseek  --without-unixodbc --with-mmseg --with-mmseg-includes=/usr/local/mmseg3/include/mmseg/ --with-mmseg-libs=/usr/local/mmseg3/lib/ --with-mysql
+        make
+        make install
 
 ####快速了解
 安装完后，在安装目录（/usr/local/sphinx）用`tree`命令可以看到如下目录结构，就代表安装成功了。  
@@ -57,7 +81,7 @@ bin目录存放二进制执行文件
 etc目录存放配置文件  
 var目录存放索引数据和搜索日志  
 
-相关度在搜索世界中是一个非常重要的概念。MySQL也支持全文检索，你只需要在指定的字段上添加“FULLTEXT” 索引。比如：在‘'post’表的'description'字段添加全文检索索引  
+**相关度** 在搜索世界中是一个非常重要的概念。MySQL也支持全文检索，你只需要在指定的字段上添加“FULLTEXT” 索引。比如：在‘'post’表的'description'字段添加全文检索索引  
 
     ALTER TABLE 'posts' ADD FULLTEXT(`description`);
 不过这里要注意的是只有MyISAM引擎才支持全文索引。添加索引后，就可以使用语句：  
@@ -121,22 +145,22 @@ var目录存放索引数据和搜索日志
 4. 查询索引  
 
         /usr/local/sphinx/bin/search test
-如果报错："index 'test1':search error" ，那么指定具体的index：   
+    如果报错："index 'test1':search error" ，那么指定具体的index：   
 
         /usr/local/sphinx/bin/search -i test1 -q  'test' 
 
-查询结果：  
+    查询结果：  
 
-    using config file '/usr/local/sphinx/etc/sphinx.conf'...
-    index 'test1': query 'test ': returned 3 matches of 3 total in 0.000 sec
-    
-    displaying matches:
-    1. document=1, weight=2421, group_id=1, date_added=Wed Jun  5 08:00:56 2013
-    2. document=2, weight=2421, group_id=1, date_added=Wed Jun  5 08:00:56 2013
-    3. document=4, weight=1442, group_id=2, date_added=Wed Jun  5 08:00:56 2013
-    
-    words:
-    1. 'test': 3 documents, 5 hits
+        using config file '/usr/local/sphinx/etc/sphinx.conf'...
+        index 'test1': query 'test ': returned 3 matches of 3 total in 0.000 sec
+        
+        displaying matches:
+        1. document=1, weight=2421, group_id=1, date_added=Wed Jun  5 08:00:56 2013
+        2. document=2, weight=2421, group_id=1, date_added=Wed Jun  5 08:00:56 2013
+        3. document=4, weight=1442, group_id=2, date_added=Wed Jun  5 08:00:56 2013
+        
+        words:
+        1. 'test': 3 documents, 5 hits
 
 如果使用第三方客户端API请求，需要启动searchd进程：  
 
@@ -202,7 +226,7 @@ charset_type：设置文档的编码，可以为sbcs（single-byte）和UTF-8
 
     FATAL: failed to lock /usr/local/sphinx/var/data/test1.spl: Resource temporarily unavailable, will not index. Try --rotate option.
 
-如果searchd进程启动了，那么先关闭它。或者 使用在indexer后面加参数`--rotate`，但是该参数在windows(2.1.1)的版本下不起作用
+如果searchd进程启动了，那么先关闭它。或者 使用在indexer后面加参数`--rotate`，但是该参数在Windows环境下(2.1.1)的版本下不起作用
 
 ####使用Sphinx全文检索的好处
 + 快速建立索引，比MySQL的全文检索快上50到100倍，比其他全文检索快4到10倍
@@ -227,7 +251,7 @@ Sphinx的作者Andrew Aksyonoff 在5GB文本，3百50万条记录中做的性能
 #####什么数据库索引
 在数据库中，用于提高数据库表访问速度的数据库对象，虽然索引可以提高查询速度，但是它会导致数据库系统更新数据的性能下降，因为更新数据的时候同时要更新索引。  
 #####sphinx中的索引
-Sphinx中的索引与数据库索引有所区别，sphinx中的索引数据是结构化**文档**的集合，每个文档是字段（field）的集合。一行代表一个文档，每一列代表一个字段。索引还可以包含属性（attributes）用于过滤、排序、分组，这些属性不会被全文检索，仅仅是被存储在索引中。  
+Sphinx中的索引与数据库索引有所区别，sphinx中的索引数据是结构化 **文档** 的集合，每个文档是字段（field）的集合。一行代表一个文档，每一列代表一个字段。索引还可以包含属性（attributes）用于过滤、排序、分组，这些属性不会被全文检索，仅仅是被存储在索引中。  
 
 举例：论坛帖子表中帖子的标题和内容这两个字段需要全文检索，但是检索结果需要限制在某个特定的作者，或者按照post_date对结果排序，实现这个功能可以将出了标题和内容的各列作为属性来做索引，之后使用API调用设置过滤、排序等操作。  
 sphinx.conf片段：  
@@ -260,7 +284,7 @@ sphinx.conf片段：
 
 属性的作用：过滤，排序，分组  
 
-不同的索引类型为不同的任务设计，基于磁盘的B-Tree存储结构的索引更新起来比较简单（容易向已有的索引中插入新的文档），但是搜索起来比较慢。Sphinx为了最优化建立索引和检索速度而设计，因此它更新索引时很慢的，理论上更新索引甚至比从头重建索引还要慢。不过大多数情况下可以通过建立多个索引来解决索引更新慢的问题，更多参考：**实时更新索引**  
+不同的索引类型为不同的任务设计，基于磁盘的B-Tree存储结构的索引更新起来比较简单（容易向已有的索引中插入新的文档），但是搜索起来比较慢。Sphinx为了最优化建立索引和检索速度而设计，因此它更新索引时很慢的，理论上更新索引甚至比从头重建索引还要慢。不过大多数情况下可以通过建立多个索引来解决索引更新慢的问题，更多参考： ** 实时更新索引**  
 
 实时索引采用“主索引+增量索引”（main+delta）模式来实现“近实时”的索引更新。基本思路是设置两个数据源和两个索引，对更新或根本不更新的数据建立主索引，对新增文档建立增量索引。增量索引的更新频率可以非常快，文档可以在出现几分钟内就可以被检索到。  
 确定具体某一文档分属哪个索引的分类工作可以自动完成，一个可选方案是建立一个计数器，记录将文档集分成两部分和那个文档ID，每次重新构建主索引时，这个表都会被更新。 
@@ -307,13 +331,13 @@ src_index将被合并到des_index中去，如果des_index已经用于searrchd提
 ####多值属性
 定义的格式如下：  
     
-    sql_attr_multi = unit tag_id form query;\
+    sql_attr_multi = unit tag_id from query;\
                     SELECT subject_id,tag_id FROM subject_subject_tags
 程序中可以这样调用：  
 
     int[] tags = {25770,5};
 	cl.SetFilter("tag_id", tags, false);
-只保留包含tags的subject
+只保留包含tag id 为 25770、5的subject
     
 
 
@@ -475,5 +499,4 @@ exception.txt:
     R&B => rhythmblues
     VB.NET => vbdontnetvb
     vB.NET => vbdotnetvb
-    vb.NET => vbdotnetvb
 
