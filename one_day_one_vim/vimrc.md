@@ -1,6 +1,6 @@
 
     "注：双引号表示注释
-    "这个我的vim的配置，我只要用来Python开发
+    "这个我的vim的配置，我主要用来做Python开发
     
     "默认文件编码
     set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
