@@ -3,7 +3,7 @@ SQLAlchemy 学习笔记
 SQLAlchemy算是Python界事实上的ORM（Object Relational Mapper）标准。  
 两个主要的组件：ORM 和SQL表达式语言。  
 
-![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)：
+![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)
 
 安装：  
     
@@ -17,21 +17,20 @@ SQLAlchemy算是Python界事实上的ORM（Object Relational Mapper）标准。
 没有没有报错就代表正确安装了。  
 
 
-连接数据库使用：
+连接MySQL数据库使用：
 
     from sqlalchemy import create_engine
     DB_CONNECT_STRING = 'mysql+mysqldb://root:@localhost/test2?charset=utf8'
     engine = create_engine(DB_CONNECT_STRING,echo=False)
-create_engine 返回一个Engine实例，engine实例直到触发数据库事件时才真正去连接数据库
+create_engine方法返回一个Engine实例，Engine实例直到触发数据库事件时才真正去连接数据库
 
     engine.execute("select 1").scalar()
 
 执行上面的语句是，sqlalchemy就会从数据库连接池中获取一个连接用于执行语句。  
 
-####
-声明一个映射（declare a Mapping)
+####声明一个映射（declare a Mapping)
 
-`declarative_base`类维持了一个从类到表的关系，通用一个应用就一个这样的base实例  
+`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例  
 
     from sqlalchemy.ext.declarative import declarative_base
     Base = declarative_base()
@@ -138,3 +137,11 @@ query = session.query(User).filter(xx)
 query.all()
 query.first()
 query.one()有且只有一个元素时才正确返回。
+
+####Relattionship
+
+#####一对多  （one to many）
+
+
+
+
