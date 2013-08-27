@@ -1,32 +1,30 @@
-###一、变量
+django 模版语言
+==============================
+模版就是一个文本文件，可以生成HTML、XML等任何基于文本格式的文件，模版包含**变量**，变量会被值替换，**标签** 控制模版的逻辑，下面就是一个简单的模版文件  
 
-1. 变量的形式是：{{variable}}， 当模板引擎碰到变量的时候，引擎使用变量的值代替变量。
-2. 使用dot(.)能够访问变量的属性
-3. 当模板引擎碰到dot的时候，查找的顺序是什么样子呢？模版系统会按照如下顺序查找：
+    <h1>{{ section.title }}</h1>
+    {% for story in story_list %}
+    <h2>
+      <a href="{{ story.get_absolute_url }}">
+        {{ story.headline|upper }}
+      </a>
+    </h2>
+    <p>{{ story.tease|truncatewords:"100" }}</p>
+    {% endfor %}
 
- - a.字典查找，例如：foo["var1"]
- - b.属性查找，例如：foo.bar
- - c.方法查找，例如：foo.bar()
- - d.list-index查找，例如foo[bar]
+####变量
+- 变量的形式是：{{variable}}， 当模板引擎遇到变量的时，引擎使用变量的值代替变量。使用"**.**" 访问变量的属性，比如{{user.name}}。当模板引擎碰到"**.**"的时候，模版系统会按照如下顺序查找：  
+     1. 字典查找，例如：foo['bar']
+     2. 属性查找，例如：foo.bar
+     3. 方法查找，例如：foo.bar()
+     4. list-index查找，例如foo[bar]
  
-**注意**：方法查找比一般的查找要复杂一些  
-
-- 如果调用方法期间，方法抛出一个异常，那么异常将会产生，除非异常对象带有一个属性silent_variable_failure，如果这个值是True，那么将会返回一个空字串。
-- 方法调用仅仅对那些没有参数的方法才会生效
-- 一些方法会产生副作用，所以系统允许方法设置一个属性alters_data，如果值为True，那么将不能够调用，其设置方法是：
-
-        def sensitive_function(self):
-            #函数内容
-            sensitive_function.alters_data = True
-- 如果模板中使用的某个变量不存在，那么模板系统将使用setting.py中 变量TEMPLATE_STRING_IF_INVALID的值进行替代，在默认情况下，该变量的值是''(空字符）。
-
-###二、过滤器
-
-1. 可以通过过滤器来修改变量的显示，过滤器的形式是：{{ variable | filter }}，管道符号'|'代表使用过滤器
-2. 过滤器能够采用链式的方式使用，例如：{{ text | escape | linebreaks }}
-3. 过滤器还可以带参数，例如： {{ bio|truncatewords:30 }}
-4. 过滤器的参数中如果带有空格，那么需要用引号引起来，例如：{{ list | join : ", "}}
-5. django中30个内建的过滤器
+####过滤器
+- 通过过滤器可以改变变量的显示方式，过滤器的形式是：{{ variable | filter }}，管道符号'|'代表使用过滤器，例如：{{value|default:"nohting"}}表示当value的为空或者None时就会显示"nothing"。
+- 过滤器能够采用链式的方式使用，例如：{{ text | lower }} 把变量text值转换为小写
+- 过滤器还可以带参数，例如： {{ bio|truncatewords:30 }}
+- 过滤器的参数中如果带有空格，那么需要用引号引起来，例如：{{ list | join : ", "}}
+- django中30个内建的过滤器
 
     1. add
             使用形式为：{{ value | add: "2"}}
@@ -556,3 +554,12 @@ Time zone offset in seconds. The offset for timezones west of UTC is always nega
 参考：
 https://docs.djangoproject.com/en/dev/ref/templates/builtins/
 http://lishiguang.iteye.com/blog/1332529
+
+
+####escape 
+转义，遇到`<div>`等标签时，django默认就会进行转义成`$lt;div$gt;`，在页面上看到了也是`<div>`。如果对于某些`<a>`标签不想转义，有如下几种方式：  
+
+1. 在模版中使用**safe** 过滤器，如：{{data|safe}} 
+2. 在模版中使用 **autoescape** 标签，如：{%autoescape off %} {{data}} {%endautoescape%}
+3. 在view中修改设置Context的autoscape属性为False，如：context = Context({'url':url},autoescape=False)，需要注意的是它的优先级低于第二条，意味着如果在template中显示的设置了{%autoescape on %}那么在context设置为autoescape=False也不会生效  
+
