@@ -100,3 +100,6 @@
     ""http://www.cnblogs.com/renrenqq/archive/2010/09/09/1813669.html
     ""https://github.com/rkulla/pydiction
     
+    "常用的折叠方式就两种，indent和marker
+    "indent方式会利用缩进自动进行折叠
+    set foldmethod=indent
