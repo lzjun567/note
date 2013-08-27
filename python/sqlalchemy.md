@@ -1,7 +1,7 @@
 SQLAlchemy 学习笔记
 =====================
-SQLAlchemy算是Python界事实上的ORM（Object Relational Mapper）标准。  
-两个主要的组件：ORM 和SQL表达式语言。  
+SQLAlchemy是Python界事实上的ORM（Object Relational Mapper）标准。  
+两个主要的组件：** ORM**  和** SQL表达式语言**  。  
 
 ![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)
 
