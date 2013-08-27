@@ -30,12 +30,12 @@ create_engine方法返回一个Engine实例，Engine实例直到触发数据库�
 
 ####声明一个映射（declare a Mapping)
 
-`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例  
+`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例，所有实体类都应该继承此类
 
     from sqlalchemy.ext.declarative import declarative_base
     Base = declarative_base()
 
-现在就可以创建一个domain类了  
+现在就可以创建一个domain类  
 
     from sqlalchemy import Column,Integer,String
 
@@ -56,7 +56,7 @@ create_engine方法返回一个Engine实例，Engine实例直到触发数据库�
             return "<User('%s','%s','%s')>"%(self.name,self.fullname,self.password)
 
 Base.metadataa.create_all(engine)  
-sqlalchemy 就是把Base子类转变为数据库表
+sqlalchemy 就是把Base子类转变为数据库表，定义好User类后，会生成`Table`和`mapper()`，分别通过User.__table__  和User.__mapper__来访问
 
 对于主键，象oracle没有自增长的主键时，要使用：  
 
@@ -65,7 +65,7 @@ sqlalchemy 就是把Base子类转变为数据库表
 
 ####创建Session
 
-Session是真正与数据库通信的handle，  
+Session是真正与数据库通信的handler，  
 
     from sqlalchemy.orm import sessionmaker
     Session = sessionmaker(bind=engine)
@@ -142,6 +142,40 @@ query.one()有且只有一个元素时才正确返回。
 
 #####一对多  （one to many）
 
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer,primary_key = True)
+        children = relationship("Child",backref='parent')
+    
+    class Child(Base):
+        __tablename__ = 'child'
+        id = Column(Integer,primary_key = True)
+        parent_id = Column(Integer,ForeignKey('parent.id'))
 
+在one的那端设置了backref后，反过来就是多对一，在保存child时不需要显示的保存parent
+
+    def save_child():
+        parent = Parent()
+        child1 = Child(parent = parent)
+        child2 = Child(parent = parent)
+        child3 = Child(parent = parent)
+        session = Session()
+        session.add_all([child1,child2,child3])
+        session.flush()
+        session.commit()
+
+设置 `cascade= 'all'`，可以级联删除  
+
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer,primary_key = True)
+        children = relationship("Child",cascade='all',backref='parent')
+    
+    def delete_parent():
+        session = Session()
+        parent = session.query(Parent).get(2)
+        session.delete(parent)
+        session.commit()
+不过不设置cascade，删除parent时，其关联的chilren不会删除，只会把chilren关联的parent.id置为空，设置cascade后就可以级联删除children  
 
 
