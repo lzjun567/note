@@ -138,3 +138,23 @@ query = session.query(User).filter(xx)
 query.all()
 query.first()
 query.one()有且只有一个元素时才正确返回。
+
+
+###使用加载策略（懒加载，饿加载）
+SQLAlchemy 默认使用 Lazy Loading 策略加载对象的 relationships。因此，如果你在对象 detached 之后访问对象的 relationships，会报 "DetachedInstanceError" 错误。例如：
+
+user = session.query(User).get(id)
+_session.close()
+print user.comments  # this will raise DetachedInstanceError
+如果你需要在对象 detach 后访问 relationships（例如需要跨进程共享对象），则应该使用 Eager Loading 策略：
+
+session.query(User).options(joinedload('comments')).get(id)
+_session.close()
+print user.comments  # OK
+如果需要加载所有的 relationships ，可以设置 Default Loading Strategies :
+
+session.query(User).options(joinedload('*')).get(id)
+_session.close()
+print user.comments  # OK
+print user.posts  # OK
+
