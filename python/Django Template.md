@@ -559,7 +559,7 @@ http://lishiguang.iteye.com/blog/1332529
 ####escape 
 转义，遇到`<div>`等标签时，django默认就会进行转义成`$lt;div$gt;`，在页面上看到了也是`<div>`。如果对于某些`<a>`标签不想转义，有如下几种方式：  
 
-1. 在模版中使用**safe** 过滤器，如：{{data|safe}} 
+1. 在模版中使用 **safe** 过滤器，如：{{data|safe}} 
 2. 在模版中使用 **autoescape** 标签，如：{%autoescape off %} {{data}} {%endautoescape%}
 3. 在view中修改设置Context的autoscape属性为False，如：context = Context({'url':url},autoescape=False)，需要注意的是它的优先级低于第二条，意味着如果在template中显示的设置了{%autoescape on %}那么在context设置为autoescape=False也不会生效  
 
