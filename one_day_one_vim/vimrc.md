@@ -103,3 +103,8 @@
     "常用的折叠方式就两种，indent和marker
     "indent方式会利用缩进自动进行折叠
     set foldmethod=indent
+
+" 无论是normal模式还是插入模式还是visual模式，按crtl+s 保存文件
+nmap <c-s> :w<CR>
+vmap <c-s> <Esc><c-s>gv
+imap <c-s> <Esc><c-s>
