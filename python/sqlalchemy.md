@@ -1,7 +1,7 @@
 SQLAlchemy 学习笔记
 =====================
-SQLAlchemy算是Python界事实上的ORM（Object Relational Mapper）标准。  
-两个主要的组件：ORM 和SQL表达式语言。  
+SQLAlchemy是Python界事实上的ORM（Object Relational Mapper）标准。  
+两个主要的组件：** ORM**  和** SQL表达式语言**  。  
 
 ![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)
 
@@ -30,12 +30,12 @@ create_engine方法返回一个Engine实例，Engine实例直到触发数据库�
 
 ####声明一个映射（declare a Mapping)
 
-`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例  
+`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例，所有实体类都应该继承此类
 
     from sqlalchemy.ext.declarative import declarative_base
     Base = declarative_base()
 
-现在就可以创建一个domain类了  
+现在就可以创建一个domain类  
 
     from sqlalchemy import Column,Integer,String
 
@@ -56,7 +56,7 @@ create_engine方法返回一个Engine实例，Engine实例直到触发数据库�
             return "<User('%s','%s','%s')>"%(self.name,self.fullname,self.password)
 
 Base.metadataa.create_all(engine)  
-sqlalchemy 就是把Base子类转变为数据库表
+sqlalchemy 就是把Base子类转变为数据库表，定义好User类后，会生成`Table`和`mapper()`，分别通过User.__table__  和User.__mapper__来访问
 
 对于主键，象oracle没有自增长的主键时，要使用：  
 
@@ -65,7 +65,7 @@ sqlalchemy 就是把Base子类转变为数据库表
 
 ####创建Session
 
-Session是真正与数据库通信的handle，  
+Session是真正与数据库通信的handler，  
 
     from sqlalchemy.orm import sessionmaker
     Session = sessionmaker(bind=engine)
@@ -151,6 +151,108 @@ session.query(User).options(joinedload('comments')).get(id)
 _session.close()
 print user.comments  # OK
 如果需要加载所有的 relationships ，可以设置 Default Loading Strategies :
+=======
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer,primary_key = True)
+        children = relationship("Child",backref='parent')
+    
+    class Child(Base):
+        __tablename__ = 'child'
+        id = Column(Integer,primary_key = True)
+        parent_id = Column(Integer,ForeignKey('parent.id'))
+
+在one的那端设置了backref后，反过来就是多对一，在保存child时不需要显示的保存parent
+
+    def save_child():
+        parent = Parent()
+        child1 = Child(parent = parent)
+        child2 = Child(parent = parent)
+        child3 = Child(parent = parent)
+        session = Session()
+        session.add_all([child1,child2,child3])
+        session.flush()
+        session.commit()
+
+设置 `cascade= 'all'`，可以级联删除  
+
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer,primary_key = True)
+        children = relationship("Child",cascade='all',backref='parent')
+    
+    def delete_parent():
+        session = Session()
+        parent = session.query(Parent).get(2)
+        session.delete(parent)
+        session.commit()
+不过不设置cascade，删除parent时，其关联的chilren不会删除，只会把chilren关联的parent.id置为空，设置cascade后就可以级联删除children  
+
+####Session
+Session 使用 connection发送query，把返回的result row 填充到一个object中，该对象同时还会保存在Session中，Session内部有一个叫 Identity Map的数据结构，为每一个对象维持了唯一的副本。primary key 作为 key ，value就是该object。  
+session刚开始无状态，直到有query发起时。
+
+对象的变化会被session的跟踪维持着，在数据库做下一次查询后者当前的事务已经提交了时，it fushed all pendings changes to the database.   
+这就是传说中的 Unit of work 模式
+
+例如：
+
+    def unit_of_work():
+        session = Session()
+        album = session.query(Album).get(4)
+        album.name = "jun"   #这里不会修改album的name属性，不会触发update语句
+
+    def unit_of_work():
+        session = Session()
+        album = session.query(Album).get(4)
+        album.name = "jun"   #这里修改了album的name属性，会触发一个update语句
+        session.query(Artist).get(11)
+        session.commit()
+
+####构造了session，何时commit，何时close
+规则：始终保持session与function和objecct分离
+
+####transaction scope  和  session scope
+
+#####对象的四种状态
+ 对象在session中可能存在的四种状态包括：  
+
+ - **Transient** ：实例还不在session中，还没有保存到数据库中去，没有数据库身份，想刚创建出来的对象比如`User()`，仅仅只有`mapper()`与之关联  
+ - **Pending** ：用add()一个transient对象后，就变成了一个pending对象，这时候仍然没有flushed到数据库中去，直到flush发生。  
+ - **Persistent** ：实例出现在session中而且在数据库中也有记录了，通常是通过flush一个pending实例变成Persistent或者从数据库中querying一个已经存在的实例。
+ - **Detached**：一个对象它有记录在数据库中，但是不在任何session中，
+
+
+#### Hibernate中的Session
+SessionFactory创建Session，SessionFactory是线程安全的，而Session是线程不安全的。Session是轻量级的，创建和删除都不需要耗太大的资源，这与JDBC的connection不一样，Connection的创建时很好资源的。  
+Session对象内部有一个缓存，称之为Hibernate第一级缓存，每个session实例都有自己的缓存，存放的对象是当前工作单元中加载的对象。  
+Hibernate Session 缓存三大作用：  
+1. 减少数据库的访问频率，提高访问性能
+2. 保证缓存的对象与数据库同步，位于缓存中的对象称为持久化对象
+3. 当持久化对象存在关联时，session保证不出现对象图的死锁
+
+####Session什么时候清理缓存
+1. commit()方法调用的时候
+2. 查询时会清理缓存，保证查询结果能反映对象的最新状态
+3. 显示调用session的flush方法
+4.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 session.query(User).options(joinedload('*')).get(id)
 _session.close()
