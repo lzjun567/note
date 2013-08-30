@@ -151,7 +151,7 @@ session.query(User).options(joinedload('comments')).get(id)
 _session.close()
 print user.comments  # OK
 如果需要加载所有的 relationships ，可以设置 Default Loading Strategies :
-=======
+======
     class Parent(Base):
         __tablename__ = 'parent'
         id = Column(Integer,primary_key = True)
@@ -258,9 +258,12 @@ session.query(User).options(joinedload('*')).get(id)
 _session.close()
 print user.comments  # OK
 print user.posts  # OK
-=======
+======
 ####Relattionship
 
 #####一对多  （one to many）
 
 
+
+
+mapping class link to table metadata  
