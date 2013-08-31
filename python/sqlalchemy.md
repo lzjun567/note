@@ -204,6 +204,7 @@ session刚开始无状态，直到有query发起时。
 
 ####transaction scope  和  session scope
 
+
 #####对象的四种状态
  对象在session中可能存在的四种状态包括：  
 
@@ -228,21 +229,102 @@ Hibernate Session 缓存三大作用：
 4.  
 
 
+####Querying
+
+    q = session.query(SomeMappedClass)
+
+session的query方法就可以创建一个查询对象，
 
 
 
 
 
+    def add_before_query():
+        session = Session()
+        ed_user = User(name='zhangsan')
+        session.add(ed_user)
+        user = session.query(User).filter_by(name='zhangsan').first()
+        print ed_user == user
+这里的ed_user == user 返回True，session中会根据用主键作为key，object作为vlaue缓存在session中
 
 
 
+    def test1():
+        session = Session()
+        jack = session.query(User).filter_by(name='lzjun').one()
+        print jack
+        print jack.addresses
+默认sqlalchemy 使用的时懒加载的模式，查询user的时候，并不会查询user.addresses，只有真正使用user.addresses的时候
+才会触发user.addresses的查询语句。  
+
+    from sqlalchemy.orm import subqueryload
+    def subquery_load_test():
+        session = Session()
+        jack = session.query(User).\
+                options(subqueryload(User.addresses)).\
+                filter_by(name='lzjun').one()
+        print jack
+使用subqueryload操作，饿汉式加载，查询user的时候，就把addresses查询出来了。  
 
 
+####ManyToMany
+
+    from sqlalchemy import Table,Text
+    post_keywords = Table('post_keywords',Base.metadata,
+            Column('post_id',Integer,ForeignKey('posts.id')),
+            Column('keyword_id',Integer,ForeignKey('keywords.id'))
+    )
+
+假如博客与关键字是多对多的关系，用Table。
+
+    class BlogPost(Base):
+        __tablename__ = 'posts'
+        id = Column(Integer,primary_key=True)
+        user_id = Column(Integer,ForeignKey('user.id'))
+        headline = Column(String(255),nullable=False)
+        body = Column(Text)
+        keywords = relationship('Keyword',secondary=post_keywords,backref='posts')
+    
+        def __init__(self,headline,body,author):
+            self.headline = headline
+            self.body = body
+            self.author = author
+            
+        def __repr__(self):
+            return "BlogPost(%r,%r,%r)"%(self.headline,self.body,self.author)
+    
+    class Keyword(Base):
+        __tablename__ = 'keywords'
+        id = Column(Integer,primary_key = True)
+        keyword = Column(String(50),nullable=False,unique=True)
+    
+        def __init__(self,keyword):
+            slef.keyword = keyword
+
+    BlogPost.author = relationship(User,backref=backref('posts',lazy='dynamic'))
+
+secondary 用来关联中间表的  
 
 
+####传统映射
+用Table构建一个table metadata，然后通过映射函数mapper与User关联起来  
 
+    from sqlalchemy import Table,Metadata
+    metadata = Metadata()
+    
+    user = Table('user',metadata,
+            Column('id',Integer,primary_key = True),
+            )
+    class User(object):
+        def __init__(self,name):
+            self.name = name
+    mapper(User,user)
 
+等价于：  
 
-
-
+    class User(Base):
+        id = Column(Integer,primary_key = True)
+        name = Column(String)
+        def __init__(self,name):
+            self.name = name
 
