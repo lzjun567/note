@@ -598,3 +598,34 @@ print user.posts  # OK
 
 
 mapping class link to table metadata  
+
+
+
+    print session.query(func.count(User.id)).all()
+    print session.query(func.count(User.id)).first()
+    print session.query(func.count(User.id)).scalar()
+
+
+    all()返回的是list，[(10,)]
+    first()返回的是tuple，(10,)，就是all()里面的的第0个元组
+    scalar()返回的就是单一值，元组中的第0个值，而且scalar只使用于当前返回的是单个值，比如all()里面返回的10
+
+
+####Classic mapping
+
+    from sqlalchemy import Table, MetaData
+    from sqlalchemy.orm import mapper
+    metadata = MetaData()
+    subject = Table('subject', metadata,
+                Column('id', Integer, primary_key=True),
+                Column('title', String(100))
+            )
+    class Subject(object):
+        def __init__(self, name):
+            self.name = name
+    metadata.create_all(engine)  #生成数据库表
+    mapper(Subject,subject)   #建立映射
+
+
+####Hybrid Attributes  混合属性
+属性在类级别和实例级别有特殊的属性
