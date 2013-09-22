@@ -40,4 +40,5 @@ kwargs就是一个字典类型的参数，它的使用方式如：
 
     def archive(request, archive_id, summary):
 
-
+https://docs.djangoproject.com/en/1.1/topics/http/urls/#id2
+https://docs.djangoproject.com/en/1.1/ref/templates/builtins/#std:templatetag-url
