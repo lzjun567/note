@@ -51,11 +51,7 @@ kwargs就是一个字典类型的参数，它的使用方式如：
 
 当然如果你确定不是上述问题抛出的此异常，那么可以看下这两个答案：  
 http://stackoverflow.com/questions/9649587/reverse-for-with-arguments-and-keyword-arguments-not-found  
-http://stackoverflow.com/questions/14882491/django-release-1-5-url-requires-a-non-empty-first-argument-the-syntax-change
-
-
-
-
-
-https://docs.djangoproject.com/en/1.1/topics/http/urls/#id2
+http://stackoverflow.com/questions/14882491/django-release-1-5-url-requires-a-non-empty-first-argument-the-syntax-change  
+本文参考  
+https://docs.djangoproject.com/en/1.1/topics/http/urls/#id2  
 https://docs.djangoproject.com/en/1.1/ref/templates/builtins/#std:templatetag-url
