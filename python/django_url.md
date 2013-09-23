@@ -42,14 +42,15 @@ kwargs就是一个字典类型的参数，它的使用方式如：
 
 
 注意：  
-1. 如果在url.py中有`url(r'^comment/(\d{1,9})/delete/$','delete_comment'),`的配置，如果不存在`delete_comment`这样一个函数视图，如果在模版中使用了`{% url path.to.some_view %}`这个标签，那么抛出 ViewDoesNotExit错误。仔细想想很有道理，如果视图不存在，即使匹配到了URL，当访问这个URL的时候，还是会抛ViewDoesNotExit的异常，这里Django只是在加载解析URLConf的时候就做了检查。
 
+1. 如果在url.py中有`url(r'^comment/(\d{1,9})/delete/$','delete_comment'),`的配置，如果不存在`delete_comment`这样一个函数视图，如果在模版中使用了`{% url path.to.some_view %}`这个标签，那么抛出 ViewDoesNotExit错误。仔细想想很有道理，如果视图不存在，即使匹配到了URL，当访问这个URL的时候，还是会抛ViewDoesNotExit的异常，这里Django只是在加载解析URLConf的时候就做了检查。
 2. 如果在根url.py文件中使用了`url(r'^people/', include('people.urls', namespace='people'))`，这里people是一个app，那么在people这个app中的url.py中`url(r'^(\d{1,9})/$','index', name='index')`必须指定了name=index才能正常使用{% url 'people:index'%}，否则：  
 
-    NoReverseMatch at /
-    Reverse for 'subjects' with arguments '()' and keyword arguments '{}' not found
-当然如果你确定不是上述问题抛出的此异常，那么可以看下这两个答案：
-http://stackoverflow.com/questions/9649587/reverse-for-with-arguments-and-keyword-arguments-not-found
+        NoReverseMatch at /
+        Reverse for 'subjects' with arguments '()' and keyword arguments '{}' not found
+
+当然如果你确定不是上述问题抛出的此异常，那么可以看下这两个答案：  
+http://stackoverflow.com/questions/9649587/reverse-for-with-arguments-and-keyword-arguments-not-found  
 http://stackoverflow.com/questions/14882491/django-release-1-5-url-requires-a-non-empty-first-argument-the-syntax-change
 
 
