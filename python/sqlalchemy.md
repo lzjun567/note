@@ -1,11 +1,10 @@
 SQLAlchemy 学习笔记
 =====================
-SQLAlchemy是Python界事实上的ORM（Object Relational Mapper）标准。  
-两个主要的组件：** ORM**  和** SQL表达式语言**  。  
+SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准，两个主要的组件：**SQLAlchemy ORM** 和 **SQLAlchemy Core**  。  
 
 ![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)
 
-安装：  
+#####安装  
     
     pip install SQLAlchemy
 
@@ -14,15 +13,12 @@ SQLAlchemy是Python界事实上的ORM（Object Relational Mapper）标准。
     >>> import sqlalchemy
     >>> sqlalchemy.__version__
     0.8.0
-没有没有报错就代表正确安装了。  
-
-
-连接MySQL数据库使用：
+没有没有报错就代表正确安装了，连接MySQL数据库(需要MySQLdb支持)：  
 
     from sqlalchemy import create_engine
     DB_CONNECT_STRING = 'mysql+mysqldb://root:@localhost/test2?charset=utf8'
-    engine = create_engine(DB_CONNECT_STRING,echo=False)
-create_engine方法返回一个Engine实例，Engine实例直到触发数据库事件时才真正去连接数据库
+    engine reate_engine(DB_CONNECT_STRING,echo=False)
+create_engine方法返回一个Engine实例，Engine实例只有直到触发数据库事件时才真正去连接数据库，如执行：
 
     engine.execute("select 1").scalar()
 
@@ -30,7 +26,7 @@ create_engine方法返回一个Engine实例，Engine实例直到触发数据库�
 
 ####声明一个映射（declare a Mapping)
 
-`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例，所有实体类都应该继承此类
+`declarative_base`类维持了一个从类到表的关系，通常一个应用使用一个base实例，所有实体类都应该继承此类对象
 
     from sqlalchemy.ext.declarative import declarative_base
     Base = declarative_base()
@@ -52,13 +48,11 @@ create_engine方法返回一个Engine实例，Engine实例直到触发数据库�
             self.password = password
         
         def __repr(self):
-            
             return "<User('%s','%s','%s')>"%(self.name,self.fullname,self.password)
 
-Base.metadataa.create_all(engine)  
-sqlalchemy 就是把Base子类转变为数据库表，定义好User类后，会生成`Table`和`mapper()`，分别通过User.__table__  和User.__mapper__来访问
+    Base.metadataa.create_all(engine)  
 
-对于主键，象oracle没有自增长的主键时，要使用：  
+sqlalchemy 就是把Base子类转变为数据库表，定义好User类后，会生成`Table`和`mapper()`，分别通过User.__table__  和User.__mapper__返回这两个对象，对于主键，象oracle没有自增长的主键时，要使用：  
 
     from sqlalchemy import Sequence
     Column(Integer,Sequence('user_idseq'),prmary_key=True)
@@ -95,42 +89,32 @@ Query对象通过Session.query获取，query接收类或属性参数
 ####常用过滤操作：  
 
 - equals
-
     query.filter(User.name == 'ed')
 - not equal
-
     query.filter(User.name !='ed')
-
 - LIKE
-
     query.filter(User.name.like('%d%')
-
 - IN:
-    
     query.filter(User.name.in(['a','b','c'])
--NOT IN:
-    
+- NOT IN:
     query.filter(User.name.in_(['ed','x'])
 - IS NULL:
-
     filter(User.name==None)
-
-IS NOT NULL:
-    
+- IS NOT NULL:
     filter(User.name!=None)
--AND
-
+- AND
     from sqlalchemy import and_
     filter(and_(User.name == 'ed',User.fullname=='xxx'))    
 或者多次调用filter或filter_by
-
     filter(User.name =='ed').filter(User.fullname=='xx')
-
+    等同于 func.add_()
 - OR
-
 - match
 
 
+Django中ORM的filter方法里面只有一个等号，比如：  
+
+    Entry.objects.all().filter(pub_date__year=2006)
 
 all()返回列表
 query = session.query(User).filter(xx)
