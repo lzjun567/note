@@ -1,6 +1,6 @@
 SQLAlchemy 学习笔记
 =====================
-SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准，两个主要的组件：**SQLAlchemy ORM** 和 **SQLAlchemy Core**  。  
+SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准实现，两个主要的组件： **SQLAlchemy ORM** 和 **SQLAlchemy Core**  。  
 
 ![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)
 
@@ -85,9 +85,7 @@ Query对象通过Session.query获取，query接收类或属性参数
 
     for name,fullname in session.query(User.name,User.fullname):
         print name,fullname
-
 ####常用过滤操作：  
-
 - equals
     query.filter(User.name == 'ed')
 - not equal
