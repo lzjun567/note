@@ -468,4 +468,101 @@ mapping class link to table metadata
 
 
 ####Hybrid Attributes  混合属性
-属性在类级别和实例级别有特殊的属性
+属性在类和实例上有特殊的行为  
+
+    from sqlalchemy import Column, Integer
+    from sqlalchemy.ext.declarative import declarative_base
+    from sqlalchemy.orm import Session, aliased
+    from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+    
+    Base = declarative_base()
+    
+    class Interval(Base):
+        __tablename__ = 'interval'
+    
+        id = Column(Integer, primary_key=True)
+        start = Column(Integer, nullable=False)
+        end = Column(Integer, nullable=False)
+    
+        def __init__(self, start, end):
+            self.start = start
+            self.end = end
+    
+        @hybrid_property
+        def length(self):
+            print self
+            return self.end - self.start
+    
+        @hybrid_method
+        def contains(self,point):
+            return (self.start <= point) & (point < self.end)
+    
+        @hybrid_method
+        def intersects(self, other):
+            return self.contains(other.start) | self.contains(other.end)
+
+这个hybrid_property和python中的@property有什么区别呢？区别就在这个hybrid上，既然是混合的属性，也就是说，既可以作为实例属性
+也可以作为类属性，
+
+    if __name__ == '__main__':
+        Base.metadata.create_all(engine)
+        i = Interval(5, 10)
+        print i.length
+        print Interval.length
+
+
+输出结果是：
+
+    <__main__.Interval object at 0x9cfdd8c> ----
+    5
+    <class '__main__.Interval'> ----
+    interval."end" - interval.start
+
+而Interval.length的type是
+
+    <class 'sqlalchemy.sql.expression.BinaryExpression'>
+
+那它有什么用呢？  
+
+    Session().query(Interval).filter(Interval.length > 10)
+
+它的用法看起来跟属性start、end一样的，而你却无序在数据库中像start、end一样定义一个字段，多好。  
+
+那@hibrid_method有什么用呢？ ,如果是判断point是不是contains，直接:  
+
+    i.contains(7) 
+就好了啊，干嘛要用@hibrid_method呢？
+
+    Session().query(Interval).filter(Interval.contains(15))
+看到了吧，和hybrid_property有相似之处
+
+
+####区别于属性的表达式装饰器
+
+    from sqlalchemy import func
+    
+    class Interval(object):
+        # ...
+    
+        @hybrid_property
+        def radius(self):
+            return abs(self.length) / 2
+    
+        @radius.expression
+        def radius(cls):
+            return func.abs(cls.length) / 2
+    
+
+这里为什么还要用radius.expression呢，对于查询：  
+
+    Session().query(Interval).filter(Interval.radius > 5)
+直接像length一样不行吗?当然不行，不信，注释掉radius.expression试试。  
+
+    TypeError: bad operand type for abs(): 'BinaryExpression'
+其实它接收的是一个sqlahclemy里面的函数，func.abs，因为这里面使用的length也是一个hybrid的属性
+
+    @length.setter
+    def length(self, value):
+        self.end = self.start + value
+
+也支持setter
