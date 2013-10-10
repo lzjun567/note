@@ -188,6 +188,7 @@ var目录存放索引数据和搜索日志
                 sql_db                  = test
                 sql_port                = 3306  # optional, default is 3306
         
+                sql_query_pre           = SET NAMES utf8
                 sql_query               = \
                         SELECT id, group_id, UNIX_TIMESTAMP(date_added) AS date_added, title, content \
                         FROM documents
@@ -197,7 +198,43 @@ var目录存放索引数据和搜索日志
         
                 sql_query_info          = SELECT * FROM documents WHERE id=$id
         }
-sql_query：第一次索引所有数据时执行的SQL语句  
+sql_query：获取待索引数据查询，最多可以指定32个数据字段，这些字段都会被全文检索  
+sql_query_pre： 执行sql_query前的查询，可以有多个，按照配置文件顺序执行，于查询的结果会被忽略。它一般用于设置字符集编码，标记索引的记录，更新内部计数器等。  
+sql_attr：属性，属性是附加在每个文档上的额外信息，可以在搜索的时候用于过滤和排序。下面详细介绍属性  
+
+####属性
+搜索除了根据文档的匹配度和相关度排序外，还经常会根据其它方式对结果进行额外处理，如：用户需要对新闻检索结果依次按日期和相关度排序，或者将检索结果按月分组，Sphinx的属性就能完成上述任务。  
+属性于字段不一样，它不会被全文检索，仅仅是存储在索引中。属性可以用于过滤，或者限制返回的数据，以及排序、分组。  
+
+论坛帖子表是一个很好的例子。假设只有帖子的标题和内容这两个字段需要全文检索，但是有时检索结果需要被限制在某个特定的作者的帖子或者属于某个子论坛的帖子中（也就是说，只检索在SQL表的author_id和forum_id这两个列上有特定值的那些行），或者需要按post_date列对匹配的结果排序，或者根据post_date列对帖子按月份分组，并对每组中的帖子计数。  
+
+为实现这些功能，可以将上述各列（除了标题和内容列）作为属性做索引，之后即可使用API调用来设置过滤、排序和分组。以下是一个例子：  
+
+示例： sphinx.conf 片段:  
+
+    ...
+    sql_query = SELECT id, title, content, \
+    	author_id, forum_id, post_date FROM my_forum_posts
+    sql_attr_uint = author_id
+    sql_attr_uint = forum_id
+    sql_attr_timestamp = post_date
+    ...
+示例： 应用程序代码 (使用 PHP):  
+
+    // 仅搜索ID为123的作者发布的内容
+    $cl->SetFilter ( "author_id", array ( 123 ) );
+    
+    // 仅在id为1，3，7的子论坛中搜索
+    $cl->SetFilter ( "forum_id", array ( 1,3,7 ) );
+    
+    // 按照发布时间倒序排列获取的结果
+    $cl->SetSortMode ( SPH_SORT_ATTR_DESC, "post_date" );
+
+示例：  
+
+
+    sql_query_pre = REPLACE INTO sph_tag_counter SELECT 1,MAX(id) FROM subject_tag
+
 
 + **index**：指定索引数据的方法路径以及如何存放  
 
@@ -507,4 +544,65 @@ exception.txt:
     R&B => rhythmblues
     VB.NET => vbdontnetvb
     vB.NET => vbdotnetvb
+
+
+
+=================================
+sphinx-coreseek 优化指南
+=================================
+####html_strip：HTML标记清除
+
+只保留标记之间的内容，HTML标签和HTML注释会被删除。比如:  
+
+    <a href="http://www.google.com">google</a>
+开启html_strip=1后，就只保留内容google。默认情况html_strip的值是0，表示禁用，1表示启用。如果要把标签之间的内容也删除的话，那么就要使用html_remove_elements属性了。    
+
+看下面这个例子：  
+![search_html](../../resource/image/html_search0.png)
+第一条记录看上去就是无相关的，点进去看了下，就是一个一个视频链接，里面有这么一段：  
+
+    <embed src="http://player.youku.com/player.php/Type/Folder/Fid/18841125/Ob/1/sid/XNTA1MTg0NDg0/v.swf" type="application/x-shockwave-flash" width="660" height="500" autostart="true" loop="true">
+
+这个embed标签里面有一个链接包含php的字符。我们设置html_strip=1，再来看结果就只有一条记录了。  
+ ![search_html1](../../resource/image/html_search1.png)
+
+####exceptions：
+在搜索c++、c#等词的时候，包含c的内容都搜索出来了，显然这不是我们想要的，exceptions的功能就是将一个或多个Token映射成一个单独的关键字，与wordforms类似，但是也有很多不同的地方。  
+
+![exception](../resource/images/exceptions0.png)
+
+* exceptions 大小写敏感，wordforms大小写无关  
+* exeptions 可以使用charset_table中没有的特殊符号，wordforms完全遵从charset_table。  
+
+示例：  
+
+    AT & T => AT&T
+    AT&T => AT&T
+    Standarten   Fuehrer => standartenfuhrer
+    Standarten Fuhrer => standartenfuhrer
+    MS Windows => ms windows
+    Microsoft Windows => ms windows
+    C++ => cplusplus
+    c++ => cplusplus
+    C plus plus => cplusplus
+
+注意 “=》”的字符串都是单个完成的字符串，无论是"&"还是空格“ ”都是看作单个字符串的一部分。  
+![exception](../resource/images/exceptions1.png)  
+
+你妹的，exception和wordform还相互影响   
+
+####wordforms：词形字典
+
+    wordforms = /usr/local/sphinx/data/wordforms.txt
+
+用来将不同形式的词形编程单一的标准形式，如："microsoft、ms、微软"变成同一的形式microsoft。格式是：  
+
+    ms > microsoft
+    微软 > microsoft
+
+![wordform](../resource/image/wordforms.png)
+目标词形(microsoft)只能是单个词，比如：  
+
+     zhang san > 张三
+查询chang san 的时候，只匹配张，就是说只要是含有“张”字的都匹配，无论是张三还是张四。  
 
