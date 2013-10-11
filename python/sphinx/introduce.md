@@ -601,7 +601,7 @@ sphinx-coreseek 优化指南
     ms > microsoft
     微软 > microsoft
 
-![wordform](../../resource/image/wordforms.png)
+![wordform](../../resource/image/wordform.png)
 目标词形(microsoft)只能是单个词，比如：  
 
      zhang san > 张三
