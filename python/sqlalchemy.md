@@ -566,3 +566,6 @@ mapping class link to table metadata
         self.end = self.start + value
 
 也支持setter
+
+####mapping class inheritance hierarchies 
+http://docs.sqlalchemy.org/en/latest/orm/inheritance.html

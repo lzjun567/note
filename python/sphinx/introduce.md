@@ -601,9 +601,15 @@ sphinx-coreseek 优化指南
     ms > microsoft
     微软 > microsoft
 
-![wordform](../../resource/image/wordform.png)
+![wordform](../../resource/image/wordform.png)  
 目标词形(microsoft)只能是单个词，比如：  
 
      zhang san > 张三
 查询chang san 的时候，只匹配张，就是说只要是含有“张”字的都匹配，无论是张三还是张四。  
+
+####一元切分模式
+有时候使用一元切分模式，反而降低的搜索的准确率。比如我在搜索”小小“时，使用一元分词后，凡是含有”小“字的内容都被搜索出来了。显然不是我们想要的。  
+![yiyuan0.png](../../resource/image/yiyuan.png)  
+
+一元分词的详细配置在http://www.coreseek.cn/products-install/ngram_len_cjk/ ，如果不想启动一元分词时，charset_type=utf-8，要改成 charset_type=zh_cn.utf-8,否则是搜出去东西来的。  
 
