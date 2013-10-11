@@ -555,13 +555,14 @@ sphinx-coreseek 优化指南
 只保留标记之间的内容，HTML标签和HTML注释会被删除。比如:  
 
     <a href="http://www.google.com">google</a>
-开启html_strip=1后，就只保留内容google。默认情况html_strip的值是0，表示禁用，1表示启用。如果要把标签之间的内容也删除的话，那么就要使用html_remove_elements属性了。    
+开启html_strip=1后，就只保留内容google。默认情况html_strip的值是0，表示禁用，1表示启用。如果要把标签之间的内容也删除的话，那么就要使用**html_remove_elements** 属性了。    
 
 看下面这个例子：  
 ![search_html](../../resource/image/html_search0.png)
 第一条记录看上去就是无相关的，点进去看了下，就是一个一个视频链接，里面有这么一段：  
 
-    <embed src="http://player.youku.com/player.php/Type/Folder/Fid/18841125/Ob/1/sid/XNTA1MTg0NDg0/v.swf" type="application/x-shockwave-flash" width="660" height="500" autostart="true" loop="true">
+    <embed src="http://player.youku.com/player.php/Type/Folder/Fid/18841125/Ob/1/sid/XNTA1MTg0NDg0/v.swf" 
+    type="application/x-shockwave-flash" width="660" height="500" autostart="true" loop="true">
 
 这个embed标签里面有一个链接包含php的字符。我们设置html_strip=1，再来看结果就只有一条记录了。  
  ![search_html1](../../resource/image/html_search1.png)
@@ -569,7 +570,7 @@ sphinx-coreseek 优化指南
 ####exceptions：
 在搜索c++、c#等词的时候，包含c的内容都搜索出来了，显然这不是我们想要的，exceptions的功能就是将一个或多个Token映射成一个单独的关键字，与wordforms类似，但是也有很多不同的地方。  
 
-![exception](../resource/images/exceptions0.png)
+![exception](../../resource/image/exceptions0.png)
 
 * exceptions 大小写敏感，wordforms大小写无关  
 * exeptions 可以使用charset_table中没有的特殊符号，wordforms完全遵从charset_table。  
@@ -587,7 +588,7 @@ sphinx-coreseek 优化指南
     C plus plus => cplusplus
 
 注意 “=》”的字符串都是单个完成的字符串，无论是"&"还是空格“ ”都是看作单个字符串的一部分。  
-![exception](../resource/images/exceptions1.png)  
+![exception](../../resource/image/exceptions1.png)  
 
 你妹的，exception和wordform还相互影响   
 
@@ -600,7 +601,7 @@ sphinx-coreseek 优化指南
     ms > microsoft
     微软 > microsoft
 
-![wordform](../resource/image/wordforms.png)
+![wordform](../../resource/image/wordforms.png)
 目标词形(microsoft)只能是单个词，比如：  
 
      zhang san > 张三
