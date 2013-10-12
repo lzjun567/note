@@ -613,3 +613,15 @@ sphinx-coreseek 优化指南
 
 一元分词的详细配置在http://www.coreseek.cn/products-install/ngram_len_cjk/ ，如果不想启动一元分词时，charset_type=utf-8，要改成 charset_type=zh_cn.utf-8,否则是搜出去东西来的。  
 
+
+
+####sphnix的匹配模式
+* SPH_MATCH_ALL:匹配所有查询此，这是sphinx的默认模式，比如搜索：“中国"，那么只有文档中同时出现”中国“二字时才会匹配，当然“中国”可以不出现在一块.  
+* SPH_MATCH_ANY:匹配任意一个  
+* SPH_MATCH_PHRASE
+
+
+
+####数据源的一些限制条件
+
+document 的 id 必须是唯一的无符号的非0的整数，直白点就是要大于0的整数，至于是32位还是64位的根据自己的喜好设定。我们的线上环境就有一个id为-1的数据，搜不出来，该主键是非常麻烦的，所以在新建数据的时候就要特别注意。  
