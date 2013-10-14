@@ -44,7 +44,7 @@ PEP8建议按如下三种方式分组导入包
         model = WaffleCone
         form_class = WaffleConeForm 
 
-* 现在加入你想在其他project重用这个cones app，但是刚好这个project中已经有一个叫cones 的app了，这样就会造成名字的冲突。  
+* 现在假如你想在其他project重用这个cones app，但是刚好这个project中已经有一个叫cones 的app了，这样就会造成名字的冲突。  
 * 如果想像把cones改名，你又得在多次更改cones。  
 
 推荐的方式应该是：  
@@ -59,8 +59,8 @@ PEP8建议按如下三种方式分组导入包
         form_class = WaffleConeForm 
 
 
-####避免使用Import *
-在99%的情况下都因该明确import每个模块
+####避免使用 import  *
+在99%的情况下都因该明确import具体的模块名字
 
     from django import forms
     from django.db import models
@@ -90,7 +90,7 @@ Virtualenv是用来创建完全独立的、隔离的Python环境的工具，这�
 而使用virtualenvwrapper可以简单为：  
 
     workon myproject
-####使用 版本控制系统
+####使用版本控制系统
 Git 和 Mercurial 是 Django开发中最流行的版本控制工具，它不仅能使用你在本地有一份拷贝，而且还能使用代码托管服务用来备份，更重要的是可以多人协助编程。推荐大家使用 GitHub 或者 Bitbucket，后者可以建立免费的私有仓库。  
 
 ####Django项目代码布局
@@ -137,8 +137,13 @@ Django1.5的默认布局：
                 wsgi.py
 
 这是一个三层结构的布局：  
-顶层是仓库根目录，它包含了第二层目录外还包括一些如：** README, doc/**目录，**.gitignore** 、**requirements** 文件。  
+顶层是仓库根目录，它包含了第二层目录外还包括一些如：**README, doc/** 目录，**.gitignore** 、**requirements** 文件。  
 
 第二层是django项目的根目录，这层是通过 django-admin.py startproject 命令生成的。这个目录包含了第三层目录外还有mdedia、static（css，js等）、templates（模版）目录和app目录（比如：profiles、ratings、products）  
 
 第三层同样是通过django-admin.py startproject 生成，除了一个基础的URLConf（urls.py)外还有settings模块，settings模块方式不同环境下的项目配置文件。  
+
+
+####配置文件和必要文件
+* 所有配置文件都应该有版本控制。
+* 遵循DRP原则
