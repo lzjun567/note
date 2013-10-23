@@ -526,7 +526,7 @@ mapping class link to table metadata
 
     Session().query(Interval).filter(Interval.length > 10)
 
-它的用法看起来跟属性start、end一样的，而你却无序在数据库中像start、end一样定义一个字段，多好。  
+它的用法看起来跟属性start、end一样的，而你却无需在数据库中像start、end一样定义一个字段，多好。  
 
 那@hibrid_method有什么用呢？ ,如果是判断point是不是contains，直接:  
 

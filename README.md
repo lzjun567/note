@@ -41,5 +41,7 @@
 14. [SQLAlchemy学习笔记](./python/sqlalchemy.md)
 15. [Python虚拟环境：virtualenv](./python/virtualenv.md)
 
+####memcached
+1. [入门篇](./memcached/入门篇.md)
 不定时更新...... 
 
