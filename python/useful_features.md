@@ -181,3 +181,39 @@ else代码块只有在for循环结束后或者break语句后执行，等价于�
     if not found: 
         print("i was never 0")
 不过这种语法看起来怪怪地，让人感觉是else块是在for语句块没有执行的时候执行的，很容易让人去类比 if else 的语法，如果是把else换成finally或许更容易理解    
+
+####python2.5有个__missing__方法
+dict的子类如果定义了方法__missing__(self, key)，如果key不再dict中，那么d[key]就会调用__missing__方法，而且d[key]的返回值就是__missing__的返回值。  
+
+    >>> class MyDict(dict):
+    ...  def __missing__(self, key):
+    ...   self[key] = rv = []
+    ...   return rv
+    ... 
+    >>> m = MyDict()
+    >>> m["foo"].append(1)
+    >>> m["foo"].append(2)
+    >>> dict(m)
+    {'foo': [1, 2]}
+
+在collections模块下有一个叫defaultdict的dict子类，它与missing非常类似，但是对于不存在的项不需要传递参数。  
+
+    >>> from collections import defaultdict
+    >>> m = defaultdict(list)
+    >>> m["foo"].append(1)
+    >>> m["foo"].append(2)
+    >>> dict(m)
+    {'foo': [1, 2]}
+
+####交换值
+
+    >>> a = 10
+    >>> b = 5
+    >>> a, b
+    (10, 5)
+    
+    >>> a, b = b, a
+    >>> a, b
+    (5, 10)
+    
+
