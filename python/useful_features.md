@@ -12,7 +12,7 @@
     >>> 5 == x > 4
     True
 
-你可能认为它执行的过程先是：`1 < x`，返回`True`，然后再比较`True < 10`,当然这么做也是返回`True`,因为比较表达式`True < 10`,解释器会把`True`转换成`1`，`False`转换成`0`。但是解释器内部并不是这样干，它会把这种链式的比较操作转换成：`1 < x and x < 10`，不信你可以看看最后一个例子。它本可以值得所有编程语言拥有，但是很遗憾  
+你可能认为它执行的过程先是：`1 < x`，返回`True`，然后再比较`True < 10`,当然这么做也是返回`True`,比较表达式`True < 10`,因为解释器会把`True`转换成`1`，`False`转换成`0`。但这里的链式比较解释器在内部并不是这样干的，它会把这种链式的比较操作转换成：`1 < x and x < 10`，不信你可以看看最后一个例子。这样的链式操作本可以值得所有编程语言拥有，但是很遗憾  
 
 ####枚举
 
@@ -55,7 +55,7 @@ iter()内建函数接收的参数分为两种，第一种是：
 参数collection必须是可迭代对象或者是序列 ，第二种是：  
 
     iter（callable， sentinel) --> iterator
-callable函数会一直被调用，直到它返回sentinel，例如：  
+callable函数会一直被调用，直到它的返回结果等于sentinel，例如：  
 
     def seek_next_line(f):
         #每次读一个字符，直到出现换行符就返回
@@ -107,3 +107,77 @@ callable函数会一直被调用，直到它返回sentinel，例如：
     7
     >>> g.next() #now it will yield 7 until we send something else
     7
+
+如果你不喜欢使用空格缩进，那么可以使用C语言花括号{}定义函数：  
+
+    >>> from __future__ import braces   #这里的braces 指的是：curly braces（花括号）
+      File "<stdin>", line 1
+    SyntaxError: not a chance
+
+当然这仅仅是一个玩笑，想用花括号定义函数？没门。感兴趣的还可以了解下：  
+
+    from __future__ import barry_as_FLUFL
+
+不过这是python3里面的特性，http://www.python.org/dev/peps/pep-0401/  
+
+####切片操作中的步长参数
+
+    a = [1,2,3,4,5]
+    >>> a[::2]  # iterate over the whole list in 2-increments
+    [1,3,5]
+还有一个特例：`x[::-1]`，反转列表：  
+
+    >>> a[::-1]
+    [5,4,3,2,1]
+有关反转，还有两个函数reverse、reversed，reverse是list对象的方法，没有返回值，而reversed是内建方法，可接收的参数包括tuple、string、list、unicode，以及用户自定义的类型，返回一个迭代器。  
+
+    >>> l = range(5)
+    >>> l
+    [0, 1, 2, 3, 4]
+    >>> l.reverse()
+    >>> l
+    [4, 3, 2, 1, 0]
+    >>> l2 = reversed(l)
+    >>> l2
+    <listreverseiterator object at 0x99faeec>
+####装饰器
+装饰器使一个函数或方法包装在另一个函数里头，可以在被包装的函数添加一些额外的功能，比如日志，还可以对参数、返回结果进行修改。装饰器有点类似Java中的AOP。下面这个例子是打印被装饰的函数里面的参数的装饰器，  
+
+    >>> def print_args(function):
+    >>>     def wrapper(*args, **kwargs):
+    >>>         print 'Arguments:', args, kwargs
+    >>>         return function(*args, **kwargs)
+    >>>     return wrapper
+    
+    >>> @print_args
+    >>> def write(text):
+    >>>     print text
+    
+    >>> write('foo')
+    Arguments: ('foo',) {}
+    foo
+
+@是语法糖，它等价于：  
+
+    >>> write = print_args(write)
+    >>> write('foo')
+    arguments: ('foo',) {}
+    foo
+
+####for ... else语法
+
+    for i in foo:
+        if i == 0:
+            break
+    else:
+        print("i was never 0")
+else代码块只有在for循环结束后或者break语句后执行，等价于下面：  
+
+    found = False
+    for i in foo:
+        if i == 0:
+            found = True
+            break
+    if not found: 
+        print("i was never 0")
+不过这种语法看起来怪怪地，让人感觉是else块是在for语句块没有执行的时候执行的，很容易让人去类比 if else 的语法，如果是把else换成finally或许更容易理解    
