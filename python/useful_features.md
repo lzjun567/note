@@ -1,3 +1,6 @@
+Python 奇技淫巧
+-----------------
+本文整理自SO上的热门问答[hidden features of python](http://stackoverflow.com/questions/101268/hidden-features-of-python?rq=1)，早期有人做过类似的整理，但是内容比较旧而且比较粗糙，因此笔者在原文基础上加入自己的一些理解，另外那些高质量的评论也引入进来了。总之，这是一篇用心之作，希望你可以喜欢。
 ####链式比较操作
 
     >>> x = 5
