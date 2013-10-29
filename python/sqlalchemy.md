@@ -121,8 +121,10 @@ query.first()
 query.one()有且只有一个元素时才正确返回。
 
 ####Relattionship
-
-#####一对多  （one to many）
+SQLAlchemy中的映射关系有四种,分别是**一对多**,**多对一**,**一对一**,**多对多**  
+#####一对多(one to many）
+一对多与多对一的区别在于其关联(relationship)的属性在多的一方还是一的一方,因为外键(ForeignKey)始终定义在多的一方.如果relationship和ForeignKey都定义在多的一方,那就是多对一,如果relationship定义在一的一方那就是一对多.  
+这里的例子中,一指的是Parent,一个parent有多个child.  
 
     class Parent(Base):
         __tablename__ = 'parent'
@@ -134,19 +136,20 @@ query.one()有且只有一个元素时才正确返回。
         id = Column(Integer,primary_key = True)
         parent_id = Column(Integer,ForeignKey('parent.id'))
 
-在one的那端设置了backref后，反过来就是多对一，在保存child时不需要显示的保存parent
+#####多对一(many to one)
+这个例子中many是指parent了,意思是一个child可能有多个parent(父亲和母亲),这里的外键(child_id)和relationship(child)都定义在多(parent)的一方  
 
-    def save_child():
-        parent = Parent()
-        child1 = Child(parent = parent)
-        child2 = Child(parent = parent)
-        child3 = Child(parent = parent)
-        session = Session()
-        session.add_all([child1,child2,child3])
-        session.flush()
-        session.commit()
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer, primary_key=True)
+        child_id = Column(Integer, ForeignKey('child.id'))
+        child = relationship("Child", backref="parents")
+    
+    class Child(Base):
+        __tablename__ = 'child'
+        id = Column(Integer, primary_key=True)
 
-设置 `cascade= 'all'`，可以级联删除  
+为了建立双向关系,可以在relationship()中设置backref,Child对象就有parents属性.设置 `cascade= 'all'`，可以级联删除  
 
     class Parent(Base):
         __tablename__ = 'parent'
@@ -159,6 +162,156 @@ query.one()有且只有一个元素时才正确返回。
         session.delete(parent)
         session.commit()
 不过不设置cascade，删除parent时，其关联的chilren不会删除，只会把chilren关联的parent.id置为空，设置cascade后就可以级联删除children  
+
+#####一对一
+一对一就是多对一和一对多的一个特例,只需在relationship加上一个参数uselist=False替换多的一端就是一对一:  
+从一对多转换到一对一:  
+
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer, primary_key=True)
+        child = relationship("Child", uselist=False, backref="parent")
+    
+    class Child(Base):
+        __tablename__ = 'child'
+        id = Column(Integer, primary_key=True)
+    parent_id = Column(Integer, ForeignKey('parent.id'))
+从多对一转换到一对一:  
+
+    class Parent(Base):
+        __tablename__ = 'parent'
+        id = Column(Integer, primary_key=True)
+        child_id = Column(Integer, ForeignKey('child.id'))
+        child = relationship("Child", backref=backref("parent", uselist=False))
+    
+    class Child(Base):
+        __tablename__ = 'child'
+        id = Column(Integer, primary_key=True)
+#####多对多
+多对多关系需要一个中间关联表,通过参数secondary来指定,  
+
+    from sqlalchemy import Table,Text
+    post_keywords = Table('post_keywords',Base.metadata,
+            Column('post_id',Integer,ForeignKey('posts.id')),
+            Column('keyword_id',Integer,ForeignKey('keywords.id'))
+    )
+
+    class BlogPost(Base):
+        __tablename__ = 'posts'
+        id = Column(Integer,primary_key=True)
+        body = Column(Text)
+        keywords = relationship('Keyword',secondary=post_keywords,backref='posts')
+            
+    class Keyword(Base):
+        __tablename__ = 'keywords'
+        id = Column(Integer,primary_key = True)
+        keyword = Column(String(50),nullable=False,unique=True)
+
+
+#####relationship()API
+[relationships api](http://docs.sqlalchemy.org/en/latest/orm/relationships.html#relationships-api),参数非常多,列举一下我用到的参数:  
+
+- backref:在一对多或多对一之间建立双向关系,比如:  
+
+        class Parent(Base):
+            __tablename__ = 'parent'
+            id = Column(Integer, primary_key=True)
+            children = relationship("Child", backref="parent")
+        
+        class Child(Base):
+            __tablename__ = 'child'
+            id = Column(Integer, primary_key=True)
+            parent_id = Column(Integer, ForeignKey('parent.id'))
+    Prarent对象获取children,parent.children,反过来Child对象可以获取parent:child.parent.
+- lazy:默认值是True,说明关联对象只有到真正访问的时候才会去查询数据库,比如有parent对象,只有知道访问parent.children的时候才做关联查询.  
+- remote_side:表中的外键引用的是自身时,如Node类,如果想表示多对一的关系,那么就可以使用remote_side  
+
+        class Node(Base):
+            __tablename__ = 'node'
+            id = Column(Integer, primary_key=True)
+            parent_id = Column(Integer, ForeignKey('node.id'))
+            data = Column(String(50))
+            parent = relationship("Node", remote_side=[id])
+    如果是想建立一种双向的关系,那么还是结合backref:  
+
+        class Node(Base):
+        __tablename__ = 'node'
+        id = Column(Integer, primary_key=True)
+        parent_id = Column(Integer, ForeignKey('node.id'))
+        data = Column(String(50))
+        children = relationship("Node",
+                    backref=backref('parent', remote_side=[id])
+                )
+- primaryjoin:用在一对多或者多对一的关系中,默认情况连接条件就是主键与另一端的外键,用primaryjoin参数可以用来指定连接条件 ,比如:下面user的address必须现address是一'tony'开头:  
+
+        class User(Base):
+            __tablename__ = 'user'
+            id = Column(Integer, primary_key=True)
+            name = Column(String)
+        
+            addresses = relationship("Address",
+                            primaryjoin="and_(User.id==Address.user_id, "
+                                "Address.email.startswith('tony'))",
+                            backref="user")
+        
+        class Address(Base):
+            __tablename__ = 'address'
+            id = Column(Integer, primary_key=True)
+            email = Column(String)
+            user_id = Column(Integer, ForeignKey('user.id'))
+
+- secondary:
+
+
+#####association_proxy
+[associationproxy](http://docs.sqlalchemy.org/en/rel_0_8/orm/extensions/associationproxy.html)是sqlalchemy扩展包里面的一个函数,是一个无关痛痒的提供便捷性的功能,在多的言语也不及官方文档的例子,还是看看文档吧.  
+
+#####column_propety
+可以用[column_property](http://docs.sqlalchemy.org/en/latest/orm/mapper_config.html#using-column-property)来实现SQL表达式作为映射类的属性(另外一种方式就是用hybrid),
+ 
+
+
+对比Django中的ORM:  
+Django 中提供了三种通用的数据库关系类型，many-to-one，many-to-many，one-to-one，  
+
+many-to-one：  
+用ForeignKey来定义多对一的关系，假设一个员工只能隶属于一个部门，但部门可以有多个员工，则可以：
+
+    class Department(models.Model):
+        ...
+    
+    class Employee(models.Model):
+       department = models.ForeignKey(Department)
+       ...
+
+如果一个对象和自身有多对一的关系，则可以是：  
+
+    models.ForeignKey('self'):
+
+    class Employee(models.Model):
+        manager = models.ForeignKey('self')
+
+many-to-many：  
+用ManyToManyField来定义多对多的关系，假设Blog可以有多个Tag，一个Tag也可以在多篇Blog里面，那么就可以用ManyToManyField  
+
+    class Blog(models.Model):
+        tags = ManyToManyField(Tag)
+    class Tag(models.Model):
+        ....
+
+同样可以通过ManyToManyField('self')和自身建立多对多的关系.  
+
+one-to-one:  
+用OneToOneField来定义一对一的关系
+
+相比较而言,django的orm可谓简单很多,但是性能方面未必优于sqlalchemy,不同点,sqlalchemy的model需要指定id,而django会自动帮你生成id.
+
+
+
+
+
+
+
 
 ####Session
 Session 使用 connection发送query，把返回的result row 填充到一个object中，该对象同时还会保存在Session中，Session内部有一个叫 Identity Map的数据结构，为每一个对象维持了唯一的副本。primary key 作为 key ，value就是该object。  
@@ -247,45 +400,6 @@ session的query方法就可以创建一个查询对象，
                 filter_by(name='lzjun').one()
         print jack
 使用subqueryload操作，饿汉式加载，查询user的时候，就把addresses查询出来了。  
-
-
-####ManyToMany
-
-    from sqlalchemy import Table,Text
-    post_keywords = Table('post_keywords',Base.metadata,
-            Column('post_id',Integer,ForeignKey('posts.id')),
-            Column('keyword_id',Integer,ForeignKey('keywords.id'))
-    )
-
-假如博客与关键字是多对多的关系，用Table。
-
-    class BlogPost(Base):
-        __tablename__ = 'posts'
-        id = Column(Integer,primary_key=True)
-        user_id = Column(Integer,ForeignKey('user.id'))
-        headline = Column(String(255),nullable=False)
-        body = Column(Text)
-        keywords = relationship('Keyword',secondary=post_keywords,backref='posts')
-    
-        def __init__(self,headline,body,author):
-            self.headline = headline
-            self.body = body
-            self.author = author
-            
-        def __repr__(self):
-            return "BlogPost(%r,%r,%r)"%(self.headline,self.body,self.author)
-    
-    class Keyword(Base):
-        __tablename__ = 'keywords'
-        id = Column(Integer,primary_key = True)
-        keyword = Column(String(50),nullable=False,unique=True)
-    
-        def __init__(self,keyword):
-            slef.keyword = keyword
-
-    BlogPost.author = relationship(User,backref=backref('posts',lazy='dynamic'))
-
-secondary 用来关联中间表的  
 
 
 ####传统映射
@@ -568,4 +682,35 @@ mapping class link to table metadata
 也支持setter
 
 ####mapping class inheritance hierarchies 
+
+
+使用memecache做缓存的时候，出现了错误：读取一篇article，异常信息：  
+
+    DetachedInstanceError: Parent instance <Article at 0xb22da4c> is not bound to a Session; lazy load operation of attribute 'user' cannot proceed
+
+访问代码：  
+
+     session = DBSession()
+        @cache_region('long_term')
+        def func_to_cache(session):
+            article = session.query(Article).get(articleId)
+            return article
+    
+        article = func_to_cache(session)
+
+这段代码的意思相当于：  
+   
+    article = mc.get(key)
+    if not article:
+        article = session.query(Article).get(articleid)
+        mc.set(key, article)
+
+因为Article类还关联了user  
+
+    userId = Column('user_id', IdDataType, ForeignKey(
+        'user_profile.user_id'), nullable=False)
+    user = relationship(UserProfile)
+
+默认SQLAlchemy的实体是使用Lazyload模式，也就是说只有真正访问article.user的时候才会去数据库查询该用户，而这里事先把article缓存起来了，在访问article的时候延迟查询所使用的session跟原对象的关联被切断了。没法触发sql查询了。可以使用 eager loading，通过joinedload()，
 http://docs.sqlalchemy.org/en/latest/orm/inheritance.html
+http://docs.sqlalchemy.org/en/latest/orm/loading.html
