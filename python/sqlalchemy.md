@@ -13,7 +13,7 @@ SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准实�
     >>> import sqlalchemy
     >>> sqlalchemy.__version__
     0.8.0
-没有没有报错就代表正确安装了，连接MySQL数据库(需要MySQLdb支持)：  
+没有报错就代表正确安装了，连接MySQL数据库(需要MySQLdb支持)：  
 
     from sqlalchemy import create_engine
     DB_CONNECT_STRING = 'mysql+mysqldb://root:@localhost/test2?charset=utf8'

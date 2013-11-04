@@ -40,6 +40,7 @@
 13. [python json](./python/json.md)
 14. [SQLAlchemy学习笔记](./python/sqlalchemy.md)
 15. [Python虚拟环境：virtualenv](./python/virtualenv.md)
+16. [Python实用技巧](./python/useful_features.md)
 
 ####memcached
 1. [入门篇](./memcached/入门篇.md)
