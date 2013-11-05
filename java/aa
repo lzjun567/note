@@ -1,6 +1,0 @@
-Thread
-Lock
-RLock
-Condition
-
-Event：通用的条件变量，多个线程可以等待某个事件的发生，事件发生后，所有的线程都会被激活。  
