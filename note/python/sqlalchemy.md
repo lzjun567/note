@@ -13,7 +13,7 @@ SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准实�
     >>> import sqlalchemy
     >>> sqlalchemy.__version__
     0.8.0
-没有没有报错就代表正确安装了，连接MySQL数据库(需要MySQLdb支持)：  
+没有报错就代表正确安装了，连接MySQL数据库(需要MySQLdb支持)：  
 
     from sqlalchemy import create_engine
     DB_CONNECT_STRING = 'mysql+mysqldb://root:@localhost/test2?charset=utf8'
@@ -714,3 +714,27 @@ mapping class link to table metadata
 默认SQLAlchemy的实体是使用Lazyload模式，也就是说只有真正访问article.user的时候才会去数据库查询该用户，而这里事先把article缓存起来了，在访问article的时候延迟查询所使用的session跟原对象的关联被切断了。没法触发sql查询了。可以使用 eager loading，通过joinedload()，
 http://docs.sqlalchemy.org/en/latest/orm/inheritance.html
 http://docs.sqlalchemy.org/en/latest/orm/loading.html
+
+
+
+错误总结:  
+1.用column_property()函数做为类属性的时候:  
+
+    Article.recommendCnt = column_property(select([func.count(ArticlePGoal.id)]).where(and_( 
+                    Article.id == ArticlePGoal.articleId, 
+                    ArticlePGoal.artType == ArticlePGoal.ART_TYPE_RECOMMEND, 
+                    Article.id == ArticlePGoal.articleId, 
+                    ~Article.isDeleted)))  
+抛出的异常:  
+
+    InvalidRequestError: Select statement 'SELECT count(article_pgoal.id) AS count_1 
+    FROM article_pgoal, article 
+    WHERE article.id = article_pgoal.article_id AND article_pgoal.art_type = %s AND article.id = article_pgoal.article_id AND NOT article.is_deleted' returned no FROM clauses due to auto-correlation; specify correlate(<tables>) to control correlation manually.
+
+关键看错误信息的最后一句,它告诉我们需要手动指定关联的表  
+
+    Article.recommendCnt = column_property(select([func.count(ArticlePGoal.id)]).where(and_( 
+                    Article.id == ArticlePGoal.articleId, 
+                    ArticlePGoal.artType == ArticlePGoal.ART_TYPE_RECOMMEND, 
+                    Article.id == ArticlePGoal.articleId, 
+                    ~Article.isDeleted)).correlate(Article.__table__))

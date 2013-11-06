@@ -1,4 +1,4 @@
-Python 奇技淫巧
+Python 实用技巧
 -----------------
 本文整理自SO上的热门问答[hidden features of python](http://stackoverflow.com/questions/101268/hidden-features-of-python?rq=1)，早期有人做过类似的整理，但是内容比较旧而且比较粗糙，因此笔者在原文基础上加入自己的一些理解，另外那些高质量的评论也引入进来了。总之，这是一篇用心之作，希望你可以喜欢。
 ####链式比较操作
@@ -237,6 +237,83 @@ dict的子类如果定义了方法`__missing__(self, key)`，如果key不再dict
     ... $                   # end of string
     ... """
     >>> re.search(pattern, 'M', re.VERBOSE)
+
+
+
+
+####函数参数解包(unpacking)
+分别使用`*`和`**`解包列表和字典,这是一种非常实用的快捷方式,因为list,tuple,dict作为容器被广泛使用    
+
+    def draw_point(x, y):
+        # do some magic
+    
+    point_foo = (3, 4)
+    point_bar = {'y': 3, 'x': 2}
+    
+    draw_point(*point_foo)
+    draw_point(**point_bar)
+
+####动态地创建新类型
+动态创建新类型虽不是实用功能,但了解一下也是有好处的  
+
+    >>> NewType = type("NewType", (object,), {"x": "hello"})
+    >>> n = NewType()
+    >>> n.x
+    "hello"
+type的第一个参数就是类名,第二个参数是继承的父类,第三个参数是类的属性.它完全等同于:  
+
+    >>> class NewType(object):
+    >>>     x = "hello"
+    >>> n = NewType()
+    >>> n.x
+    "hello"
+
+####上下文管理器与with语句
+上下文管理器(context manager)用于规定某个对象的使用范围,进入或退出该范围时,特殊的操作会被执行(比如关闭连接,释放内存等等),语法是:`with... as ...`,该特性在python2.5引入的.
+上下文管理器协议有两个方法组成`contextmanager.__enter__()`和`contextmanager.__exit__()`,任何实现了这两个方法的对象都称之为上下文管理器对象,比如文件对象就默认实现了该协议.
+
+    with open('foo.txt', 'w') as f:
+        f.write('hello!')
+####字典的get()方法
+字典的get()方法用来替换d['key'],后者如果是遇到key不存在会有异常,如果使用的d.get('key'),key不存在时它返回的是None,你可以指定两个参数如:d.get('key',0)来用0取代返回的None  
+
+    sum[value] = sum.get(value, 0) + 1
+还有一个类似的方法`setdefault(key, value)`,如果字典中存在key,那么就直接返回d[key],否则设置d[key]=value,并返回该值.  
+
+    >>> d = {'key':123}
+    >>> d.setdefault('key',456)
+    123
+    >>> d['key']
+    123
+    >>> d.setdefault('key2',456)
+    456
+    >>> d['key2']
+    456
+
+collections.Counter是dict的子类,用来统计可哈稀对象,
+
+    >>> cnt = Counter('helloworld')
+    >>> cnt
+    Counter({'l': 3, 'o': 2, 'e': 1, 'd': 1, 'h': 1, 'r': 1, 'w': 1})
+    >>> cnt['l']
+    3
+    >>> cnt['x'] = 10
+    >>> cnt.get('y')
+
+####描述符(Descriptors)
+描述符是python的核心特新之一,当你使用`.`访问成员时,(如:x.y),python首先在实例字典中查找该成员,如果没有发现再从类字典中查找,如果这个对象实现了描述符(实现了`__get__,__set__,__delete__`),那么优先返回`__get__`方法的返回值.  
+
+####条件赋值
+为什么python中没有类c语言的三目运算符,Guido van Rossum说过了,条件赋值更容易理解  
+
+    x = 3 if (y == 1) else 2
+这个表达式的意思就是:如果y等于那么就把3赋值给x,否则把2赋值给x, 条件中的括号是可选的,为了可读性可以考虑加上去.if else中的表达式可以是任何类型的,既可以函数,还可以类  
+
+    (func1 if y == 1 else func2)(arg1, arg2) 
+如果y等于1,那么调用func1(arg1,arg2)否则调用func2(arg1,arg2)  
+
+    x = (class1 if y == 1 else class2)(arg1, arg2)
+class1,class2是两个类  
 
 
 
