@@ -41,8 +41,11 @@
 14. [SQLAlchemy学习笔记](./note/python/sqlalchemy.md)
 15. [Python虚拟环境：virtualenv](./note/python/virtualenv.md)
 16. [Python实用技巧](./note/python/useful_features.md)
+17. [python测试](./note/python/testing.md)
 
 ####memcached
 1. [入门篇](./note/memcached/入门篇.md)  
+####sphinx/coreseek
+1. [sphinx笔记](./note/python/sphinx/introduce.md)  
 不定时更新...... 
 
