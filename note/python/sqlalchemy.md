@@ -717,7 +717,7 @@ http://docs.sqlalchemy.org/en/latest/orm/loading.html
 
 
 
-错误总结:  
+####错误总结:  
 1.用column_property()函数做为类属性的时候:  
 
     Article.recommendCnt = column_property(select([func.count(ArticlePGoal.id)]).where(and_( 
@@ -738,3 +738,9 @@ http://docs.sqlalchemy.org/en/latest/orm/loading.html
                     ArticlePGoal.artType == ArticlePGoal.ART_TYPE_RECOMMEND, 
                     Article.id == ArticlePGoal.articleId, 
                     ~Article.isDeleted)).correlate(Article.__table__))
+
+2. 使用memecache做缓存的时候,异常:  
+
+    DetachedInstanceError: Instance <Article at 0xb3b239ec> is not bound to a Session; attribute refresh operation cannot proceed
+
+可以设置 `session.expire_on_commit = False`

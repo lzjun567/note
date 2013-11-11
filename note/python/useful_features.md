@@ -315,5 +315,16 @@ collections.Counter是dict的子类,用来统计可哈稀对象,
     x = (class1 if y == 1 else class2)(arg1, arg2)
 class1,class2是两个类  
 
+####异常else语句块
+
+    try:
+       try_this(whatever)
+    except SomeException, exception:
+       #Handle exception
+    else:
+        # do something
+    finally:
+        #do something
+else语句块会在没有异常的情况下执行,先于finally,它的好处就是你可以明确知道它会在没有异常的情况下执行,如果是把else语句块放在try语句块里面就达不到这种效果.  
 
 
