@@ -744,3 +744,20 @@ http://docs.sqlalchemy.org/en/latest/orm/loading.html
     DetachedInstanceError: Instance <Article at 0xb3b239ec> is not bound to a Session; attribute refresh operation cannot proceed
 
 可以设置 `session.expire_on_commit = False`
+
+####列与数据类型
+http://docs.sqlalchemy.org/en/rel_0_9/core/types.html  
+**BigInteger**对应数据库中的BIGINT
+**Boolean**对应BOOLEAN或SAMLLINT,Python端是True或False
+**Date**对应datetime.date()对象
+**DateTime**就是datetime.datetime()对象
+**Float**
+**Integer**
+**Interval**对应datetime.timedelta(),在数据库中如果是PostgreSQL对应本地的INTERVAL类型,其它数据库用date保存.(相对于1970,1,1)
+**Text**继承自String,在SQL中使用CLOB或TEXT,一般没有长度
+**Time**  datetime.time()
+**Unicode**继承String,有length参数
+**UnicodeText**
+
+
+
