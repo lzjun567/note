@@ -1,5 +1,4 @@
-《Python网络编程》学习笔记一
-================================
+###《Python网络编程》学习笔记一
 学习新知识最好的方式就是一边记笔记，一边写代码，为了更深入地了解网络编程、异步通信、事件驱动编程等领域知识，开始系统学习相关知识，主要参考书目包括《Python网络编程》、《Twisted Network Progamming Essentials》，gevent、celey、rabbitmq等官方文档。  
 
 网络编程离不开TCP/IP，因此想写好一个网络相关的程序，那么理解TCP/IP原理是最基本的要求。你能想象如果不理解TCP/IP，能写出一个goagent出来吗？  
@@ -10,7 +9,7 @@ TCP/IP是一些协议的合集，每个TCP连接有一个IP地址和一个端口
 
 为了防止信息包重复或顺序错误，TCP每传送一个信息包都会传送一个序号，接受方会检查这个序号，确保收到该信息包，并把全部信息包按顺序重新合并。如果接收方看到一个已经存在的序号，那么该信息包就会被丢弃。  
 
-#####建立socket
+####建立socket
 对于客户端程序来说，建立socket需要两个步骤，第一：建立一个socket对象，第二：把他连接到远程服务器。建立socket对象时，需要告诉系统两个事情：**通信类型和协议家族**。通信类型指明用什么协议来传输数据，协议包括IPv4(当前Internet标准）、IPv6（将来的Internet标准）等，协议家族定义了数据如何被传输。  
 
 对于Internet通信类型基本上都是AF_INET（对应IPv4），协议家族一般是表示TCP通信的SOCK_STREAM或表示UDP通信的SOCK_DGRAM。对于TCP通信，建立socket的代码一般是：  
@@ -43,7 +42,7 @@ TCP/IP是一些协议的合集，每个TCP连接有一个IP地址和一个端口
         sys.stdout.write(buf)
         buf = s.recv(2048)
 
-    #l类文件对象
+    #类文件对象
     fd = s.makefile("rw", 0)
     fd.write(filename+"\r\n")
     for line in fd.readlines():

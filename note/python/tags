@@ -1,0 +1,68 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Album	sqlalchemytest.py	/^class Album(Base):$/;"	c
+Artist	sqlalchemytest.py	/^class Artist(Base):$/;"	c
+Base	sqlalchemytest.py	/^Base = declarative_base()   #1.构建基类$/;"	v
+BeautifulSoup	startup.py	/^from bs4 import BeautifulSoup$/;"	i
+Column	sqlalchemytest.py	/^from sqlalchemy import Column,Integer,String,ForeignKey$/;"	i
+ForeignKey	sqlalchemytest.py	/^from sqlalchemy import Column,Integer,String,ForeignKey$/;"	i
+Integer	sqlalchemytest.py	/^from sqlalchemy import Column,Integer,String,ForeignKey$/;"	i
+RomanNumeralConverter	recipel.py	/^class RomanNumeralConverter(object):$/;"	c
+RomanNumeralConverterTest	recipel.py	/^class RomanNumeralConverterTest(unittest.TestCase):$/;"	c
+Session	sqlalchemytest.py	/^Session = sessionmaker(bind=engine)  #3、连接数据库的session$/;"	v
+String	sqlalchemytest.py	/^from sqlalchemy import Column,Integer,String,ForeignKey$/;"	i
+__init__	recipel.py	/^    def __init__(self, roman_numeral):$/;"	m	class:RomanNumeralConverter
+__tablename__	sqlalchemytest.py	/^    __tablename__ = 'album'$/;"	v	class:Album
+__tablename__	sqlalchemytest.py	/^    __tablename__ = 'artist'$/;"	v	class:Artist
+album_id	sqlalchemytest.py	/^    album_id = Column('id',Integer,primary_key=True)$/;"	v	class:Album
+albums	sqlalchemytest.py	/^    albums = relationship('Album',cascade='all,delete',backref='artist')   #定义在一的这一端就是这么写$/;"	v	class:Artist
+artist_id	sqlalchemytest.py	/^    artist_id = Column('artist',ForeignKey('artist.id'))  #注意下这里的外键，就是关联对象的id属性$/;"	v	class:Album
+artist_id	sqlalchemytest.py	/^    artist_id = Column('id',Integer,primary_key=True)$/;"	v	class:Artist
+backref	sqlalchemytest.py	/^from sqlalchemy.orm import sessionmaker,relationship,backref$/;"	i
+centers	startup.py	/^centers = soup.find_all('center')[1:]$/;"	v
+convert_to_decimal	recipel.py	/^    def convert_to_decimal(self):$/;"	m	class:RomanNumeralConverter
+cookie	autologin.py	/^cookie =r.cookies$/;"	v
+cookies	startup.py	/^        cookies = {'user':'igbj8JwX'}$/;"	v
+datas	autologin.py	/^datas = urllib.urlencode(datas)$/;"	v
+datas	autologin.py	/^datas = {$/;"	v
+declarative_base	sqlalchemytest.py	/^from sqlalchemy.ext.declarative import declarative_base$/;"	i
+engine	sqlalchemytest.py	/^engine = sqlalchemy.create_engine("mysql+mysqldb:\/\/root:@localhost\/test2?charset=utf8",echo=True)$/;"	v
+fnid	startup.py	/^fnid = soup.find_all(attrs={'type':'hidden'})[0]['value']$/;"	v
+header	autologin.py	/^header = {"User-Agent":"Mozilla\/5.0 (indows NT 6.2; WOW64) AppleWebKit\/537.31 (KHTML, like Gecko) Chrome\/26.0.1410.43"}$/;"	v
+list_all	sqlalchemytest.py	/^def list_all():$/;"	f
+login_url	startup.py	/^login_url = url + tag_url['href']$/;"	v
+name	sqlalchemytest.py	/^    name = Column('name',String(100))$/;"	v	class:Album
+name	sqlalchemytest.py	/^    name = Column('name',String(100))$/;"	v	class:Artist
+param	startup.py	/^param = {'fnid':fnid,'u':'qwerty','p':'qwerty'}$/;"	v
+r	autologin.py	/^r = requests.post(theurl,data=datas,headers=header)$/;"	v
+r	startup.py	/^        r = requests.get(url1,cookies = cookies)$/;"	v
+r	startup.py	/^r = requests.get(login_url)$/;"	v
+r	startup.py	/^r = requests.get(url)$/;"	v
+r	startup.py	/^r = requests.post('http:\/\/news.dbanotes.net\/y',data = param)$/;"	v
+r2	autologin.py	/^r2 = requests.post(theurl,data=datas,headers=header,cookies=cookie)$/;"	v
+relationship	sqlalchemytest.py	/^from sqlalchemy.orm import sessionmaker,relationship,backref$/;"	i
+remove	sqlalchemytest.py	/^def remove():$/;"	f
+requests	autologin.py	/^import requests$/;"	i
+requests	startup.py	/^import requests$/;"	i
+save	sqlalchemytest.py	/^def save():$/;"	f
+save_artist	sqlalchemytest.py	/^def save_artist():$/;"	f
+sessionmaker	sqlalchemytest.py	/^from sqlalchemy.orm import sessionmaker,relationship,backref$/;"	i
+setUp	recipel.py	/^    def setUp(self):$/;"	m	class:RomanNumeralConverterTest
+soup	startup.py	/^soup = BeautifulSoup(r.text)$/;"	v
+sqlalchemy	sqlalchemytest.py	/^import sqlalchemy$/;"	i
+tag_url	startup.py	/^tag_url = soup.find_all('a',text="Login\/Register")[0]$/;"	v
+tearDown	recipel.py	/^    def tearDown(self):$/;"	m	class:RomanNumeralConverterTest
+test_empty_roman_numeral	recipel.py	/^    def test_empty_roman_numeral(self):$/;"	m	class:RomanNumeralConverterTest
+test_no_roman_numeral	recipel.py	/^    def test_no_roman_numeral(self):$/;"	m	class:RomanNumeralConverterTest
+test_parsing_millenia	recipel.py	/^    def test_parsing_millenia(self):$/;"	m	class:RomanNumeralConverterTest
+theurl	autologin.py	/^theurl = "http:\/\/liuzhijun.iteye.com\/admin\/blogs"$/;"	v
+theurl	autologin.py	/^theurl = "http:\/\/www.iteye.com\/login\/"$/;"	v
+time	startup.py	/^import time$/;"	i
+unittest	recipel.py	/^import unittest$/;"	i
+url	startup.py	/^url = 'http:\/\/news.dbanotes.net'$/;"	v
+url1	startup.py	/^        url1 = url + "\/" + center.a['href']$/;"	v
+urllib	autologin.py	/^import urllib$/;"	i
