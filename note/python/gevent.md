@@ -33,15 +33,17 @@ http://architects.dzone.com/articles/threads-versus-greenlets
 http://blog.pythonisito.com/2012/07/introduction-to-gevent.html  
 
 ###翻译
-####介绍Gevent
-Gevent官方网站是这么介绍了:  
+####Gevent简介
+官方网站是这么介绍Gevent:  
 >gevent is a coroutine-based Python networking library that uses greenlet to provide a high-level synchronous API on top of the libevent event loop.  
 
-这是对gevent的一个简单介绍,介绍了gevent的架构实现和技术,但是并没有让初学者看明白.我能想到的最快的方法是:  
-gevent给你线程,但是没有使用线程  
+简单翻译过来就是：[gevent](http://www.gevent.org/)一个基于协程的Python网络库，依赖于[libevent](http://www.libevent.org/)的[event loop](http://www.ruanyifeng.com/blog/2013/10/event_loop.html)使用greenlet提供高级同步API。
 
-####为什么不仅仅使用线程
-所以为什么不使用线程呢?线程最大的缺点对我来说就是相比较greenlets(类线程的抽象概念使用在gevent中)来说它会占用大量资源. 例如:这个最小的程序模拟helloworld webserver,没有用任何并发  
+这段话简单描述了gevent的架构实现和技术，不过初学者看了还是一脸茫然。我能想到的能最快让人理解的定义是:  
+>gevent给了你线程,但是没有使用线程  
+
+####为什么不使用线程
+为什么不使用线程呢？线程最大的缺点对我来说就是相比较greenlets(使用在gevent中的类线程的抽象概念)来说它会占用大量资源。 例如：这个模拟helloworld webserver的小程序，下面是没有使用任何并发的代码：  
  
     import sys
     import socket
@@ -74,7 +76,7 @@ gevent给你线程,但是没有使用线程
     if __name__ == '__main__':
         sequential(int(sys.argv[1]))
 
-这件仅有的事关于这个脚本是做了一点点事是减慢handle_request方法使它更真实.如果是使用apahce的性能测试工具用大量的并发,然而,我们会得到很糟糕的结果,例如:运行: `ab -r -n 200 -c 200 http://lcoalhost:1111/`  
+这段代码使用sleep，目的是是减慢handle_request方法使它更真实。使用Apache的性能测试工具做大并发测试，然而我们得到很糟糕的结果。运行： `ab -r -n 200 -c 200 http://lcoalhost:1111/`  
 
 结果:
 
@@ -82,9 +84,9 @@ gevent给你线程,但是没有使用线程
     Completed 100 requests
     apr_pollset_poll: The timeout specified has expired (70007)
     Total of 196 requests Completed
-到最后超时了.
+到最后超时了。
 
-也许我们用线程会更好,我们可以用sequential函数用threads函数  
+也许用线程会更好，那么用threads函数替换sequential函数：
 
     import threading
     
@@ -142,7 +144,7 @@ gevent给你线程,但是没有使用线程
       99%    116
      100%    116 (longest request)
 
-运行 ab -r -n 200 -c 200给了我一个更差的结果,测压差不多要拒绝完成,保释10个错误.现在我们用gevent给我们类线程行为而不是在基于线程之上的行为:  
+运行`ab -r -n 200 -c 200`，总共花时是0.229秒，现在我们用gevent做类线程的模拟操作:  
 
     import gevent
     def greenlet(port):
@@ -199,10 +201,12 @@ gevent给你线程,但是没有使用线程
       99%      5
      100%      5 (longest request)
 
-####为什么不要一直使用gevent/greenlets呢?
-主要是,归结为抢占式问题.Greenlets使用协助多任务式,而线程使用抢占多任务式,意味着一个greenlet永远不会停止执行和'yield'让给另外的greenlet,除非它使用确定的'yielding'函数(像:gevent.socket.socket.recv或gevent.sleep),线程,另一方面,将yield到另一个线程(有时是不可遇见的),具体基于操作系统什么时候切换它们.  
+我们看到总共花时不到0.012秒。
 
-当然,如果你使用python一会儿了,你已经听说过,关于全局解释锁(GIL),在python中,仅仅运行单个线程执行python字节码在同一时间.所以尽管你有线程在python中,他们给一些并发(依赖于是否指定扩展库你正在使用的GIL).线程提供更少的好处比你期待的来自于C或者Java.  
+####为什么不要一直使用gevent/greenlets呢？
+为什么不要一直在gevent中greenlet？主要是归结为抢占式问题，Greenlets使用协助式多任务，而线程使用抢占式多任务，意味着一个greenlet永远不会停止执行和'yield'让给另外的greenlet,除非它使用确定的'yielding'函数(像:gevent.socket.socket.recv或gevent.sleep)，而线程，另一方面，将yield到另一个线程(有时是不可遇见的)，具体基于操作系统什么时候切换它们。  
+
+当然,如果你使用python一段时间了，你也已经听说过关于全局解释锁(GIL)，仅仅运行单个线程执行python字节码在同一时间。所以尽管你有线程在python中,他们给一些并发(依赖于是否指定扩展库你正在使用的GIL).线程提供更少的好处比你期待的来自于C或者Java.  
 
 ####那么Gevent中还有些啥
 希望我能给你一些有兴趣在学习更多的有关gevent同时它的一些扩展,你因该发现的其它的好的东西在gevent中包括:  
