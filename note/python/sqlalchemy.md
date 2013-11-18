@@ -761,3 +761,5 @@ http://docs.sqlalchemy.org/en/rel_0_9/core/types.html
 
 
 
+####映射类继承层次
+SQLAlchemy支持三种形式的继承,**单表继承**, 多个类对应单独的一个表,**具体表继承**:
