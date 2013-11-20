@@ -98,7 +98,7 @@ http://blog.pythonisito.com/2012/07/introduction-to-gevent.html
             cli, addr = s.accept()
             t = threading.Thread(target=handle_request, args=(cli, time.sleep))
             t.daemon = True
-        t.start()
+            t.start()
 结果:  
 
     Benchmarking localhost (be patient)
@@ -204,20 +204,16 @@ http://blog.pythonisito.com/2012/07/introduction-to-gevent.html
 我们看到总共花时不到0.012秒。
 
 ####为什么不要一直使用gevent/greenlets呢？
-为什么不要一直在gevent中greenlet？主要是归结为抢占式问题，Greenlets使用协助式多任务，而线程使用抢占式多任务，意味着一个greenlet永远不会停止执行和'yield'让给另外的greenlet,除非它使用确定的'yielding'函数(像:gevent.socket.socket.recv或gevent.sleep)，而线程，另一方面，将yield到另一个线程(有时是不可遇见的)，具体基于操作系统什么时候切换它们。  
+为什么不要一直在gevent中greenlet？主要Greenlets使用协助式多任务，而线程使用抢占式多任务，意味着一个greenlet永远不会停止执行来让给另外的greenlet执行，除非它使用确切的'yielding'函数(像:gevent.socket.socket.recv或gevent.sleep)，而线程完全是基于操作系统决定线程之间的切换的。   
 
-当然,如果你使用python一段时间了，你也已经听说过关于全局解释锁(GIL)，仅仅运行单个线程执行python字节码在同一时间。所以尽管你有线程在python中,他们给一些并发(依赖于是否指定扩展库你正在使用的GIL).线程提供更少的好处比你期待的来自于C或者Java.  
+如果你使用python一段时间了，你应该听说过关于全局解释锁(GIL)，它只允许在同一时刻单个线程执行python字节码。所以尽管在python中有线程和并发，但是线程所提供的好处不及C或者Java。  
 
-####那么Gevent中还有些啥
-希望我能给你一些有兴趣在学习更多的有关gevent同时它的一些扩展,你因该发现的其它的好的东西在gevent中包括:  
-* 函数to monkey_patch标准库,所以你可以使用socket.socket而不是gevent.socket.例如  
-* 基本的服务器处理socket连接用自己的handlers  
-* 更细粒度的控制在greenlet你的spawn.  
-* 同步原生合适使用greenlets 
-* greenlet pools
-* greenlet-local对象(如:threadlocal, 但是greenlets)
-* 两个基于greentlet的WSGI服务器
-
-在之后的帖子中,我将更细致的介绍如何在生产环境下使用gevent.所以你想怎么样,gevent有时你已经在你的toolbox了, 他的并发处理能力激发了你?,任何项目已经使用gevent?我想听听你的评论,接下来.  
-
+####Gevent中还有些啥
+希望在学习gevent时我能给你一些兴趣，gevent中还包括：  
+* 提供monkey_patch标准库，所以你可以使用socket.socket而不需要gevent.socket  
+* 用自己的handlers处理基于socket连接的server。  
+* 在greenlet中更细粒度的控制spawn.  
+* greenlet pools  
+* greenlet-local对象  
+* 两个基于greentlet的WSGI服务器  
 
