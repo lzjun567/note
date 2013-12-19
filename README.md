@@ -13,6 +13,7 @@
 16. [Python实用技巧](./note/python/useful_features.md)
 17. [python测试](./note/python/testing.md)
 18. [gevent简介](./note/python/gevent.md)
+
 #####Django
 1. [Django测试指南](./note/python/a_guide_to_testing_in_django.md)
 2. [Django模版语言](./note/python/django_template.md)
@@ -20,13 +21,16 @@
 3. [Python/Django编程实践指南](./note/python/code_style.md)
 8. [Django Form](./note/python/django_form.md)
 9. [Django url()函数详解](./note/python/django_url.md)
+
 #####Mako模板
 5. [mako简介](./note/python/mako.md)
+
 #####SQLAlchemy
 14. [SQLAlchemy学习笔记](./note/python/sqlalchemy.md)
 
 ####Java
 此系列文章绝大部分发布在[importnew.com](htt://www.importnew.com)网站上  
+
 1. [JDBC批处理Select语句](./note/java/JDBC Performance Tips.md)
 2. [JDBC为什么要使用PreparedStatement而不是Statement](./note/java/Why use PreparedStatement in Java JDBC .md)
 3. [Java为什么需要Lambda表达式（-）](./note/java/Why W Need Lambda Expressions in Java Part2.md)
@@ -57,7 +61,6 @@
 27. [Vim27 高亮所有搜索模式匹配](./note/vim/27.md)
 28. [Vim28 全局命令](./note/vim/28.md)
 [我的vim配置](./note/vim/vimrc.md)  
-
 
 ####memcached
 1. [入门篇](./note/memcached/入门篇.md)  
