@@ -44,7 +44,9 @@ add_static_view的name参数也可以是一个完全限定URL（full qualified U
 
 
 Security
-======================================
+--------------------------------------------
+authorization:授权，权限  
+authentication:认证，登录验证  
 pyramid 提供了一个可选的授权认证系统,在view被调用之前,认证系统可以根据request中的证书与上下文资源一道决定是否可以被访问.它的工作流程是这样的:  
 
 * 当用户访问应用的时候生成request对象
@@ -53,7 +55,12 @@ pyramid 提供了一个可选的授权认证系统,在view被调用之前,认证
 * authentication policy 生效,传递给request,返回一些principal identifiers.
 * 如果authorization policy 激活了,view configuration 关联了view callable,t它有关联的permission,那么authorization policy 会传递给context.permission关联view,允许或拒绝
 * 如果authorization policy允许访问,视图就会被调用
-* 如果authorization policy拒绝访问,视图就不会被调用,取而代之代之的是forbdden view
+* 如果authorization policy拒绝访问,视图就不会被调用,取而代之代之的是forbidden view
+
+Security在Pyramid中，不想很多系统，清晰明确的分离的authorization和authentication。authorization仅仅是一种机制，通过request中的管理证书（credential）解析成一个或多个principal。
+
+####使authorization生效
+默认情况下，pyramid的authorization policy是不生效的。所有试图可以完全在匿名用户下能访问。为了保护试图基于安全设置防止被执行，你需要使authorization policy生效。  
 
 
 
