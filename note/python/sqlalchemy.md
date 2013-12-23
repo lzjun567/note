@@ -260,7 +260,23 @@ SQLAlchemy中的映射关系有四种,分别是**一对多**,**多对一**,**一
             email = Column(String)
             user_id = Column(Integer, ForeignKey('user.id'))
 
-- secondary:
+- secondary:  
+- order_by:  
+    在一对多的关系中,如下代码:  
+
+        class User(Base):
+        # ....
+        addresses = relationship("Address",
+                         order_by="desc(Address.email)",
+                         primaryjoin="Address.user_id==User.id")
+    如果user的address要按照email排序,那么就可以在relationship中添加参数order_by.这里的参数是一字符串形式表示的,不过它等同于python表达式,其实还有另一种基于lambda的方式:  
+        
+        class User(Base):
+        # ...
+        addresses = relationship(lambda: Address,
+                         order_by=lambda: desc(Address.email),
+                         primaryjoin=lambda: Address.user_id==User.id)
+
 
 
 #####association_proxy
@@ -763,3 +779,6 @@ http://docs.sqlalchemy.org/en/rel_0_9/core/types.html
 
 ####映射类继承层次
 SQLAlchemy支持三种形式的继承,**单表继承**, 多个类对应单独的一个表,**具体表继承**:
+
+####Querying
+http://docs.sqlalchemy.org/en/rel_0_9/orm/query.html#sqlalchemy.orm.query.Query.join

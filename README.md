@@ -2,24 +2,41 @@
 在这里记录自己的学习笔记，有些文章是半成品，部分完整文章有可能会发布在自己的[博客](http://foofish.net)里面。用GitHub记录的一个好处是版本控制，当然有时候我也用Evernote来记录。  
 
 ####Python
-1. [Django测试指南](./note/python/a_guide_to_testing_in_django.md)
-2. [Django模版语言](./note/python/django_template.md)
-3. [使用django-simple-captcha遇到的坑](./note/python/captcha.md)
-3. [Python/Django编程实践指南](./note/python/code_style.md)
 5. [collections学习笔记](./note/python/collections.md)
 6. [协程](./note/python/coroutine.md)
 7. [装饰器](./note/python/decorators.md)
-8. [Django Form](./note/python/django_form.md)
-9. [Django url()函数详解](./note/python/django_url.md)
 10. [异常](./note/python/exception.md)
 11. [yield 生成器](./note/python/generator.md)
 12. [迭代器与生成器的区别](./note/python/iterator_generator.md)
 13. [python json](./note/python/json.md)
-14. [SQLAlchemy学习笔记](./note/python/sqlalchemy.md)
 15. [Python虚拟环境：virtualenv](./note/python/virtualenv.md)
 16. [Python实用技巧](./note/python/useful_features.md)
 17. [python测试](./note/python/testing.md)
 18. [gevent简介](./note/python/gevent.md)
+
+#####Django
+1. [Django测试指南](./note/python/a_guide_to_testing_in_django.md)
+2. [Django模版语言](./note/python/django_template.md)
+3. [使用django-simple-captcha遇到的坑](./note/python/captcha.md)
+3. [Python/Django编程实践指南](./note/python/code_style.md)
+8. [Django Form](./note/python/django_form.md)
+9. [Django url()函数详解](./note/python/django_url.md)
+
+#####Mako模板
+5. [mako简介](./note/python/mako.md)
+
+#####SQLAlchemy
+14. [SQLAlchemy学习笔记](./note/python/sqlalchemy.md)
+
+####Java
+此系列文章绝大部分发布在[importnew.com](htt://www.importnew.com)网站上  
+
+1. [JDBC批处理Select语句](./note/java/JDBC Performance Tips.md)
+2. [JDBC为什么要使用PreparedStatement而不是Statement](./note/java/Why use PreparedStatement in Java JDBC .md)
+3. [Java为什么需要Lambda表达式（-）](./note/java/Why W Need Lambda Expressions in Java Part2.md)
+4. [深入单例模式](./note/java/singleton.md)
+5. [范行实践](./note/java/Generic.md)
+6. [类加载与初始化](./note/java/classloading and initialization.md)
 
 ####Vim
 [Vim相关文章](./note/vim/目录.md)，早期写的一些文章可以在我的旧博客：[liuzhijun.iteye.com](http://liuzhijun.iteye.com/category/270228)查看到  
@@ -45,11 +62,10 @@
 28. [Vim28 全局命令](./note/vim/28.md)
 [我的vim配置](./note/vim/vimrc.md)  
 
-
 ####memcached
 1. [入门篇](./note/memcached/入门篇.md)  
 
 ####sphinx/coreseek
 1. [sphinx笔记](./note/python/sphinx/introduce.md)  
-不定时更新...... 
+不定时更新中 
 
