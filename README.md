@@ -29,7 +29,7 @@
 14. [SQLAlchemy学习笔记](./note/python/sqlalchemy.md)
 
 ####Java
-此系列文章绝大部分发布在[importnew.com](htt://www.importnew.com)网站上  
+此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上  
 
 1. [JDBC批处理Select语句](./note/java/JDBC Performance Tips.md)
 2. [JDBC为什么要使用PreparedStatement而不是Statement](./note/java/Why use PreparedStatement in Java JDBC .md)
