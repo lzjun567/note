@@ -3,6 +3,7 @@
 
 ####Python
 5. [collections学习笔记](./note/python/collections.md)
+5. [函数式编程------序列处理函数](./note/python/function_programming_of_function_processing_functions.md)
 6. [协程](./note/python/coroutine.md)
 7. [装饰器](./note/python/decorators.md)
 10. [异常](./note/python/exception.md)
