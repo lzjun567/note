@@ -3,6 +3,7 @@
 
 ####Python
 5. [collections学习笔记](./note/python/collections.md)
+5. [函数式编程------序列处理函数](./note/python/function_programming_of_function_processing_functions.md)
 6. [协程](./note/python/coroutine.md)
 7. [装饰器](./note/python/decorators.md)
 10. [异常](./note/python/exception.md)
@@ -29,7 +30,7 @@
 14. [SQLAlchemy学习笔记](./note/python/sqlalchemy.md)
 
 ####Java
-此系列文章绝大部分发布在[importnew.com](htt://www.importnew.com)网站上  
+此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上  
 
 1. [JDBC批处理Select语句](./note/java/JDBC Performance Tips.md)
 2. [JDBC为什么要使用PreparedStatement而不是Statement](./note/java/Why use PreparedStatement in Java JDBC .md)
