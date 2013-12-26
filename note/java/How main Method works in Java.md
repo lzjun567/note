@@ -25,4 +25,6 @@ Josh Bloch在他的书籍《Effective Java》告诉我们重写hashcode方法的
 把上面计算得到的hash值c合并到result中  
 
     result = 31*result + c 
-.
+
+####String中的Hashcode方法
+String类一个非常流行的类，他的hashcode的算法充分利用了所有字符从内部字符数组中。
