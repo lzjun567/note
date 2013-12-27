@@ -14,13 +14,13 @@ Josh Bloch在他的书籍《Effective Java》告诉我们重写hashcode方法的
 
     * 为该域计算int类型的散列码c：  
             
-            *  如果该域是boolean类型，则计算(f?1:0)
-            *  如果该域是byte、char、short或者int类型，则计算(int)f
-            *  如果该域是long类型，则计算(int)(f^(f>>>32))
-            *  如果该域是float类型，则计算Float.floatToIntBits(f)
-            *  如果该域是double类型，则计算Double.doubleToLongBits(f)，然后重复c步骤。
-            *  如果该域是一个对象引用，并且该类的equals方法通过递归调用equals方法来比较这个域，同样为这个域递归的调用hashCode，如果这个域为null，则返回0。
-            *  如果该域是数组，则要把每一个元素当作单独的域来处理，递归的运用上述规则，如果数组域中的每个元素都很重要，那么可以使用Arrays.hashCode方法。
+        *  如果该域是boolean类型，则计算(f?1:0)
+        *  如果该域是byte、char、short或者int类型，则计算(int)f
+        *  如果该域是long类型，则计算(int)(f^(f>>>32))
+        *  如果该域是float类型，则计算Float.floatToIntBits(f)
+        *  如果该域是double类型，则计算Double.doubleToLongBits(f)，然后重复c步骤。
+        *  如果该域是一个对象引用，并且该类的equals方法通过递归调用equals方法来比较这个域，同样为这个域递归的调用hashCode，如果这个域为null，则返回0。
+        *  如果该域是数组，则要把每一个元素当作单独的域来处理，递归的运用上述规则，如果数组域中的每个元素都很重要，那么可以使用Arrays.hashCode方法。
 
 把上面计算得到的hash值c合并到result中  
 
