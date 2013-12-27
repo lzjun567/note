@@ -1,5 +1,5 @@
 如何生成一个合适的hashcode方法
----------------------
+------------------------------
 Hashcode在基于key-value的集合如HashMap、LinkedHashMap中扮演很重要的角色。除此之外hashcode的概念同样运用在HashSet中，最佳的部分使用合适的hashcode是获取操作是 O(1).  
 
 一个差劲的hashcode算法不仅会降低一个基于哈希的集合性能，而且会导致异常结果。有多种不同的方式来生成hashcode。  
@@ -27,4 +27,35 @@ Josh Bloch在他的书籍《Effective Java》告诉我们重写hashcode方法的
     result = 31*result + c 
 
 ####String中的Hashcode方法
-String类一个非常流行的类，他的hashcode的算法充分利用了所有字符从内部字符数组中。
+String类一个非常流行的类，他的hashcode的算法充分利用了所有字符从内部字符数组中。更重要的是给出了最有意义的字符在字符数组中，生成算法的hash码在string类中看起来像如下所示，注意“s“是哪个字符数组，n是字符串的长度。  
+
+    s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+
+####Hashcode使用Eclipse IDE
+现代IDE提供了允许你生成hashcode通过调用右键上下文菜单，一个hashcode生成通过Eclipse IDE像：  
+
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + a;
+        return result;
+    }
+
+
+不推荐使用如上代码在企业级别代码中，最好使用第三方库如Apache commons 生成hashocde方法在自定义类中。  
+
+####Apache commons HashcodeBuilder
+我们同样可以Apache Commons hashcode builder 来生成代码在我们的类中，使用第三方库的优势是尝试和测试代码从对象中可以使用在我们的应用中。以下代码显示了如何使用Apache Commons hash code 构建 生成 hash code 为一个自定义类。  
+
+    public int hashCode(){
+           HashCodeBuilder builder = new HashCodeBuilder();
+           builder.append(mostSignificantMemberVariable);
+       ........................
+       builder.append(leastSignificantMemberVariable);
+           return builder.toHashCode();
+       }
+
+如上面代码显示的，最重要的签名成员变量应该首先传递然后跟随的是没那么重要的成员变量。  
+
+Apache Commons 同样提供了去构建生成equals方法为自定义的类，代码使用equals构建器看起来非常像上面的代码。事实上规则传递给成员变量开始从最重要的签名到最不重要的签名，同样应用于equals构建器中。  
+
