@@ -1,4 +1,4 @@
-Django应用部署(nginx,gunicorn,virtualenv,supervisor)
+Django应用部署(nginx、gunicorn、virtualenv、supervisor)
 ====================================================
 [Django](http://djangoproject.org)在python语言中是最受欢迎的全栈式web框架，过去部署Django应用一般采用Apache+mod_wsgi，但是随着Nginx出色的性能表现，Django也有了更先进的部署方式，比较常用的一种部署方案是Nginx+Gunicorn。 接下来我会详细介绍一个完整的符合生产条件的部署过程及组件，这些组件全部属于开源实现。  
 ####前提条件
@@ -378,7 +378,7 @@ django初始化数据库，默认Django会创建一些数据表
     │   └── gunicorn.sock 
     └── static                       <= 项目的静态资源目录
 
-
+此文参考[这里](http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/)，所有步骤经过自己操作验证通过，如果你在配置过程中有任何疑问，毫不犹豫给我留言。  
 
 
 
