@@ -14,6 +14,7 @@
 16. [Python实用技巧](./note/python/useful_features.md)
 17. [python测试](./note/python/testing.md)
 18. [gevent简介](./note/python/gevent.md)
+19. [Django应用部署(nginx、gunicorn、virtualenv、supervisor)](.\note\python\deploy_django_with_nginx.md)
 
 #####Django
 1. [Django测试指南](./note/python/a_guide_to_testing_in_django.md)
