@@ -56,9 +56,26 @@ def application(environ, start_response):
     return [response_body]
 
 
+
+class AppClass:
+
+    def __call__(self, environ, start_reponse):
+        status = "200 OK"
+        response_header = [('Content_Type','text/plain'),]
+        start_reponse(status, response_header)
+        return ["hello world ok!"]
+
+class Upperware(object):
+    def __init__(self, app):
+        self.wrapped_app = app
+    def __call__(self,environ, start_response):
+        for data in self.wrapped_app(environ, start_response):
+            return data.upper()
+        
 httpd= make_server('localhost',
                     8051,
-                    application)
+                    Upperware(AppClass()),
+                    )
 
 #httpd.handle_request()
 httpd.serve_forever()
