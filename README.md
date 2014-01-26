@@ -15,6 +15,8 @@
 17. [python测试](./note/python/testing.md)
 18. [gevent简介](./note/python/gevent.md)
 19. [Django应用部署(nginx、gunicorn、virtualenv、supervisor)](.\note\python\deploy_django_with_nginx.md)
+20. [理解WSGI](./note/python/wsgi.md)
+21. [Flask之Hello world详解](./note/python/flask.md)
 
 #####Django
 1. [Django测试指南](./note/python/a_guide_to_testing_in_django.md)
@@ -24,7 +26,9 @@
 8. [Django Form](./note/python/django_form.md)
 9. [Django url()函数详解](./note/python/django_url.md)
 
+
 #####Mako模板
+
 5. [mako简介](./note/python/mako.md)
 
 #####SQLAlchemy
