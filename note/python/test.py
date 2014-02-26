@@ -57,22 +57,45 @@ class Email(object):
     #        raise Exception('email not valid')
     #    self.email = email
 
+#class Person(object):
+#
+#    def __init__(self):
+#        self._email = None
+#
+#    def get_email(self):
+#        return self._email
+#
+#    def set_email(self, value):
+#         m = re.match('\w+@\w+\.\w+', value)
+#         if not m:
+#             raise Exception('email not valid')
+#         self._email = value
+#
+#    def del_email(self):
+#        del self._email
+#
+#    email = property(get_email, set_email, del_email, 'this is email property')
+        
+
 class Person(object):
 
     def __init__(self):
         self._email = None
 
-    def get_email(self):
+    @property
+    def email(self):
         return self._email
 
-    def set_email(self, value):
+    @email.setter
+    def email(self, value):
          m = re.match('\w+@\w+\.\w+', value)
          if not m:
              raise Exception('email not valid')
          self._email = value
 
-    def del_email(self):
+    @email.deleter
+    def email(self):
         del self._email
 
-    email = property(get_email, set_email, del_email, 'this is email property')
-        
+
+
