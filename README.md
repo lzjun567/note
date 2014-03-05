@@ -69,9 +69,11 @@
 [我的vim配置](./note/vim/vimrc.md)  
 
 ####memcached
-1. [入门篇](./note/memcached/入门篇.md)  
+1. [入门安装篇](./note/memcached/introduce_install.md)  
+2. [命令介绍篇](./note/memcached/telnet_command.md)
+
 
 ####sphinx/coreseek
 1. [sphinx笔记](./note/python/sphinx/introduce.md)  
-不定时更新中 
+不定时更新 
 
