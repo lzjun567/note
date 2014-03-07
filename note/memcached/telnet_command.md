@@ -1,10 +1,9 @@
-安装成功后, 确认一下memcached进程是否启动  
+安装成功后, 确认一下memcached进程是否启动, 如下显示memecached进程已经存在.  
 
     lzjun@lzjun:~/workspace/note/note/memcached$ ps -eaf | grep memcached
     lzjun    10892  3749  0 11:48 ?        00:00:00 memcached -d
 
-使用`telnet`连接Memcached  
-格式:  
+使用`telnet`连接Memcached, 格式:  
 
     telnet <hostname> <port>
 
@@ -13,17 +12,19 @@
     telnet localhost 11211
 
 ####存储相关命令
-set/add/replace/append/prepend/cas  
-#####Set
+**set/add/replace/append/prepend/cas**  
+
+**set**
 
     set <key> <flags> <exptime> <bytes> \r\n <value> \r\n
 
-* `<key>`: key就是你要存储数据的键值, 数据通过key来获取
-* `<flags>`: 无符号的32位整型,客户端提供的参数,用于标识数据格式,比如使用MEMCACHE_COMPRESSED表示数据压缩存储.对服务端而言,这个参数并不知道是做什么用的.还有json, xml等
-* `<exptime>`: 写入缓存失效的时间, 单位是秒, 0表示数据永久不过期, 除非当前内存不够用了使用LRU算法来回收该段内存.
-* `<bytes>`: 用来缓存value的数据块的字节数, `<value>`的大小不能超过此`<bytes>` 
-* `\r\n`: 表示回车换行
-* `<value>`: 表示要缓存的数据
+* key:      key就是你要存储数据的键值, 数据通过key来获取
+* flags:   无符号的32位整型,客户端提供的参数,用于标识数据格式,比如使用MEMCACHE_COMPRESSED表示数据压缩存储.还有json, xml等.对服务端而言,这个参数并不知道是做什么用的.
+* exptime: 写入缓存失效的时间, 单位是秒, 0表示数据永久不过期, 除非当前内存不够用了使用LRU算法来回收该段内存.
+* bytes:   用来缓存value的数据块的字节数, `<value>`的大小不能超过此`<bytes>` 
+* \r\n:    表示回车换行
+* value:   表示要缓存的数据
+
 
     set name 0 100 3
     liu
@@ -33,7 +34,7 @@ set/add/replace/append/prepend/cas
     liu
     END
 
-如果bytes指定的值过小,而实际存储的值偏大的话,就会有Error, 必须相等,偏小也不行: 
+如果bytes指定的值过小,而实际存储的值偏大的话,就会有Error,偏小也不行,必须相等,: 
 
     set name 0 100 3
     liuzhijun
@@ -61,7 +62,7 @@ set/add/replace/append/prepend/cas
     VALUE length 0 4
     junz
     END
-**cas** : check and set , 只有版本号匹配的才能存储  
+**cas** : check and set , 只有版本号匹配的才能存储, 下面的6是版本号  
 
     cas length 0 0 4 6
     hell
@@ -83,11 +84,11 @@ set/add/replace/append/prepend/cas
 
 
 ####读取命令
-get/gets  
+**get/gets**  
 
     get/gets <key>
 
-gets返回带版本信息的数据, 返回格式  
+gets返回带版本信息的数据, 返回格式:  
 
     VALUE <key> <flags> <bytes> [versions] \r\n
     <datablock>\r\n
