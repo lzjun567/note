@@ -71,6 +71,11 @@
 ####memcached
 1. [入门安装篇](./note/memcached/introduce_install.md)  
 2. [命令介绍篇](./note/memcached/telnet_command.md)
+3. 
+4. 
+
+####redis
+1. [入门篇](./note/redis/introduce.md)
 
 
 ####sphinx/coreseek
