@@ -1,7 +1,7 @@
 今天无意中看到据说是[史上最简单的Git教程](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000)，看完后又学到了不少新东西，把自己学到东西总结并记录下，否则总觉得少了些什么东西。  
 
 下面用一张图来说明工作区（working directory）、版本库（Repository）、暂存区（stage），以及分支的概念。  
-![git](..\resource\image\git.jpg)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/git.jpg)
 
 下面解释不是完全严谨，请结合上图来理解下面四个概念。  
 **工作区（working dicrectory）**：包含.git目录的父目录一般就是工作区，就是我们的工程目录。新创建的文件都处于工作区，此时还没有加入到后面要解释的的暂缓区。  
@@ -99,7 +99,7 @@ commit 后面的那串就是版本号， 一般只要选择前面几位就可以
 ####分支管理
 开发一个新功能时，可能需要几周的时间才能完成，那么可以创建一个分支，在分支上做开发，而不影响主分支的功能。  
 **创建分支**：  
-![git](..\resource\image\c_branch.png)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/c_branch.png)
 
     git branch dev
     git checkout dev
@@ -114,13 +114,13 @@ commit 后面的那串就是版本号， 一般只要选择前面几位就可以
 星号就代表当前的所在的分支。    
 
 **切换分支**：  
-![git](..\resource\image\s_branch.png)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/s_branch.png)
 
     git checkout master
 
 **合并分支**：  
 切换分支后，dev分支上做的修改在master分支看不到，如果dev分支的功能开发完成后，就可以考虑合并分支了，合并后还可以删除dev分支，因为此时dev分支对于我们来说没有多大意义了。  
-![git](..\resource\image\m_branch.png)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/m_branch.png)
 
     git merge dev
 合并分支就是把master执行dev分支，接着还可以删除分支  
@@ -161,7 +161,7 @@ README.rst内容出现了如下情况：
     git rebase master
 
 相当于快速的把dev分支指向master。  
-![git](..\resource\image\rebase2.png)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/rebase2.png)
 
 ####分支策略
 开发过程中，都应该按照以下方式来管理分支。  
@@ -171,11 +171,11 @@ README.rst内容出现了如下情况：
 
 **自己的分支**：每个人在dev分支上建立自己的分支。  
 默认情况下，git合并使用"fast forward”模式，相当于直接把master分支指向dev分支。删除分支后，分支信息也随即丢失。  
-![git](..\resource\image\ff.png)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/ff.png)
 
 在合并的时候附上参数 `--no-ff`就可以禁用fast-forward合并模式。这样在master上能生成一个新的节点，意味着master保留的分支信息，而这种合并方式我们希望采用的。  
     
     git merge --no-ff dev
 
-![git](..\resource\image\nff.png)
+![git](https://github.com/lzjun567/note/tree/master/note/resource/image/nff.png)
 
