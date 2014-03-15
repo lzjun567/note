@@ -20,15 +20,20 @@ memcached作为高性能的分布式缓存系统，它的用户有Twitter、Flickr、Wikipedia、weibo
          或者
          memcached -p 11211 -m 64m -d
 
-- -p TCP端口，默认是11211  
-- -m 最大使用内存，默认64M。memcached是基于内存的缓存系统  
+- -d 作为守护(daemon)进程在后台启动  
 - -u 运行memcache的用户  
-- -d 作为daemon进程在后台启动  
+- -p 小写, TCP端口，默认是11211  
+
+- -m 最大使用内存，默认64M。memcached是基于内存的缓存系统  
 - -c 最大并发连接数  
 - -l 监听的服务器IP地址  
 - -P 保存memcache的pid文件  
 
+####memcached调试
 
+- -v    输出error/warning
+- -vv   输出命令和响应
+- -vvv  输出内部状态 
 
 使用非阻塞网络IO，在内存中开辟一块空间，建立一个HashTable，Memcached进程管理这些HashTable。  
 
