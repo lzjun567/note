@@ -2,7 +2,7 @@
 从第二篇介绍来看, memcached的[协议](https://github.com/memcached/memcached/blob/master/doc/protocol.txt)非常简单, 没有采用xml,json等数据格式, 就是简单的**文本行**(直接telnet就可以完成数据的存取操作)和**非结构化数据**.文本行总是以\r\n结尾, 非结构化数据同样也是以\r\n结尾  
 ####内存分配机制
 slab是memcached用来存放item的机制., 如图:  
-![](https://github.com/lzjun567/note/blob/master/note/resource/image/slab.png)
+![](../resource/image/slab.png)
 
 **item**:需要存储的数据, 包括item结构体, key和value  
 **slab class**:相当于一个容器, 没有大小概念, 由page组成, page默认大小是1MB,也就是说slab是装有page的容器.  
@@ -34,5 +34,5 @@ slab是memcached用来存放item的机制., 如图:
 
 ####item数据格式
 双向链表结构
-![](https://github.com/lzjun567/note/blob/master/note/resource/image/memcached-item.png)
+![](../resource/image/memcached-item.png)
 
