@@ -25,6 +25,7 @@
 3. [Python/Django编程实践指南](./note/python/code_style.md)
 8. [Django Form](./note/python/django_form.md)
 9. [Django url()函数详解](./note/python/django_url.md)
+10. [Django signal](./note/python/signals.md)
 
 
 #####Mako模板
