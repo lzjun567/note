@@ -20,4 +20,29 @@ Intent的意思就是"intent to do something"，打算去做某事。通常用�
 
     Intent intent = new Intent(this, DisplayMessageActivity.class);
 
-this 是 Context对象，Activity是Context的一个子类。  
+this 是 Context对象，Activity是Context的一个子类。 完整代码：  
+
+    public void sendMessage(View view){
+    		Intent itent = new Intent(this, DislapyMessageActivity.class);
+    		EditText et = (EditText)findViewById(R.id.edit_message);
+    		itent.putExtra(EXTRA_MESSAGE, et.getText().toString());
+    		startActivity(itent);  //关键步骤
+    	}
+
+接下来是写`DisplayMessasgeActivity`，直接new Activity，继承ActionBarActivity。然后覆盖onCreate()方法       
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		
+		Intent intent = getIntent();
+		String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+		
+		TextView textview = new TextView(this);
+		textview.setText(message);
+		setContentView(textview);
+		
+	}
+
+

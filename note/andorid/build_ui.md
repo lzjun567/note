@@ -4,13 +4,19 @@ Android的GUI由View和ViewGroup对象构成，View指的就是那些Button，Te
 
 Android可以直接通过XML配置文件来定义UI。  
 
-![viewgroup](http://foofish.qiniudn.com/emulator.png)
+![viewgroup](http://foofish.qiniudn.com/viewgroup.png)
 
 ####创建一个Linear布局
-打开res/layout/framgment_main.xml
-我自己的project这个文件叫 activity_fullscreen.xml，可能是我初始选择的是一个fullscreen activity。  
+打开res/layout/framgment_main.xml，删掉`<RelativeLayout>`换成`<LinearLayout>`：  
 
-LinearLayout 就是一个view group，在<LinearLayout>添加一个：  
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+LinearLayout 就是一个view group，在<LinearLayout>添加一个View：  
 
     <EditText android:id="@+id/edit_message"
             android:layout_width="wrap_content"
