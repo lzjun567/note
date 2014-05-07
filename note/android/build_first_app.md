@@ -10,7 +10,9 @@
 
 ![](http://foofish.qiniudn.com/layout1.png)
 ####AndroidManifest.xml
-manifest 文件定义了app的说需要的基本组件，其中`<uses-sdk>`元素用来兼容Android的版本信息的。你应该这样设置：  
+每个Android project都会有一个manifest文件，AdnroidManifest.xml，位于工程的根目录下面，manifest文件定义了app的结构和元数据以及所需组件和一些requirements。包括了组成应用的每个Activities，Services，Content Providers和Broacast Receivers节点，使用Intent Filter和Permission来决定如何与其它应用交互。 元数据如icon，版本号，主题。  
+
+其中`<uses-sdk>`元素用来兼容Android的版本信息的。你应该这样设置：  
 
     <manifest xmlns:android="http://schemas.android.com/apk/res/android" ... >
         <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" />
