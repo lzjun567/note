@@ -26,8 +26,8 @@ Django匹配正则表达式成功后，就会找到相应的视图函数，Djang
 
 在模版中可以使用：  
 
-    {% url arch-summary 1945 %}
-    {% url full-archive 2007 %}
+    {% url "arch-summary" 1945 %}
+    {% url "full-archive" 2007 %}
 
 #####kwargs
 kwargs就是一个字典类型的参数，它的使用方式如：  
