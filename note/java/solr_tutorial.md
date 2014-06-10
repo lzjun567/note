@@ -34,16 +34,16 @@
 
 文档就是用来搜索的数据源，现在就可以通过管理界面搜索关键字"solr"，具体步骤是：
 ![solr](../resource/image/solr.png)
-点击页面下的`Execute Query`后右侧就会显示查询结果，这个结果就是刚才导入进去的solr.xml的json格式的展示结果。solr支持丰富的查询语法，比如：现在想搜索字段`name`里面的关键字`Search`就可以用语法`name:search`，当然如果你搜索`name:xxx`就没有返回结果了，因为文档中没有这样的内容。    
+点击页面下的`Execute Query`按钮后右侧就会显示查询结果，这个结果就是刚才导入进去的solr.xml的json格式的展示结果。solr支持丰富的查询语法，比如：现在想搜索字段`name`里面的关键字"Search"就可以用语法`name:search`，当然如果你搜索`name:xxx`就没有返回结果了，因为文档中没有这样的内容。    
 
 ####数据导入
 导入数据到Solr的方式也是多种多样的：  
 
-* 可以使用DIH(以后介绍)从数据库导入数据
-* 支持CSV文件导入，因此Excel中数据也能轻松导入
+* 可以使用DIH(DataImportHandler)从数据库导入数据
+* 支持CSV文件导入，因此Excel数据也能轻松导入
 * 支持JSON格式文档
 * 二进制文档比如：Word、PDF
-* 还可以通过SolrJ以编程的方式来自定义导入
+* 还能以编程的方式来自定义导入
 
 ####更新数据
 如果同一份文档solr.xml重复导入会出现什么情况呢？实际上solr会根据文档的字段`id`来唯一标识文档，如果导入的文档的`id`已经存在solr中，那么这份文档就被最新导入的同`id`的文档自动替换。你可以自己尝试试验一下，观察替换前后管理界面的几个参数：`Num Docs`，`Max Doc`，`Deleted Docs`的变化。  
@@ -61,10 +61,10 @@
 此时`solr.xml`文档从索引中删除了，再次搜"solr"时不再返回结果。当然solr也有数据库中的事务，执行删除命令的时候事务自动提交了，文档就会立即从索引中删除。你也可以把commit设置为false，手动提交事务。  
 
     java -Ddata=args  -Dcommit=false -jar post.jar "<delete><id>3007WFP</id></delete>"
-执行完上面的命令是文档并没有真正删除，还是可以继续搜索相关结果，最后可以通过命令：  
+执行完上面的命令时文档并没有真正删除，还是可以继续搜索相关结果，最后可以通过命令：  
 
     java -jar post.jar -
-强制提交事务。现在把刚刚删除的文件重新导入Solr中来，继续我们的学习。  
+强制提交事务，文档就彻底删除了。现在把刚刚删除的文件重新导入Solr中来，继续我们的学习。  
 
 ####查询数据
 查询数据都是通过HTTP的GET请求获取的，搜索关键字用参数`q`指定，另外还可以指定很多可选的参数来控制信息的返回，例如：用`fl`指定返回的字段，比如`f1=name`，那么返回的数据就只包括name字段的内容
@@ -94,7 +94,7 @@
                 }
 
 ####文本分析
-文本字段通过把文本分割成单词以及运用各种转换方法（如：大小写、复数移除、词干提取）后被索引，schema.xml文件中定义了字段在索引中，这些字段将作用于其中.  
+文本字段通过把文本分割成单词以及运用各种转换方法（如：小写转换、复数移除、词干提取）后被索引，schema.xml文件中定义了字段在索引中，这些字段将作用于其中.  
 默认情况下搜索"power-shot"是不能匹配"powershot"的，通过修改schema.xml文件(solr/example/solr/collection1/conf目录)，把features和text字段替换成"text_en_splitting"类型，就能索引到了。  
 
     <field name="features" type="text_en_splitting" indexed="true" stored="true" multiValued="true"/>
