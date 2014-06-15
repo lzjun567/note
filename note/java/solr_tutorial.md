@@ -32,8 +32,9 @@
     </doc>
     </add>
 
-文档就是用来搜索的数据源，现在就可以通过管理界面搜索关键字"solr"，具体步骤是：
+表示向索引中添加一个文档，文档就是用来搜索的数据源，现在就可以通过管理界面搜索关键字"solr"，具体步骤是：
 ![solr](../resource/image/solr.png)
+
 点击页面下的`Execute Query`按钮后右侧就会显示查询结果，这个结果就是刚才导入进去的solr.xml的json格式的展示结果。solr支持丰富的查询语法，比如：现在想搜索字段`name`里面的关键字"Search"就可以用语法`name:search`，当然如果你搜索`name:xxx`就没有返回结果了，因为文档中没有这样的内容。    
 
 ####数据导入
@@ -72,6 +73,7 @@
     http://localhost:8983/solr/collection1/select?q=solr&fl=name&wt=json&indent=true
 
 * 排序
+
     Solr提供排序的功能，通过参数`sort`来指定，它支持正序、倒序，或者多个字段排序
     * q=video&sort=price desc
     * q=video&sort=price asc

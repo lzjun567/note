@@ -40,7 +40,7 @@ fieldType:
 对比之前的分词效果，改进了很多，差不多就是正常的语义了。这里在分词的时候你有可能会遇到一个问题：  
     >>TokenStream contract violation: reset()/close() call missing, reset() called multiple times, or subclass does not call super.reset(). Please see Javadocs of TokenStream class for more information about the correct consuming workflow.
 
-这个是rSolr4.8环境下mmseg4j的一个bug，这是mmseg4j-analysis-1.9.1.jar引起的，需要修改源码，找到文件：mmseg4j-1.9.1\mmseg4j-analysis\src\main\java\com\chenlb\mmseg4j\analysis\MMSegTokenizer.java，加上`super.reset()`：     
+这个是Solr4.8环境下mmseg4j的一个bug，这是mmseg4j-analysis-1.9.1.jar引起的，需要修改源码，找到文件：mmseg4j-1.9.1\mmseg4j-analysis\src\main\java\com\chenlb\mmseg4j\analysis\MMSegTokenizer.java，加上`super.reset()`：     
 
     public void reset() throws IOException {
 		//lucene 4.0

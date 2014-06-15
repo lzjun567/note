@@ -13,7 +13,7 @@ IK Analyzer是一款结合了词典和文法分析算法的中文分词组件，
 
 整合IK Analyzer比mmseg4j要简单很多，[下载](https://code.google.com/p/ik-analyzer/downloads/list)解压缩IKAnalyzer2012FF_u1.jar放到目录：E:\solr-4.8.0\example\solr-webapp\webapp\WEB-INF\lib，修改配置文件schema.xml，添加代码：  
    
-      <field name="ik_analyzer_name" type="text_ik" indexed="true" stored="true"/> 
+      <field name="content" type="text_ik" indexed="true" stored="true"/> 
 
       <fieldType name="text_ik" class="solr.TextField">
             <analyzer type="index" isMaxWordLength="false" class="org.wltea.analyzer.lucene.IKAnalyzer"/>
@@ -38,3 +38,57 @@ IK Analyzer是一款结合了词典和文法分析算法的中文分词组件，
       <entry key="ext_stopwords">/ext_stopword.dic</entry>    
     </properties> 
 
+###更新：
+
+前面的FieldType配置其实存在问题，根据目前最新的IK版本[IK Analyzer 2012FF_hf1.zip](https://code.google.com/p/ik-analyzer/downloads/list)，**索引时使用最细粒度分词，查询时最大分词（智能分词）**实际上是不生效的。  
+
+据作者[linliangyi](http://linliangyi2007.iteye.com/)说，在2012FF_hf1这个版本中已经修复，经测试还是没用，详情请看[此贴](https://code.google.com/p/ik-analyzer/issues/detail?id=88)。
+
+####解决办法：重新实现IKAnalyzerSolrFactory  
+
+    package org.wltea.analyzer.lucene;
+    
+    import java.io.Reader;
+    import java.util.Map;
+    
+    import org.apache.lucene.analysis.Tokenizer;
+    import org.apache.lucene.analysis.util.TokenizerFactory;
+    import org.apache.lucene.util.AttributeSource.AttributeFactory;
+    
+    public class IKAnalyzerSolrFactory extends TokenizerFactory{
+    	
+    	private boolean useSmart;
+    	
+    	public boolean useSmart() {
+    		return useSmart;
+    	}
+    	
+    	public void setUseSmart(boolean useSmart) {
+    		this.useSmart = useSmart;
+    	}
+    	
+    	 public IKAnalyzerSolrFactory(Map<String,String> args) {
+    	     super(args);
+    	     assureMatchVersion();
+    	     this.setUseSmart(args.get("useSmart").toString().equals("true"));
+    	   }
+    
+    
+        @Override
+        public Tokenizer create(AttributeFactory factory, Reader input) {
+            Tokenizer _IKTokenizer = new IKTokenizer(input , this.useSmart);
+            return _IKTokenizer;
+        }
+    
+    }
+
+重新编译后更新文件，更新schema.xml文件：  
+
+    <fieldType name="text_ik" class="solr.TextField" >
+            <analyzer type="index">
+                <tokenizer class="org.wltea.analyzer.lucene.IKAnalyzerSolrFactory" useSmart="false"/>
+            </analyzer> 
+            <analyzer type="query">
+                <tokenizer class="org.wltea.analyzer.lucene.IKAnalyzerSolrFactory" useSmart="true"/>
+            </analyzer> 
+    </fieldType>

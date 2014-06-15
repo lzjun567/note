@@ -1,24 +1,25 @@
 全文检索分为两个过程：1.索引创建（Indexing）2. 搜索索引（Search），由此引入三个问题：  
 
 1. Index：索引里面存放什么？
-2. Indexing：如何创建索引
-3. Search：如何对索引进行搜索 
+2. Indexing：如何创建索引？
+3. Search：如何对索引进行搜索？
 
 ###索引里面存放什么？
 **反向索引**：从关键字到文档的映射是文档的关键字映射的反向过程，保存关键字到文档映射的这种信息的索引称为反向索引  
+
 ![inverted_index_thumb.jpg](../resource/image/inverted_index_thumb.jpg)
 
 * 左边保存的是字符串序列，成为字典  
 * 右边是字符串的文档（Document）链表，称为倒排表（Posting List）
 
-现在想搜索"lucene"，那么索引直接告诉我们，包含有"lucene"的文档有：2，3，10，35，92，而无需在整个文档库中挨个查找。如果是想搜既包含"lucene"又包含"solr"的文档，那么与之对应的两个倒排表去交集即可获得：3、10、35、92。  
+现在想搜索"lucene"，那么索引直接告诉我们，包含有"lucene"的文档有：2，3，10，35，92，而无需在整个文档库中逐个查找。如果是想搜既包含"lucene"又包含"solr"的文档，那么与之对应的两个倒排表去交集即可获得：3、10、35、92。  
 
 ###索引创建过程
 假设有如下两个原始文档，创建过程大概分为如下步骤：    
 文件一：Students should be allowed to go out with their friends, but not allowed to drink beer.  
 文件二：My friend Jerry went to school to see his students but found them drunk which is not allowed.  
 
-**一：把原始文档交给分词组件(Tokenizer)做如下处理**  
+**一：把原始文档交给分词组件(Tokenizer)**  
 分词组件(Tokenizer)会做以下几件事情(这个过程称为：Tokenize)  
 
 1. 将文档分成一个一个单独的单词
@@ -26,7 +27,7 @@
 3. 去除停词(stop word)
     * 所谓停词(Stop word)就是一种语言中没有具体含义，因而大多数情况下不会作为搜索的关键词，这样一来创建索引时能减少索引的大小。英语中停词(Stop word)如："the"、"a"、"this"，中文有："的，得"等。不同语种的分词组件(Tokenizer)，都有自己的停词(stop word)集合。经过分词(Tokenizer)后得到的结果称为词元(Token)。上例子中，便得到以下词元(Token)：
 
-        "Students"，"allowed"，"go"，"their"，"friends"，"allowed"，"drink"，"beer"，"My"，"friend"，"Jerry"，"went"，"school"，"see"，"his"，"students"，"found"，"them"，"drunk"，"allowed"
+            "Students"，"allowed"，"go"，"their"，"friends"，"allowed"，"drink"，"beer"，"My"，"friend"，"Jerry"，"went"，"school"，"see"，"his"，"students"，"found"，"them"，"drunk"，"allowed"
 
 **二：词元(Token)传给语言处理组件(Linguistic Processor)**  
 语言处理组件(linguistic processor)主要是对得到的词元(Token)做一些语言相关的处理。对于英语，语言处理组件(Linguistic Processor)一般做以下几点：
@@ -98,6 +99,7 @@
         their	    1
         them	    2 
 3. 合并相同的词(Term)成为文档倒排(Posting List)链表
+
 ![postlist](../resource/image/postinglist.jpg)
 
 * Document Frequency：文档频次，表示多少文档出现过此词(Term)
@@ -122,7 +124,7 @@
 
 我们把查询语句也看作是一片文档，对文档与文档之间的相关性（relevance）进行打分（scoring），分数高比较越相关，排名就越靠前。当然还可以人工影响打分，比如百度搜索，就不一定完全按照相关性来排名的。  
 
-如果评判文档之间的相关性？一个文档由多个（或者一个）词（Term）组成，比如："solr"， "toturial"，不同的词可能重要性不一样，比如solr就比toturial重要，如果一个文档出现了10次toturial，但只出现了一次solr，而另一文档solr出现了4次，toturial出现一次，那么后者很有可能就是我们想要的搜的结果。这就引申出权重（Term weight）的概念。  
+如何评判文档之间的相关性？一个文档由多个（或者一个）词（Term）组成，比如："solr"， "toturial"，不同的词可能重要性不一样，比如solr就比toturial重要，如果一个文档出现了10次toturial，但只出现了一次solr，而另一文档solr出现了4次，toturial出现一次，那么后者很有可能就是我们想要的搜的结果。这就引申出权重（Term weight）的概念。  
 
 **权重**表示该词在文档中的重要程度，越重要的词当然权重越高，因此在计算文档相关性时影响力就更大。通过词之间的权重得到文档相关性的过程叫做**空间向量模型算法(Vector Space Model)**  
 

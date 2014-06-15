@@ -1,4 +1,5 @@
-p173
+Solr配置文件介绍
+=======================
 Solr主目录结构通常是：  
 
     <solr-home-directory>/
@@ -41,7 +42,7 @@ Solr通过定义`<lib/>标签加载插件，支持正则表达式，比如：加
 * Indexed：Indexed字段可以进行搜索和排序，还可以在这种字段上运行Solr分析过程
 * Stored：Stored字段内容可以保存在索引中，不过绝大多数应用存储的是指向内容的指针而不是真正的文件内容。
 
-凡是schema.xml中定义的字段，在搜索的时候可以指定参数q："name:java"，表示搜索字段name中有"java"的内容。
+凡是schema.xml中定义的字段，在搜索的时候可以指定参数q，比如：指定q为"name:java"，表示搜索字段name中有"java"的内容。
 
 #####Schema文件主要包含三部分，字段（Field）、字段类型（FieldType）、唯一键（uniqueKey）  
 
@@ -74,3 +75,4 @@ text_general是一种通用的文本字段，用StandardTokenizer来做分词处
       </analyzer>
     </fieldType>
 
+p173

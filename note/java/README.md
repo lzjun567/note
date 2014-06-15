@@ -6,11 +6,13 @@
 ####Solr
 1. [Solr4.8入门](./solr_tutorial.md)
 2. [全文检索原理](./solr2.md)
-3. [Solr基本概念](./solr3.md)
+3. [Solr配置文件介绍](./solr3.md)
 4. [整合mmseg4j](./solr4.md)
 5. [整合IKAnalyzer](./solr5.md)
 6. [整合MySQL、Mongodb](./solr6.md)
 7. [CopyField](./solr7.md)
+8. [查询语法和查询解析](./solr8.md)
+9. [Query Elevation 组件](./solr9.md)
 
 
 
