@@ -55,9 +55,12 @@ MySQL
            <field name="content" type="text_cn" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true"/> 
         <!-- mysql -->
 
+6. 配置增量索引更新文件
+
+参考：[http://josh-persistence.iteye.com/blog/2017155](http://josh-persistence.iteye.com/blog/2017155)  
 Mongodb
 =======
-1. 安装mongo-connector
+1. 安装[mongo-connector](https://github.com/10gen-labs/mongo-connector/wiki)
     最好使用手动安装方式：  
 
         git clone https://github.com/10gen-labs/mongo-connector.git
@@ -99,17 +102,33 @@ Mongodb
 
 3. 启动Mongod：  
 
-    mongod --replSet myDevReplSet --smallfiles  
+        mongod --replSet myDevReplSet --smallfiles  
     初始化:rs.initiate()
 
 4. 启动mongo-connector:
     
-    E:\Users\liuzhijun\workspace\mongo-connector\mongo_connector\doc_managers>mongo-connector -m localhost:27017 -t http://localhost:8080/solr/collection1 -n unews.news -u _id -d ./solr_doc_manager.py
+        E:\Users\liuzhijun\workspace\mongo-connector\mongo_connector\doc_managers>mongo-connector -m localhost:27017 -t http://localhost:8983/solr/collection2 -n s_soccer.person -u id -d ./solr_doc_manager.py
     * -m：mongod服务
     * -t：solr服务
     * -n：mongodb命名空间，监听database.collection，多个命名空间逗号分隔
     * -u：uniquekey
     * -d：处理文档的manager文件
+
+    **注意**：mongodb通常使用`_id`作为uniquekey，而Solrmore使用`id`作为uniquekey，如果不做处理，索引文件时将会失败，有两种方式来处理这个问题：  
+    1. 指定参数`--unique-key=id`到mongo-connector，Mongo Connector 就可以翻译把`_id`转换到`id`。
+    2. 把schema.xml文件中的:
+            
+            <uniqueKey>id<uniqueKey>
+        替换成
+            
+            <uniqueKey>_id</uniqueKey>
+        同时还要定义一个`_id`的字段：
+            
+            <field name="_id" type="string" indexed="true" stored="true" />
+    3. 启动时如果报错：  
+            
+            2014-06-18 12:30:36,648 - ERROR - OplogThread: Last entry no longer in oplog cannot recover! Collection(Database(MongoClient('localhost', 27017), u'local'), u'oplog.rs')
+        清空E:\Users\liuzhijun\workspace\mongo-connector\mongo_connector\doc_managers\config.txt中的内容，需要删除索引目录下的文件重新启动
 
 5. 测试
 mongodb中的数据变化都会同步到solr中去。

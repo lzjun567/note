@@ -25,7 +25,7 @@
 1. 将文档分成一个一个单独的单词
 2. 去除标点符号
 3. 去除停词(stop word)
-    * 所谓停词(Stop word)就是一种语言中没有具体含义，因而大多数情况下不会作为搜索的关键词，这样一来创建索引时能减少索引的大小。英语中停词(Stop word)如："the"、"a"、"this"，中文有："的，得"等。不同语种的分词组件(Tokenizer)，都有自己的停词(stop word)集合。经过分词(Tokenizer)后得到的结果称为词元(Token)。上例子中，便得到以下词元(Token)：
+    * 所谓停词(Stop word)就是一种语言中没有具体含义，因而大多数情况下不会作为搜索的关键词，这样一来创建索引时能减少索引的大小。英语中停词(Stop word)如："the"、"a"、"this"，中文有："的，得"等。不同语种的分词组件(Tokenizer)，都有自己的停词(stop word)集合。经过分词(Tokenizer)后得到的结果称为词元(Token)。上例子中，便得到以下**词元(Token)**：
 
             "Students"，"allowed"，"go"，"their"，"friends"，"allowed"，"drink"，"beer"，"My"，"friend"，"Jerry"，"went"，"school"，"see"，"his"，"students"，"found"，"them"，"drunk"，"allowed"
 

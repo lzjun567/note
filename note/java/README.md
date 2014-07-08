@@ -10,9 +10,17 @@
 4. [整合mmseg4j](./solr4.md)
 5. [整合IKAnalyzer](./solr5.md)
 6. [整合MySQL、Mongodb](./solr6.md)
-7. [CopyField](./solr7.md)
+7. [Field](./solr7.md)
 8. [查询语法和查询解析](./solr8.md)
 9. [Query Elevation 组件](./solr9.md)
+10. [相关性](./solr10.md)
+11. [FunctionQuery](./solr11.md)
+12. [HTMLStripCharFilterFactory](./solr12.md)
+13. [同义词](./solr13.md)
+14. [solr.EdgeNGramFilterFactory](./solr14.md)
+15. [更新索引](./solr15.md)
+16. [停止词配置](./solr16.md)
+17. [solr优化](./solr17.md)
 
 
 
