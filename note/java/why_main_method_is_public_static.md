@@ -1,3 +1,5 @@
+为什么java的main方法是public static void
+==================
 Main方法是学习Java编程语言时知道的第一个方法，你是否曾经想过为什么main方法是public、static、void的。当然，很多人首先学的是C和C++，但是在Java中main方法与前者有些细微的不同，它不会返回任何值，**为什么main方式是public、static、void** ，这篇文章尝试去找到一些答案。  
 
 Main方法是Java程序的入口，记住，我们这里不会讨论Servlet、MIDlet和其他任何容器管理的java程序，在java核心编程中，JVM会查找类中的**public static void main(String[] args)**，如果找不到该方法就抛出错误**NoSuchMethodError:main** 程序终止。  

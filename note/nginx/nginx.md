@@ -1,4 +1,5 @@
-####配置
+Nginx配置
+========
 #####全局配置指令
 user ：worker_processes 执行的用户，group忽略时，和user是一样的  
 worker_processes：

@@ -1,3 +1,5 @@
+Django Signals
+===========================
 当某个事件发生的时候，signal(信号)允许senders(发送者)用来通知receivers(接收者)，通知receivers干嘛？你想要recivers干嘛就可以干嘛。这在多处代码对同一个事件感兴趣的时候就有用武之地了。 比如：Django提供了一个built-in signal，叫`django.core.signals.request_finished`，这个signal会在一个HTTP请求完成后发送。下面就用一个简单的实例说明：在每个请求完成后打印"request finished"    
 ####编写receiver
 reciver是一个普通的callable对象，简单来说就是一个可被调用的函数，但是需要注意的是它需要接收一个参数`sender`和一个关键字参数`**kwargs`

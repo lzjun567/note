@@ -1,3 +1,5 @@
+MySQL慢查询
+==========
 慢查询日志是由一些SQL语句构成的，当查询时间超过了`long_query_time`的值时会生成慢查询日志，long_query_time的最小值是1s，默认值是10s。  
 
 检查MySQL慢查询是否开启：  

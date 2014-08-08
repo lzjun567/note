@@ -1,5 +1,5 @@
-####构建一个简单的UI
-
+Android：构建一个简单的UI
+===========
 Android的GUI由View和ViewGroup对象构成，View指的就是那些Button，Textfield等等。ViewGroup就是指view容器。  
 
 Android可以直接通过XML配置文件来定义UI。  

@@ -1,5 +1,3 @@
-[原文](http://javarevisited.blogspot.com/2012/01/improve-performance-java-database.html)
-
 JDBC性能小贴士
 ================
 本文收集了一些用于提升JDBC性能的方法。Java应用或者JavaEE Web应用的性能是很重要的，尤其是数据库后端对应用的性能影响。不知你是否经历过Java、JavaEE web应用非常慢的案例没有（处理一个简单的请求都要花上好几秒的时间用于数据库访问，分页、排序等）。下面这些贴士也许能提升Java应用的性能。它们非常简单同时还可以应用于其它编程语言，如果是用数据库作为后端存储的话。  
@@ -27,3 +25,5 @@ JDBC性能小贴士
 这些Java数据库应用性能小提示看起来非常简单，很多高级Java程序员能熟练运用在生产级代码中，但我还看到很多Java程序员并没有在乎这些，直到他们发现Java应用变得很慢时。所以对于新手来说有必要记住它使用它。同时你还可以使用这些Java性能小提示作为代码审查机制的一个参考，在你写的Java应用是使用数据库作为后端存储的时候。  
 
 以上就是关于如何改善Java应用程序的性能的贴士，如果你有什么更好的提示不妨给我留言。  
+
+[原文](http://javarevisited.blogspot.com/2012/01/improve-performance-java-database.html)

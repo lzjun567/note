@@ -1,3 +1,5 @@
+Django SiteMap
+==================
 首先`django.contrib.sitemaps`添加到`INSTALLED_APPS`，sitemaps会利用模版加载器`django.template.loaders.app_directories.Loader`加载的模版。默认情况下，这个加载器已经存在django的global_settings.py文件中的。  
 
     TEMPLATE_LOADERS = (

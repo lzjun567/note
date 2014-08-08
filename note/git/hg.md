@@ -22,3 +22,5 @@ http://blog.csdn.net/robinblog/article/details/17967991
     hg commit --close-branch 
     hg update default
     hg merge 将要关闭的分支
+
+    如果某个文件不想同步，比如a.pyc 执行了add操作，此时可以使用revert 撤销
