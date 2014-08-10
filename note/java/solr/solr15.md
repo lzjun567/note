@@ -87,3 +87,4 @@ solr4.9版本终于对multi-value字段实现了remove的更新操作，[详情]
     "group_name" : {"remove":"76人"}    #用于多值字段
     }
 
+####新增索引

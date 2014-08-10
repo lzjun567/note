@@ -1,11 +1,11 @@
 Solr入门篇
 ===========
-如果你和我一样是Solr新手，那么就和我一起来入门吧！本教程以solr4.8作为测试环境，jdk版本需要1.7及以上版本。  
+Solr采用Lucene搜索库为核心，提供全文索引和搜索开源企业平台，提供REST的HTTP/XML和JSON的API，如果你是Solr新手，那么就和我一起来入门吧！本教程以solr4.8作为测试环境，jdk版本需要1.7及以上版本。  
 ####准备
-下载解压缩solr，在example目录有start.jar文件，启动：  
+本文假设你对Java有初中级以上水平，因此不再介绍Java相关环境的配置。[下载](http://mirrors.cnnic.cn/apache/lucene/solr/4.9.0/)解压缩solr，在example目录有start.jar文件，启动：  
     
     java -jar start.jar
-浏览器访问：[http://localhost:8983/solr/](http://localhost:8983/solr/)，你看到的就是solr的管理界面
+浏览器访问：[http://localhost:8983/solr/](http://localhost:8983/solr/)，此时你会看到solr的管理界面
 
 ####索引数据
 服务启动后，目前你看到的界面没有任何数据，你可以通过POSTing命令向Solr中添加（更新）文档，删除文档，在exampledocs目录包含一些示例文件，运行命令：
@@ -34,8 +34,8 @@ Solr入门篇
     </doc>
     </add>
 
-表示向索引中添加一个文档，文档就是用来搜索的数据源，现在就可以通过管理界面搜索关键字"solr"，具体步骤是：
-![solr](../resource/image/solr.png)
+表示向索引中添加一个文档，现在就可以通过管理界面搜索关键字"solr"，具体步骤是：
+![solr](http://github-note.qiniudn.com/solr.png)
 
 点击页面下的`Execute Query`按钮后右侧就会显示查询结果，这个结果就是刚才导入进去的solr.xml的json格式的展示结果。solr支持丰富的查询语法，比如：现在想搜索字段`name`里面的关键字"Search"就可以用语法`name:search`，当然如果你搜索`name:xxx`就没有返回结果了，因为文档中没有这样的内容。    
 

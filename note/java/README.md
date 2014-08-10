@@ -22,7 +22,10 @@
 16. [停止词配置](./solr/solr16.md)
 17. [solr优化](./solr/solr17.md)
 18. [自定义分词器](./solr/solr18.md)
-
+19. [SolrCloud](./solr/solr19.md)
+20. [Lucene的分析过程](./solr/solr20.md)
+21. [生产环境部署Solr](./solr/solr21.md)
+22. [solr admin 命令](./solr/solr22.md)
 
 
 ####Java
