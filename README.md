@@ -7,7 +7,7 @@
 * [Django](./note/python/readme.md)
 
 
-* [Java](./note/java/readme.md) 此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上 
+* [Java](./note/java/README.md) 此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上 
 
 * [solr](./note/java/readme.md)
 * [Vim](./note/vim/readme.md)
