@@ -24,3 +24,17 @@ http://blog.csdn.net/robinblog/article/details/17967991
     hg merge 将要关闭的分支
 
     如果某个文件不想同步，比如a.pyc 执行了add操作，此时可以使用revert 撤销
+
+    从版本库移除多个已经删除的文件
+        
+        ! File4.cs
+        ! File5.cs
+        ! File6.cs
+    运行 
+        方法一：hg addremove  #会把未同步的文件加入版本库
+        方法二：hg remove --after  #这个不会
+
+    撤销更改到上次提交的状态：  
+        hg revert --all
+
+

@@ -6,7 +6,7 @@
 ####Solr
 1. [Solr4.8入门](./solr/solr_tutorial.md)
 2. [全文检索原理](./solr/solr2.md)
-3. [Solr配置文件介绍](./solr/solr3.md)
+3. [Solr核心概念、配置文件](./solr/solr3.md)
 4. [整合mmseg4j](./solr/solr4.md)
 5. [整合IKAnalyzer](./solr/solr5.md)
 6. [整合MySQL、Mongodb](./solr/solr6.md)
@@ -26,7 +26,7 @@
 20. [Lucene的分析过程](./solr/solr20.md)
 21. [生产环境部署Solr](./solr/solr21.md)
 22. [solr admin 命令](./solr/solr22.md)
-
+23. [自定义过滤器](./solr/solr23.md)
 
 ####Java
 此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上  

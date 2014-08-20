@@ -1,78 +1,121 @@
-Solr(3)：配置文件介绍
+Solr核心概念、配置文件
 =======================
-Solr主目录结构通常是：  
+####Document
+Document是Solr索引（动词，indexing）和搜索的最基本单元，它类似于关系数据库表中的一条记录，可以包含一个或多个字段（Field），每个字段包含一个name和文本值。字段在被索引的同时可以存储在索引中，搜索时就能返回该字段的值，通常文档都应该包含一个能唯一表示该文档的id字段。例如：   
 
-    <solr-home-directory>/
-      solr.xml
-      conf/
-        solrconfig.xml
-        schema.xml
-      data/
+    <doc>
+        <field name="id">company123</field>
+        <field name="companycity">Atlanta</field>
+        <field name="companystate">Georgia</field>
+        <field name="companyname">Code Monkeys R Us, LLC</field>
+        <field name="companydescription">we write lots of code</field>
+        <field name="lastmodified">2013-06-01T15:26:37Z</field>
+    </doc>
+    
 
-####solrconfig.xml：
-首先打开solrconfig.xml文件看看，里面包括： 
 
-* 请求处理器(request handlers)，比如：  
-
-        <requestHandler name="/select" class="solr.SearchHandler">
-        <requestHandler name="/query" class="solr.SearchHandler">
-        <requestHandler name="/get" class="solr.RealTimeGetHandler">
-* 监听器(listeners)，用于监听特定的查询相关的事件，可以用来触发执行指定的代码。
-* 请求转发器(Request Dispatcher)：用来管理HTTP通信
-* 用于分布式相关的参数
-
-默认情况，索引存储在data目录下，你可以通过修改solrconfig.xml文件改变索引的存放位置：  
-
-    <dataDir>/var/data/solr/</dataDir>  
-Solr通过定义`<lib/>标签加载插件，支持正则表达式，比如：加入数据导入的插件：  
-
-    <lib dir="../../../dist/" regex="solr-dataimporthandler-\d.*\.jar"/>ke
-可以通过指定schemaFacotry以编程的方式修改schema.xml文件，默认不支持，除非指定：  
-
-    <schemaFactory class="ManagedIndexSchemaFactory">
-         <bool name="mutable">true</bool>
-         <str name="managedSchemaResourceName">managed-schema</str>
-    </schemaFactory>
-
-####Schema.xml
-在Solr中，文档(Document)是索引和搜索的基本单元，一个索引由一个或多个文档构成，而一个文档是由一个或者多个字段(Field)组成的。文档对应于数据库中表的一行，而字段对应的是表中的某一列。字段是包括了名称，类型以及如何处理内容的一种元数据。比如：   
-
-    <field name="name" type="text_general" indexed="true" stored="true"/>
-
-* Indexed：Indexed字段可以进行搜索和排序，还可以在这种字段上运行Solr分析过程
-* Stored：Stored字段内容可以保存在索引中，不过绝大多数应用存储的是指向内容的指针而不是真正的文件内容。
-
-凡是schema.xml中定义的字段，在搜索的时候可以指定参数q，比如：指定q为"name:java"，表示搜索字段name中有"java"的内容。
-
-#####Schema文件主要包含三部分，字段（Field）、字段类型（FieldType）、唯一键（uniqueKey）  
+####Schema
+Solr中的Schema类似于关系数据库中的表结构，它以schema.xml的文本形式存在在conf目录下，在添加文当到索引中时需要指定Schema，Schema文件主要包含三部分：**字段（Field）、字段类型（FieldType）、唯一键（uniqueKey）**    
 
 * 字段类型（FieldType）：用来定义添加到索引中的xml文件字段（Field）中的类型，如：int，String，date，
 * 字段（Field）：添加到索引文件中时的字段名称
 * 唯一键（uniqueKey）：uniqueKey是用来标识文档唯一性的一个字段（Feild），在更新和删除时用到  
+  
+例如：  
 
-text_general是一种通用的文本字段，用StandardTokenizer来做分词处理，对照上一篇讲过的全文检索原理可以看出，在索引(index)时使用StandardTokenizerFactory来分词，停词和小写替换用相应的filter来处理，在查询(query)的使用也有类似的操作。
+    <schema name="example" version="1.5">
+    	<field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    	<field name="title" type="text_general" indexed="true" stored="true" multiValued="true"/>
+    
+    	<uniqueKey>id</uniqueKey>
+    	<fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+    	<fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+    		  <analyzer type="index">
+    			<tokenizer class="solr.StandardTokenizerFactory"/>
+    			<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+    			<!-- in this example, we will only use synonyms at query time
+    			<filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+    			-->
+    			<filter class="solr.LowerCaseFilterFactory"/>
+    		  </analyzer>
+    		  <analyzer type="query">
+    			<tokenizer class="solr.StandardTokenizerFactory"/>
+    			<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+    			<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+    			<filter class="solr.LowerCaseFilterFactory"/>
+    		  </analyzer>
+    	</fieldType>
+    </schema>
+####Field
+在Solr中，字段(Field)是构成Document的基本单元。对应于数据库表中的某一列。字段是包括了名称，类型以及对字段对应的值如何处理的一种元数据。比如：   
 
-    <-- A general text field that has reasonable, generic
-         cross-language defaults: it tokenizes with StandardTokenizer,
-	 removes stop words from case-insensitive "stopwords.txt"
-	 (empty by default), and down cases.  At query time only, it
-	 also applies synonyms. -->
+    <field name="name" type="text_general" indexed="true" stored="true"/>
 
-    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
-        <!-- in this example, we will only use synonyms at query time
-        <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
-        -->
-        <filter class="solr.LowerCaseFilterFactory"/>
-      </analyzer>
-      <analyzer type="query">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-      </analyzer>
+* Indexed：Indexed=true时，表示字段会加被Sorl处理加入到索引中，只有被索引的字段才能被搜索到。
+* Stored：Stored=true，字段值会以保存一份原始内容在在索引中，可以被搜索组件组件返回，考虑到性能问题，对于长文本就不适合存储在索引中。
+
+####Field Type
+Solr中每个字段都有一个对应的字段类型，比如：float、long、double、date、text，Solr提供了丰富字段类型，同时，我们还可以自定义适合自己的数据类型，例如：  
+
+    <!-- Ik 分词器 --> 
+    <fieldType name="text_cn_stopword" class="solr.TextField">
+        <analyzer type="index"> 
+            <tokenizer class="org.wltea.analyzer.lucene.IKAnalyzerSolrFactory" useSmart="false"/>
+        </analyzer>
+        <analyzer type="query"> 
+            <tokenizer class="org.wltea.analyzer.lucene.IKAnalyzerSolrFactory" useSmart="true"/>
+        </analyzer>
     </fieldType>
+    <!-- Ik 分词器 --> 
 
-p173
+####Solrconfig：
+如果把Schema定义为Solr的Model的话，那么Solrconfig就是Solr的Configuration，它定义Solr如果处理索引、高亮、搜索等很多请求，同时还指定了缓存策略，用的比较多的元素包括：  
+
+* 指定索引数据路径
+
+        <!-- 
+        Used to specify an alternate directory to hold all index data
+        other than the default ./data under the Solr home.
+        If replication is in use, this should match the replication configuration. 
+        -->
+        <dataDir>${solr.data.dir:./solr/data}</dataDir>
+    
+* 缓存参数
+        
+        <filterCache
+          class="solr.FastLRUCache"
+          size="512"
+          initialSize="512"
+          autowarmCount="0"/>
+
+        <!-- queryResultCache caches results of searches - ordered lists of
+             document ids (DocList) based on a query, a sort, and the range
+             of documents requested.  -->
+         <queryResultCache
+          class="solr.LRUCache"
+          size="512"
+          initialSize="512"
+          autowarmCount="0"/>
+
+         <!-- documentCache caches Lucene Document objects (the stored fields for each document).
+           Since Lucene internal document ids are transient, this cache will not be autowarmed.  -->
+         <documentCache
+          class="solr.LRUCache"
+          size="512"
+          initialSize="512"
+          autowarmCount="0"/>
+* 请求处理器  
+    请求处理器用于接收HTTP请求，处理搜索后，返回响应结果的处理器。比如：query请求：  
+        
+        <!-- A request handler that returns indented JSON by default -->
+        <requestHandler name="/query" class="solr.SearchHandler">
+             <lst name="defaults">
+               <str name="echoParams">explicit</str>
+               <str name="wt">json</str>
+               <str name="indent">true</str>
+               <str name="df">text</str>
+             </lst>
+        </requestHandler>
+    每个请求处理器包括一系列可配置的搜索参数，例如：wt,indent,df等等。  
+
+* 搜索组件

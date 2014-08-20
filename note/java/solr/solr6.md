@@ -41,11 +41,13 @@ MySQL
                        </document> 
             </dataConfig>
 
-
-   * query 用于初次导入到索引的sql语句。
-   * deltaImportQuery 根据ID取得需要进入的索引的单条数据。
-   * deltaQuery 用于增量索引的sql语句，用于取得需要增量索引的ID。
-   * deletedPkQuery 用于取出需要从索引中删除文档的的ID
+    * query 用于初次导入到索引的sql语句。
+        * 考虑到数据表中的数据量非常大，比如千万级，不可能一次索引完，因此需要分批次完成，那么查询语句query要设置两个参数：${dataimporter.request.length} ${dataimporter.request.offset}  
+        * query="select id,title,content from blog_blog limit ${dataimporter.request.length} offset ${dataimporter.request.offset}"
+        * 请求：http://localhost:8983/solr/collection2/dataimport?command=full-import&commit=true&clean=false&offset=0&length=10000
+    * deltaImportQuery 根据ID取得需要进入的索引的单条数据。
+    * deltaQuery 用于增量索引的sql语句，用于取得需要增量索引的ID。
+    * deletedPkQuery 用于取出需要从索引中删除文档的的ID
 
 5. 为数据库表字段建立域（field），编辑E:\solr-4.8.0\example\solr\collection1\conf\schema.xml:  
     
@@ -57,7 +59,12 @@ MySQL
 
 6. 配置增量索引更新文件
 
-参考：[http://josh-persistence.iteye.com/blog/2017155](http://josh-persistence.iteye.com/blog/2017155)  
+参考：  
+
+* [http://josh-persistence.iteye.com/blog/2017155](http://josh-persistence.iteye.com/blog/2017155)    
+* [http://wiki.apache.org/solr/DataImportHandler#Using_delta-import_command](http://wiki.apache.org/solr/DataImportHandler#Using_delta-import_command)
+
+
 Mongodb
 =======
 1. 安装[mongo-connector](https://github.com/10gen-labs/mongo-connector/wiki)，最好使用手动安装方式：  
