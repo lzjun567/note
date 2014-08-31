@@ -1,9 +1,9 @@
-Solr(4)：整合mmseg4j
+Solr(4)：整合中文分词组件mmseg4j
 =====================
 默认Solr提供的分词组件对中文的支持是不友好的，比如：“VIM比作是编辑器之神”这个句子在索引的的时候，选择FieldType为"text_general"作为分词依据时，分词效果是：  
 ![index1](http://blog-resource.qiniudn.com/index1.png)
 
-它把每一个词都分开了，可以想象如果一篇文章这样分词的搜索的体验效果非常差。目前来说中文分词组件mmseg4j是比较好的选择，这篇文章讲述如何整合Solr与mmseg4j。mmeseg4j最新版本是1.9.1，[下载](https://code.google.com/p/mmseg4j/downloads/list)解压，提取其中的三个文件：mmseg4j-analysis-1.9.1.jar， mmseg4j-core-1.9.1.jar，mmseg4j-solr-1.9.1.jar。放到目录：E:\solr-4.8.0\example\solr-webapp\webapp\WEB-INF\lib，修改配置文件schema.xml，添加下面的两段代码：    
+它把每一个词都分开了，可以想象如果一篇文章这样分词的搜索的体验效果非常差。能够和Solr集成的中文分词组件有很多，比如：mmseg4j、IkAnalyzer、ICTCLAS等等。各有各的特点。这篇文章讲述如何整合Solr与mmseg4j。mmeseg4j最新版本是1.9.1，[下载](https://code.google.com/p/mmseg4j/downloads/list)解压，提取其中的三个文件：mmseg4j-analysis-1.9.1.jar， mmseg4j-core-1.9.1.jar，mmseg4j-solr-1.9.1.jar。放到目录：E:\solr-4.8.0\example\solr-webapp\webapp\WEB-INF\lib，修改配置文件schema.xml，添加下面的两段代码：    
 fieldType:
 
     <!-- mmseg4j-->

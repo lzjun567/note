@@ -27,6 +27,11 @@
 21. [生产环境部署Solr](./solr/solr21.md)
 22. [solr admin 命令](./solr/solr22.md)
 23. [自定义过滤器](./solr/solr23.md)
+24. [中文分词](./solr/solr24.md)
+25. [auto-suggestion](./solr/solr25.md)
+26. [spell](./solr/solr26.md)
+27. [近实时搜索](./solr/solr27.md)
+28. [indexreader/writer](./solr/solr28.md)
 
 ####Java
 此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上  
