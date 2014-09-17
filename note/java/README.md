@@ -32,6 +32,9 @@
 26. [spell](./solr/solr26.md)
 27. [近实时搜索](./solr/solr27.md)
 28. [indexreader/writer](./solr/solr28.md)
+29. [SolrCloud部署](./solr/solr29.md)
+30. [segment](./solr/solr30.md)
+31. [拼音](./solr/solr31.md)
 
 ####Java
 此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上  

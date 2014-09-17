@@ -38,9 +38,7 @@ IK Analyzer是一款结合了词典和文法分析算法的中文分词组件，
       <entry key="ext_stopwords">/ext_stopword.dic</entry>    
     </properties> 
 
-###更新：
-
-前面的FieldType配置其实存在问题，根据目前最新的IK版本[IK Analyzer 2012FF_hf1.zip](https://code.google.com/p/ik-analyzer/downloads/list)，**索引时使用最细粒度分词，查询时最大分词（智能分词）**实际上是不生效的。  
+事实上前面的FieldType配置其实存在问题，根据目前最新的IK版本[IK Analyzer 2012FF_hf1.zip](https://code.google.com/p/ik-analyzer/downloads/list)，**索引时使用最细粒度分词，查询时最大分词（智能分词）**实际上是不生效的。  
 
 据作者[linliangyi](http://linliangyi2007.iteye.com/)说，在2012FF_hf1这个版本中已经修复，经测试还是没用，详情请看[此贴](https://code.google.com/p/ik-analyzer/issues/detail?id=88)。
 
@@ -85,7 +83,7 @@ IK Analyzer是一款结合了词典和文法分析算法的中文分词组件，
     
     }
 
-重新编译后更新文件，更新schema.xml文件：  
+重新编译后更新jar文件，更新schema.xml文件：  
 
     <fieldType name="text_ik" class="solr.TextField" >
             <analyzer type="index">

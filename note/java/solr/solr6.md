@@ -1,5 +1,6 @@
-Solr(6)整合MySQL、Mongodb
+Solr(6)整合MySQL、MongoDB
 =======
+如果
 MySQL
 ----------------------
 1. 拷贝mysql-connector-java-5.1.25-bin.jar到E:\solr-4.8.0\example\solr-webapp\webapp\WEB-INF\lib目录下面
