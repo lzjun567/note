@@ -1,5 +1,5 @@
 ####什么是描述符（descriptor）
-描述符是一个Python对象，这个对象比较特殊，其特殊性在于属性的访问方式不在像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法包括`__get__()`、`__set()__`、`__delete()__`，定义了其中任意一个方法的对象都叫描述符。举个例子：  
+简单来讲，描述符是一个Python对象，这个对象比较特殊，特殊性在于其**属性**的访问方式不再像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法是`__get__`、`__set__`、`__delete__`。定义了其中任意一个方法的对象都叫描述符。举个例子：  
 **普通对象**  
 
     class Parent(object):
@@ -15,9 +15,9 @@
     
 普通的Python对象操作（get，set，delete）属性时都是在这个对象的`__dict__`基础之上操作的。比如上例中它在访问属性`name`的方式是通过如下顺序去查找，直到找到该属性位置，如果在父类中还没找到那么就抛异常了。  
 
-1. zhangsan.__dict__['name']
-2. type(zhangsan).__dict__['name'] 等价于 Person.__dict__['name']
-3. zhangsan.__class__.__base__.__dict__['name']  等价于  Parent.__dict__['name'] 
+1. `zhangsan.__dict__['name']`
+2. `type(zhangsan).__dict__['name'] 等价于 Person.__dict__['name']`
+3. `zhangsan.__class__.__base__.__dict__['name']  等价于  Parent.__dict__['name']`
 
 通过dict的方式修改属性name的值：  
     
@@ -63,7 +63,13 @@
     #>>__get__ <__main__.Person object at 0x108b35d50> <class '__main__.Person'>
     #>>lisi
 
-同样，删除属性的值也是通过调用`__delete__`方法完成的。  
+类似地，删除属性的值也是通过调用`__delete__`方法完成的。此时，你有没有发现描述符似曾相识，没错，用过Django就知道在定义model的时候，就用到了描述符。
+    
+    from django.db import models
+    
+    class Poll(models.Model):
+        question = models.CharField(max_length=200)
+        pub_date = models.DateTimeField('date published') 
 
 
 
