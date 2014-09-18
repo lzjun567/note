@@ -1,5 +1,73 @@
 ####什么是描述符（descriptor）
-只要是定义了`__get__()`、`__set()__`、`__delete()__`中任意一个方法的对象都叫描述符。那描述符协议是什么呢?这个协议指的就是这三个方法。  
+描述符是一个Python对象，这个对象比较特殊，其特殊性在于属性的访问方式不在像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法包括`__get__()`、`__set()__`、`__delete()__`，定义了其中任意一个方法的对象都叫描述符。举个例子：  
+**普通对象**  
+
+    class Parent(object):
+        name = 'p'
+    
+    class Person(Parent):
+        name = "zs"
+    
+    zhangsan = Person()
+    zhangsan.name = "zhangsan"
+    print zhangsan.name
+    #>> zhangsan
+    
+普通的Python对象操作（get，set，delete）属性时都是在这个对象的`__dict__`基础之上操作的。比如上例中它在访问属性`name`的方式是通过如下顺序去查找，直到找到该属性位置，如果在父类中还没找到那么就抛异常了。  
+
+1. zhangsan.__dict__['name']
+2. type(zhangsan).__dict__['name'] 等价于 Person.__dict__['name']
+3. zhangsan.__class__.__base__.__dict__['name']  等价于  Parent.__dict__['name'] 
+
+通过dict的方式修改属性name的值：  
+    
+    zhangsan.__dict__['name'] = 'lisi'
+    print zhangsan.name
+    #>> lisi
+
+
+**描述符**  
+
+    class DescriptorName(object):
+        def __init__(self, name):
+            self.name = name
+    
+        def __get__(self, instance, owner):
+            print '__get__', instance, owner
+            return self.name
+    
+        def __set__(self, instance, value):
+            print '__set__', instance, value
+            self.name = value
+    
+    
+    class Person(object):
+        name = DescriptorName('zhangsan')
+    
+    
+    zhangsan = Person()
+    print zhangsan.name
+    #>>__get__ <__main__.Person object at 0x10bc59d50> <class '__main__.Person'>
+    #>>zhangsan
+
+这里的DescriptorName就是一个描述符，访问Person对象的name属性时不再是通过`__dict__`属性来访问的，而是通过调用DescriptorName的`__get__`方法获取的，同样的道理，给name赋值的时候是通过调用`__set__`方法实现而不是通过`__dict__`属性。  
+
+    zhangsan.__dict__['name'] = 'lisi'
+    print zhangsan.name
+    #>>__get__ <__main__.Person object at 0x10bc59d50> <class '__main__.Person'>
+    #>>zhangsan
+    
+    zhangsan.name = "lisi"
+    print zhangsan.name
+    #>>__set__ <__main__.Person object at 0x108b35d50> lisi
+    #>>__get__ <__main__.Person object at 0x108b35d50> <class '__main__.Person'>
+    #>>lisi
+
+同样，删除属性的值也是通过调用`__delete__`方法完成的。  
+
+
+
+那描述符协议是什么呢?这个协议指的就是这三个方法。  
 
     descr.__get__(self, obj, type=None) --> value
     
@@ -262,3 +330,4 @@ http://www.ibm.com/developerworks/cn/opensource/os-pythondescriptors/
 https://blog.tonyseek.com/post/notes-about-python-descriptor/
 https://speakerdeck.com/mitsuhiko/basket-of-random-python-snippets
 http://docs.python.org/2/howto/descriptor.html
+http://utcc.utoronto.ca/~cks/space/blog/python/AttributeLookupOrder
