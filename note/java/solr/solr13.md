@@ -49,7 +49,8 @@ https://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters
         i-pod, i pod => ipod,
         sea biscuit, sea biscit => seabiscuit 
     也就是说在搜索或者索引时，遇到i-pod或i pod时都将用ipod代替。  
-2. 同义词用逗号分隔，它没有显示的映射关系，它的映射策略取决于expand参数。例如：  
+2. ingoreCase:为true时忽略大小写，处理时都转换为小写  
+3. 同义词用逗号分隔，它没有显示的映射关系，它的映射策略取决于expand参数。假如syn.txt是如下配置：  
     
         ipod, i-pod, i pod
         foozball , foosball
@@ -60,10 +61,12 @@ https://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters
         也就是说当你搜i-pod的时候，可以同时匹配ipod,i-pod,i pod，搜ipod的时候也是同理。
     * 如果expand==false， 那么它等效于：  
             ipod, i-pod, i pod => ipod
-        也即是说他只匹配改行的第一个词元。
-另外多个同义词映射实体会被合并，如：  
-    foo => foo bar
-    foo => baz
-    foo => foo bar, baz
+        也即是说他只匹配该行的第一个词元。
+    另外多个同义词映射实体会被合并，如：    
 
-3. ingoreCase:为true时忽略大小写，处理时都转换为小写  
+            foo => foo bar
+            foo => baz
+            #最终会合并成
+            foo => foo bar, baz
+
+除此之外，你还应该记住的是：
