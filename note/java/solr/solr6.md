@@ -107,8 +107,9 @@ Mongodb
 
 3. 启动Mongod：  
 
-        mongod --replSet myDevReplSet --smallfiles  
-    初始化:rs.initiate()
+        sudo mongod --replSet myDevReplSet --smallfiles  
+    打开mongo客户端，初始化:rs.initiate()，否则一直会出现：replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+
 
 4. 启动mongo-connector:
     
@@ -119,9 +120,9 @@ Mongodb
     * -u：uniquekey
     * -d：处理文档的manager文件
 
-    **注意**：mongodb通常使用`_id`作为uniquekey，而Solrmore使用`id`作为uniquekey，如果不做处理，索引文件时将会失败，有两种方式来处理这个问题：  
-    1. 指定参数`--unique-key=id`到mongo-connector，Mongo Connector 就可以翻译把`_id`转换到`id`。
-    2. 把schema.xml文件中的:
+    **注意**：mongodb通常使用`_id`作为uniquekey，而Solr使用`id`作为uniquekey，如果不做处理，索引文件时将会失败，有两种方式来处理这个问题：  
+    * 指定参数`--unique-key=id`或`-u id`到mongo-connector，mongo-connector 就可以把`_id`转换到`id`。  
+    * 把schema.xml文件中的:
             
             <uniqueKey>id<uniqueKey>
         替换成
