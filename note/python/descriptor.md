@@ -1,5 +1,5 @@
 ####什么是描述符（descriptor）
-简单来讲，描述符是一个Python对象，这个对象比较特殊，特殊性在于其**属性**的访问方式不再像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法是`__get__`、`__set__`、`__delete__`。定义了其中任意一个方法的对象都叫描述符。举个例子：  
+简单来讲，描述符就是一个Python对象，但这个对象比较特殊，特殊性在于其**属性**的访问方式不再像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法包括`__get__`、`__set__`、`__delete__`。定义了其中任意一个方法的对象都叫描述符。举个例子：  
 **普通对象**  
 
     class Parent(object):
@@ -13,13 +13,13 @@
     print zhangsan.name
     #>> zhangsan
     
-普通的Python对象操作（get，set，delete）属性时都是在这个对象的`__dict__`基础之上操作的。比如上例中它在访问属性`name`的方式是通过如下顺序去查找，直到找到该属性位置，如果在父类中还没找到那么就抛异常了。  
+普通的Python对象操作（get，set，delete）属性时都是在这个对象的`__dict__`基础之上进行的。比如上例中它在访问属性`name`的方式是通过如下顺序去查找，直到找到该属性位置，如果在父类中还没找到那么就抛异常了。  
 
-1. `zhangsan.__dict__['name']`
-2. `type(zhangsan).__dict__['name'] 等价于 Person.__dict__['name']`
-3. `zhangsan.__class__.__base__.__dict__['name']  等价于  Parent.__dict__['name']`
+1. 通过实例对象的`__dict__`属性访问：`zhangsan.__dict__['name']`
+2. 通过类型对象的`__dict__`属性访问：`type(zhangsan).__dict__['name'] 等价于 Person.__dict__['name']`
+3. 通过父类对象的`__dict__`属性访问：`zhangsan.__class__.__base__.__dict__['name']  等价于  Parent.__dict__['name']`
 
-通过dict的方式修改属性name的值：  
+类似地修改属性name的值也是通过`__dict__`的方式：  
     
     zhangsan.__dict__['name'] = 'lisi'
     print zhangsan.name
@@ -50,12 +50,13 @@
     #>>__get__ <__main__.Person object at 0x10bc59d50> <class '__main__.Person'>
     #>>zhangsan
 
-这里的DescriptorName就是一个描述符，访问Person对象的name属性时不再是通过`__dict__`属性来访问的，而是通过调用DescriptorName的`__get__`方法获取的，同样的道理，给name赋值的时候是通过调用`__set__`方法实现而不是通过`__dict__`属性。  
+这里的DescriptorName就是一个描述符，访问Person对象的name属性时不再是通过`__dict__`属性来访问，而是通过调用DescriptorName的`__get__`方法获取，同样的道理，给name赋值的时候是通过调用`__set__`方法实现而不是通过`__dict__`属性。  
 
     zhangsan.__dict__['name'] = 'lisi'
     print zhangsan.name
     #>>__get__ <__main__.Person object at 0x10bc59d50> <class '__main__.Person'>
     #>>zhangsan
+    #通过dict赋值给name但值并不是"lisi"，而是通过调用get方法获取的值
     
     zhangsan.name = "lisi"
     print zhangsan.name
@@ -63,7 +64,7 @@
     #>>__get__ <__main__.Person object at 0x108b35d50> <class '__main__.Person'>
     #>>lisi
 
-类似地，删除属性的值也是通过调用`__delete__`方法完成的。此时，你有没有发现描述符似曾相识，没错，用过Django就知道在定义model的时候，就用到了描述符。
+类似地，删除属性的值也是通过调用`__delete__`方法完成的。此时，你有没有发现描述符似曾相识，没错，用过Django就知道在定义model的时候，就用到了描述符。比如：  
     
     from django.db import models
     
@@ -71,114 +72,7 @@
         question = models.CharField(max_length=200)
         pub_date = models.DateTimeField('date published') 
 
-
-
-那描述符协议是什么呢?这个协议指的就是这三个方法。  
-
-    descr.__get__(self, obj, type=None) --> value
-    
-    descr.__set__(self, obj, value) --> None
-    
-    descr.__delete__(self, obj) --> None
-
-那么描述符有什么牛逼的？ 通常来说Python对象的属性控制默认是这样的：从对象的字典(`__dict__`)中获取（get），设置（set）,删除（delete），比如：对于实例`a`，`a.x`的查找顺序为`a.__dict__['x']`,然后是`type(a).__dict__['x']`.如果还是没找到就往上级(父类)中查找。描述符就好比是破坏小子，他会改变这种默认的控制行为。究竟是怎么改变的呢？  
-
-想必会你已经猜到了，如果属性`x`是一个描述符，那么访问`a.x`时不再从字典`__dict__`中读取，而是调用描述符的`__get__()`方法，对于设置和删除也是同样的原理。  
-
-既然知道他有化腐朽为神奇的这种特点，聪明的你一定能想到的能用在什么场景下，我用邮件地址的验证这个简单的例子来演示他是如何运作的。  
-
-    class Person(object):
-        def __init__(self, email):
-            self.email = email
-
-现在如果有不安分的小子总想着搞破坏，传递一个无效的email过来，如果你不使用描述符你是没辙的，你别告诉我说你可以在init方法里面做验证嘛？老兄，python是一门动态语言，也没有像我大java一样拥有私有变量。用一个例子来粉碎你的猜想。  
-
-    import re
-    class Person(object):
-        def __init__(self, email):
-            m = re.match('\w+@\w+\.\w+', email)
-            if not m:
-                raise Exception('email not valid')
-            self.email = email
-
-上面这个初始化方法看似完美有缺，如果客户端能安分的按规则行房，错了，是行事。就不会出什么大问题。传入的无效值也能优雅的以异常的形式警告。  
-
-    >>> p = test.Person('lzjun567@gmail.com')
-    >>> p.email
-    'lzjun567@gmail.com'
-    >>> p2 = test.Person('dfsdfsdf')
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "test.py", line 38, in __init__
-        raise Exception('email not valid')
-    Exception: email not valid
-    >>> 
-
-但是，捣蛋小子来了，他要这样给p对象赋值email：  
-    
-    >>> p.email = 'sdfsdfsdf'
-    >>> p.email
-    'sdfsdfsdf'
-    >>> p.__dict__
-    {'email': 'sdfsdfsdf'}
-    >>> 
-
-这时的`p.email`默认从`__dict__`读取值。你看给`p`传个火星来的email地址也能接受。这下只有上帝能救你于水火之中，其实上帝就是那个描述符啦。那怎么把email变成一个描述符啊?当然方式有好几种：  
-
-#####基于类创建描述符
-
-    import re
-
-    class Email(object):
-    
-        def __init__(self):
-            self._name = ''
-    
-        def __get__(self, obj, type=None):
-            return self._name
-    
-        def __set__(self, obj, value):
-            m = re.match('\w+@\w+\.\w+', value)
-            if not m:
-                raise Exception('email not valid')
-            self._name = value
-    
-        def __delete__(self, obj):
-            del self._name
-        
-    class Person(object):
-        email = Email()
-
-这下你给他赋值一个火星文看看:  
-
-    >>> p = Person()
-    >>> p.email = 'ではないああを行う'
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "test.py", line 46, in __set__
-        raise Exception('email not valid')
-    Exception: email not valid
-    >>> 
-
-    >>> p.email = 'lzjun@gmail.com'
-    >>> p.email
-    'lzjun@gmail.com'
-    
-现在总算是能抵挡住大和民族的`呀咩嗲`了,再来看看`__dict__`中有哪些东西：  
-
-    >>> Person.__dict__
-    dict_proxy({'__dict__': <attribute '__dict__' of 'Person' objects>, '__module__': 'test', '__weakref__': <attribute '__weakref__' of 'Person' objects>, 'email': <test.Email object at 0x8842fcc>, '__doc__': None})
-    >>> p.__dict__
-    {}
-
-嗯，纵使email赫然在列dict中，拥有了描述符后，解释器对其视而不见，转而去调用描述符中对应的方法。即使是下面的操作方式也是徒劳而已：
-
-    >>> p.__dict__['email'] = 'xxxxxx'
-    >>> p.email
-    'lzjun@gmail.com'
-    >>> 
-
-#####使用property()函数创建描述符
+上面的例子是基于类的方式来创建描述符，你还可以通过property()函数来创建描述符，例如：  
 
     class Person(object):
     
@@ -196,7 +90,8 @@
     
         def del_email(self):
             del self._email
-    
+
+        #使用property()函数创建描述符
         email = property(get_email, set_email, del_email, 'this is email property')
             
 
@@ -220,7 +115,7 @@ property()函数返回的是一个描述符对象，它可接收四个参数：`
 * fdel：属性删除方法
 * doc： docstring
 
-采用property实现描述符与使用类实现描述符的作用是一样的，只是实现方式不一样。property的一种纯python的实现方式如下：  
+采用property实现描述符与使用类实现描述符的作用是一样的，只是实现方式不一样。python里面的property是使用C语言实现的，不过你可以使用纯python的方式来实现property函数，如下：  
 
     class Property(object):
         "Emulate PyProperty_Type() in Objects/descrobject.c"
@@ -311,14 +206,15 @@ property()函数返回的是一个描述符对象，它可接收四个参数：`
     <unbound method Foo.my_function>
     >>> Foo.__dict__['my_function']
     <function my_function at 0x02217830>
-    >>> Foo.__dict__['my_function'].__get__(None, Foo)
+    >>> Foo.__dict__['my_function'].__get__(None, Foo)  #Foo类对象my_function函数实现了__get__方法
     <unbound method Foo.my_function>
+
     >>> Foo().my_function
     <bound method Foo.my_function of <__main__.Foo object at 0x0221FFD0>>
-    >>> Foo.__dict__['my_function'].__get__(Foo(), Foo)
+    >>> Foo.__dict__['my_function'].__get__(Foo(), Foo)   #Foo的实例对象实现了__get__方法
     <bound method Foo.my_function of <__main__.Foo object at 0x02226350>>
 
-my_function函数实现了`__get__`方法。描述符也被大量用在各种框架中，比如：django的[paginator.py](https://github.com/django/django/blob/master/django/core/paginator.py)模块，django的model其实也使用了描述符。  
+`my_function`函数实现了`__get__`方法。描述符也被大量用在各种框架中，比如：django的[paginator.py](https://github.com/django/django/blob/master/django/core/paginator.py)模块，django的model其实也使用了描述符。  
 
 
 

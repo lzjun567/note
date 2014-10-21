@@ -1,5 +1,15 @@
 solr(7)：Field
 ================
+域（Field）是构成文档（Document）的最小单位，类似于关系数据库表中的字段，Field有很多属性，这些属性决定该域如何被索引等其它功能。在schema中声明一个Field看起来是这样的：  
+    
+    <field name="id" type="text" indexed="true" stored="true" multiValued="true"/>
+
+* name：代表域的名称，这在schema范围内是唯一的，一个schema中不能有多个相同name的域。  
+* type：域的类型，类型指定了域以怎样的方式索引以及搜索。solr定义了5种基本类型：float,long,double,date,text，用户可以自定义域类型。 
+* indexed：true表示该域会加入到索引，加入索引后才能被搜索和排序。    
+* stored：true表示该域会完成的保存在磁盘中，搜索结果中可以查看得到
+* multiValued：true表示多值域，它可以有多个值，比如一篇文章可以有多个标签，那么标签域就可以设置成多值域。
+
 ####copyfield
 可以实现一个字段的多次使用，比如：
 
@@ -14,7 +24,7 @@ solr(7)：Field
 现在就可以通过指定tc来搜索包括title、content在内的关键字了。
 
 ####multiValued
-当某个文档内容一个字段多个值，比如：  
+当某个文档内容一个字段多个值，比如一条微博可以有多个链接地址：    
 
     <add>  
       <doc>  
@@ -34,19 +44,18 @@ solr(7)：Field
            stored="true"  
            multiValued="true"/> 
 
-这样搜索`link:" http://manning.com/"`时，Solr会在
+这样搜索`link:" http://manning.com/"`时，Solr会在link域中查找所有的值。  
 
 ####dynamicField
-动态字段（Dynamic fields）允许 solr 索引没有在 schema 中明确定义的字段。在忘记定义一些字段时很有用。动态字段和常规字段类似，除了它名字中包含一个通配符外，在索引文档时，一个字段如果在常规字段中没有匹配时，将到动态字段中匹配。  
-比如schema中定义了一个叫*_i的动态动态字段，如果要文档中有一个叫 cost_i 的字段，但是 schema 中不存在 cost_i 的字段，这样 cost_i  将被索引到 *_i 字段中。
+动态字段（Dynamic fields）允许 solr 索引没有在 schema 中明确定义的字段，假设产品已经上线，现在新的需求来了，需要一个新的字段，但是schema中事先是不可能知道这个字段叫什么的，此时动态字段就很有用了。动态字段和常规字段类似，除了它名字中包含一个通配符外，在索引文档时，一个字段如果在常规字段中没有匹配时，将到动态字段中匹配。  
+比如schema中定义了一个叫`*_i`的动态字段，如果要文档中有一个叫 `cost_i` 的字段，但是 schema 中不存在 `cost_i` 的字段，这样 `cost_i`  将被自动索引到 `*_i` 字段中。
 
     <dynamicField name="*_i"
     type="sint"
     indexed="true"
     stored="true"/>
-建议在 schema.xml 定义一些基本的动态字段，以备扩展之用。
+搜索的时候，依然可以指定`cost_i:xxx`去搜索。建议在 schema.xml 定义一些基本的动态字段，以备扩展之用。
 
-#####################
 ###影响Luncene文档得分因素包括：  
 1. tf（term Frequency）次元频率，表示改词在某个文档中出现的次数，当然是tf越大，分值就越大。
 2. idf（inversed document Frequency）反转文档频率，计算公式是：  
