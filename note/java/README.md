@@ -35,6 +35,8 @@
 29. [SolrCloud部署](./solr/solr29.md)
 30. [segment](./solr/solr30.md)
 31. [拼音](./solr/solr31.md)
+32. [Transaction Logs、Soft Commit 和 Commit](./solr/solr32.md)
+33. [SolrJ](./solr/solr33.md)
 
 ####Java
 此系列文章绝大部分发布在[importnew.com](http://www.importnew.com)网站上  
