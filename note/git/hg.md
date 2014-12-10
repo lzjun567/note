@@ -38,3 +38,8 @@ http://blog.csdn.net/robinblog/article/details/17967991
         hg revert --all
 
 
+切换分支时，出现错误：  
+>>  abort: outstanding uncommitted merges
+
+解决办法：  
+    hg update --clean -r tip
