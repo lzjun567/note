@@ -1,6 +1,5 @@
 Solr(6)整合MySQL、MongoDB
 =======
-如果
 MySQL
 ----------------------
 1. 拷贝mysql-connector-java-5.1.25-bin.jar到E:\solr-4.8.0\example\solr-webapp\webapp\WEB-INF\lib目录下面
@@ -74,7 +73,7 @@ Mongodb
         cd mongo-connector
         #安装前修改mongo_connector/constants.py的变量：设置DEFAULT_COMMIT_INTERVAL = 0
         python setup.py install
-    默认是不会自动提交了，这里设置成自动提交，否则mongodb数据库更新，索引这边没法同时更新，或者在命令行中可以指定是否自动提交，不过我现在还没发现。
+    默认是不会自动提交了，这里设置成自动提交，否则mongodb数据库更新，索引这边没法同时更新，或者在命令行中可以指定是否自动提交，不过我现在还没发现。update：好像有时候不设置也可以自动提交，有时不可以，但是现在还查出具体是什么原因。  
 
 2. 配置schema.xml，把mongodb中需要加上索引的字段配置到schema.xml文件中：  
 
@@ -108,7 +107,7 @@ Mongodb
 3. 启动Mongod：  
 
         sudo mongod --replSet myDevReplSet --smallfiles  
-    打开mongo客户端，初始化:rs.initiate()，否则一直会出现：replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+    打开mongo客户端，初始化:rs.initiate()，否则mongod一直会出现：replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
 
 
 4. 启动mongo-connector:
