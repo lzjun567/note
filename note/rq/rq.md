@@ -132,14 +132,48 @@ RQ0.4.0中的新特性支持多个任务的链式执行，因为一个任务有�
     q = Queue(‘low’, async=False)
     report_job = q.enqueue(generate_report)
     q.enqueue(send_report, depends_on=report_job)
-它能把一个很大的任务切分成更小的任务来处理，一个任务依赖与另外一个任务其实就是只有等到它所依赖的任务处理完成后才进入队列中去。如果所依赖的任务处理失败了，那么该任务也不会被处理了。  
+它能把一个很大的任务切分成多个更小的任务来处理，一个任务依赖于另外一个任务其实就是只有等到它所依赖的任务处理完成后才进入队列中去，如果所依赖的任务处理失败了，那么该任务也不会被处理了。  
 
+    # rqtest_utils.py
+    import requests
+    
+    def count_words_at_url(url):
+        resp = requests.get(url)
+        raise ValueError(“for test”) # 模拟异常发生
+        return len(resp.text.split())
     
     
+    def count_all_words(*args):
+        return sum(args)
 
+    #rqtest.py
+    from rq import Queue
+    from redis import Redis
+    
+    from rqtest3_utils import count_words_at_url
+    from rqtest3_utils import count_all_words
+    
+    
+    q = Queue(‘low’, connection=Redis())
+    job0 = q.enqueue(count_words_at_url, “http://foofish.net”)
+    job2 = q.enqueue(count_all_words, depends_on=job0)
+    
+执行rqtest.py时，从worker进程中看到结果：  
 
-
-
+    20:32:42 low: rqtest3_utils.count_words_at_url('http://foofish.net') (3acfc6f5-3845-4241-bc36-c58abb79604a)
+    20:32:42 Starting new HTTP connection (1): foofish.net
+    20:32:43 ValueError: for test
+    Traceback (most recent call last):
+      File "/Library/Python/2.7/site-packages/rq/worker.py", line 479, in perform_job
+        rv = job.perform()
+      File "/Library/Python/2.7/site-packages/rq/job.py", line 466, in perform
+        self._result = self.func(*self.args, **self.kwargs)
+      File "/Users/lzjun/Workspace/my/toolkit/rqtest3_utils.py", line 11, in count_words_at_url
+        raise ValueError("for test")
+    ValueError: for test
+    
+    20:32:43 Moving job to failed queue.
+job2并没有继续处理下去了，如果job2没有依赖job0的话，那么即使Job0执行失败了，Job2也会继续执行。  
 
 参考：    
 [http://python-rq.org/docs/](http://python-rq.org/docs/)  
