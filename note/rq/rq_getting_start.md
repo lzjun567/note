@@ -1,6 +1,9 @@
+RQ简介
+==============
 RQ(Redis Queue)是基于Redis的消息队列服务框架，任务进入队列后后台进程处理之，它能轻易集成到系统中，不过仅支持Python语言。RQ需要Redis>=2.6.0  
 ###安装
 RQ的安装方法非常简单，直接命令：  
+
     pip install rq
 或者如果你想尝新的话，从github安装开发版：  
     
@@ -16,7 +19,6 @@ RQ的安装方法非常简单，直接命令：
         return ‘ok’
 
 然后创建一个RQ队列，把任务放入队列
->>> result = q.enqueue(
 
     >>> from my_module import send_mail
     >>> from redis import Redis
@@ -35,6 +37,6 @@ RQ的安装方法非常简单，直接命令：
     02:25:06 default: my_module.send_mail(‘hello@qq.com’) (77778f9c-2947-4551-aa58-76a77c2c0d8e)
     02:25:07 Job OK, result = ok
     02:25:07 Result is kept for 500 seconds.
-`default`是创建队列的时候默认的名字，`result＝ok`是任务的返回结果。看了吧，RQ就这么简单。  
+`default`是创建队列的时候默认的名字，`result＝ok`是任务的返回结果。你看，使用RQ就这么简单。  
 
 
