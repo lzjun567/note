@@ -215,7 +215,7 @@ property()函数返回的是一个描述符对象，它可接收四个参数：`
     <bound method Foo.my_function of <__main__.Foo object at 0x02226350>>
 
 `my_function`函数实现了`__get__`方法。描述符也被大量用在各种框架中，比如：django的[paginator.py](https://github.com/django/django/blob/master/django/core/paginator.py)模块，django的model其实也使用了描述符。  
-python 函数默认是一个描述符.调用 my_instance.my_method会重载为Myclass.__dict__['my_method'].__get__(myinstance, MyClass).  
+python 函数默认是一个描述符.调用 my_instance.my_method会重载为`Myclass.__dict__['my_method'].__get__(myinstance, MyClass)`  
 
 参考：  
 http://docs.python.org/2/howto/descriptor.html#properties  

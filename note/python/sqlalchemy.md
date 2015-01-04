@@ -1,15 +1,13 @@
-SQLAlchemy 学习笔记
+[SQLAlchemy](http://www.sqlalchemy.org/) 学习笔记
 =====================
-SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准实现，两个主要的组件： **SQLAlchemy ORM** 和 **SQLAlchemy Core**  。  
+SQLAlchemy是Python界的ORM（Object Relational Mapper）框架，它两个主要的组件： **SQLAlchemy ORM** 和 **SQLAlchemy Core**  。  
 
 ![架构图](http://docs.sqlalchemy.org/en/rel_0_8/_images/sqla_arch_small.png)
 
-#####安装  
+####安装  
     
     pip install SQLAlchemy
-
-检查安装是否成功:  
-
+    #检查安装是否成功:  
     >>> import sqlalchemy
     >>> sqlalchemy.__version__
     0.8.0
@@ -17,12 +15,19 @@ SQLAlchemy是Python语言事实上的ORM（Object Relational Mapper）标准实�
 
     from sqlalchemy import create_engine
     DB_CONNECT_STRING = 'mysql+mysqldb://root:@localhost/test2?charset=utf8'
-    engine reate_engine(DB_CONNECT_STRING,echo=False)
+    engine = create_engine(DB_CONNECT_STRING,echo=True)
 create_engine方法返回一个Engine实例，Engine实例只有直到触发数据库事件时才真正去连接数据库，如执行：
 
     engine.execute("select 1").scalar()
 
-执行上面的语句是，sqlalchemy就会从数据库连接池中获取一个连接用于执行语句。  
+执行上面的语句是，sqlalchemy就会从数据库连接池中获取一个连接用于执行语句。echo=True是回显命令，sqlalchemy与数据库通信的命令都将打印出来，例如：  
+
+    2014-12-28 01:00:29,078 INFO sqlalchemy.engine.base.Engine SHOW VARIABLES LIKE ‘sql_mode’
+    2014-12-28 01:00:29,079 INFO sqlalchemy.engine.base.Engine ()
+    2014-12-28 01:00:29,080 INFO sqlalchemy.engine.base.Engine SELECT DATABASE()
+    2014-12-28 01:00:29,081 INFO sqlalchemy.engine.base.Engine ()
+    2014-12-28 01:00:29,083 INFO sqlalchemy.engine.base.Engine show collation where `Charset` = ‘utf8’ and `Collation` = ‘utf8_bin’
+    2014-12-28 01:00:29,083 INFO sqlalchemy.engine.base.Engine ()
 
 ####声明一个映射（declare a Mapping)
 
@@ -50,80 +55,127 @@ create_engine方法返回一个Engine实例，Engine实例只有直到触发数�
         def __repr(self):
             return "<User('%s','%s','%s')>"%(self.name,self.fullname,self.password)
 
-    Base.metadataa.create_all(engine)  
+    Base.metadata.create_all(engine)  
 
-sqlalchemy 就是把Base子类转变为数据库表，定义好User类后，会生成`Table`和`mapper()`，分别通过User.__table__  和User.__mapper__返回这两个对象，对于主键，象oracle没有自增长的主键时，要使用：  
+sqlalchemy 就是把Base子类转变为数据库表，定义好User类后，会生成`Table`和`mapper()`，分别通过`User.__table__` 和`User.__mapper__`返回这两个对象，对于主键，象oracle没有自增长的主键时，要使用：  
 
     from sqlalchemy import Sequence
     Column(Integer,Sequence('user_idseq'),prmary_key=True)
+`Base.metadata`返回`sqlalchemy.schema.MetaData`对象，它是所有Table对象的集合，调用`create_all()`该对象会触发`CREATE TABLE`语句，如果数据库还不存在这些表的话。
+
 
 ####创建Session
 
-Session是真正与数据库通信的handler，  
+Session是真正与数据库通信的handler，你还可以把他理解一个容器，add就是往容器中添加对象  
 
     from sqlalchemy.orm import sessionmaker
     Session = sessionmaker(bind=engine)
-创建完session就可以添加数据了  
 
+    #创建完session就可以添加数据了  
     ed_user = User('ed','Ed jone','edpasswd')
     session.add(ed_user)
-    session.commit()
 
-也可以使用session.add_all()添加多个对象 
+    #也可以使用session.add_all()添加多个对象 
+    #session.add_all([user1,user2,user3])
 
-    session.add_all([user1,user2,user3])
+    print ed_user in session  # True
+    session.rollback()
+    print ed_user in session # False
 
-如果没有提交事务，如果是在add方后有查询，那么回flush一下，把数据刷一遍，add最终会把数据保存到数据库。
+执行完add方法后，`ed_user`对象处于pending状态，不会触发INSERT语句，当然ed_uesr.id也为None，如果在add方后有查询(session.query)，那么会flush一下，把数据刷一遍，把所有的pending信息先flush再执行query。  
 
-一样有session.rollback()
+####对象状态
+对象实例有四种状态，分别是：  
+
+1. Transient（瞬时的）：这个状态的对象还不在session中，也不会保存到数据库中，主键为None（不是绝对的，如果Persistent对象rollback后虽然主键id有值，但还是Transient状态的）。  
+2. Pending（挂起的）：调用session.add()后，Transient对象就会变成Pending，这个时候它还是不会保存到数据库中，只有等到触发了flush动作才会存在数据库，比如query操作就可以出发flush。同样这个时候的实例的主键一样为None  
+3. Persistent（持久的）：session中，数据库中都有对应的一条记录存在，主键有值了。
+4. Detached（游离的）：数据库中有记录，但是session中不存在，对这个状态的对象进行操作时，不会触发任何SQL语句。
+    
+
 
 ####查询
-Query对象通过Session.query获取，query接收类或属性参数  
+Query对象通过Session.query获取，query接收类或属性参数，以及多个类  
 
     for instance in session.query(User).order_by(User.id)
         print instance.name
 
     for name,fullname in session.query(User.name,User.fullname):
         print name,fullname
+
+    # TODO
+
+filter_by接收的参数形式是关键字参数，而filter接收的参数是更加灵活的SQL表达式结构：  
+
+    # sqlalchemy源码对filter_by的定义
+    def filter_by(self, **kwargs):
+    # 举例：
+    for user in session.query(User).filter_by(name=’ed’).all():
+        print user
+
+    for user in session.query(User).filter(User.name==”ed”).all():
+        print user
 ####常用过滤操作：  
-- equals
-    query.filter(User.name == 'ed')
-- not equal
-    query.filter(User.name !='ed')
-- LIKE
-    query.filter(User.name.like('%d%')
-- IN:
-    query.filter(User.name.in(['a','b','c'])
-- NOT IN:
-    query.filter(User.name.in_(['ed','x'])
-- IS NULL:
-    filter(User.name==None)
-- IS NOT NULL:
-    filter(User.name!=None)
-- AND
-    from sqlalchemy import and_
-    filter(and_(User.name == 'ed',User.fullname=='xxx'))    
-或者多次调用filter或filter_by
-    filter(User.name =='ed').filter(User.fullname=='xx')
-    等同于 func.add_()
-- OR
-- match
 
+* equals
 
-Django中ORM的filter方法里面只有一个等号，比如：  
+        query.filter(User.name == 'ed')
+* not equal
+
+        query.filter(User.name !='ed')
+* LIKE
+
+        query.filter(User.name.like('%d%')
+* IN:
+
+        query.filter(User.name.in_(['a','b','c'])
+* NOT IN:
+
+        query.filter(~User.name.in_(['ed','x'])
+* IS NULL:
+
+        filter(User.name==None)
+* IS NOT NULL:
+
+        filter(User.name!=None)
+* AND
+
+        from sqlalchemy import and_
+        filter(and_(User.name == 'ed',User.fullname=='xxx'))    
+    或者多次调用filter或filter_by
+
+        filter(User.name =='ed').filter(User.fullname=='xx')
+    还可以是：  
+        
+        query.filter(User.name == ‘ed’, User.fullname == ‘Ed Jones’)
+* OR
+
+        from sqlalchemy import or_
+        query.filter(or_(User.name == ‘ed’, User.name == ‘wendy’))
+
+对比一下Django：Django中ORM的filter方法里面只有一个等号，比如：  
 
     Entry.objects.all().filter(pub_date__year=2006)
+#####查询返回结果
 
-all()返回列表
-query = session.query(User).filter(xx)
-query.all()
-query.first()
-query.one()有且只有一个元素时才正确返回。
+* query.all()，all()返回列表  
+* query.first()：返回第一个元素
+* query.one()有且只有一个元素时才正确返回。
+
+此外，filter函数还可以接收text对象，text是SQL查询语句的字面对象，比如：  
+    
+    for user in session.query(User).filter(text(“id<224”)).order_by(text(“id”)).all():
+        print user.name
+####count
+有两种count，第一种是纯粹是执行SQL语句后返回有多少行，对应的函数count()，第二个是func.count()，适用在分组统计，比如按性别分组时，男的有多少，女的多少：  
+
+    session.query(User).filter(User.name==’ed’).count()
+    session.query(func.count(), User.name).group_by(User.name).all( )
 
 ####Relattionship
 SQLAlchemy中的映射关系有四种,分别是**一对多**,**多对一**,**一对一**,**多对多**  
 #####一对多(one to many）
-一对多与多对一的区别在于其关联(relationship)的属性在多的一方还是一的一方,因为外键(ForeignKey)始终定义在多的一方.如果relationship和ForeignKey都定义在多的一方,那就是多对一,如果relationship定义在一的一方那就是一对多.  
+因为外键(ForeignKey)始终定义在多的一方.如果relationship定义在多的一方,那就是多对一,一对多与多对一的区别在于其关联(relationship)的属性在多的一方还是一的一方，如果relationship定义在一的一方那就是一对多.  
 这里的例子中,一指的是Parent,一个parent有多个child.  
 
     class Parent(Base):
@@ -149,7 +201,7 @@ SQLAlchemy中的映射关系有四种,分别是**一对多**,**多对一**,**一
         __tablename__ = 'child'
         id = Column(Integer, primary_key=True)
 
-为了建立双向关系,可以在relationship()中设置backref,Child对象就有parents属性.设置 `cascade= 'all'`，可以级联删除  
+为了建立双向关系,可以在relationship()中设置backref（详情[参考](http://docs.sqlalchemy.org/en/latest/orm/backref.html#relationships-backref)）,Child对象就有parents属性.设置 `cascade= 'all'`，可以级联删除  
 
     class Parent(Base):
         __tablename__ = 'parent'
@@ -207,9 +259,16 @@ SQLAlchemy中的映射关系有四种,分别是**一对多**,**多对一**,**一
         id = Column(Integer,primary_key = True)
         keyword = Column(String(50),nullable=False,unique=True)
 
-
-#####relationship()API
-[relationships api](http://docs.sqlalchemy.org/en/latest/orm/relationships.html#relationships-api),参数非常多,列举一下我用到的参数:  
+####关联查询（query with join）
+简单地可以使用：  
+    for u, a in session.query(User, Address).filter(User.id==Address.user_id).filter(Address.email==’lzjun@qq.com’).all():
+        print u, a
+如果是使用真正的关联SQL语法来查询可以使用：  
+    
+    session.query(User).join(Address).filter(Address.email==”lzjun@qq.com”).all()
+因为这里的外键就一个，系统知道如何去关联
+####relationship()API
+[relationship()](http://docs.sqlalchemy.org/en/latest/orm/relationships.html#relationships-api)函数接收的参数非常多，比如：backref，secondary，primaryjoin，等等。列举一下我用到的参数:  
 
 - backref:在一对多或多对一之间建立双向关系,比如:  
 
