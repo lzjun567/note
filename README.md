@@ -5,7 +5,7 @@
 ====================
 [Java](./note/java/README.md)
 ====================
-[Solr](./note/java/readme.md)
+[Solr](./note/java/solr/readme.md)
 =========
 [Vim](./note/vim/readme.md)
 ======
