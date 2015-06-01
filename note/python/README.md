@@ -1,4 +1,4 @@
-﻿
+﻿1. [Python如何使用static、class、abstract方法](./guide-python-static-class-abstract-methods.md)
 5. [collections学习笔记](./collections.md)
 5. [函数式编程------序列处理函数](./function_programming_of_function_processing_functions.md)
 6. [协程](./coroutine.md)
