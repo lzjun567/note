@@ -88,3 +88,17 @@ unittest模块提供了TestLoader().loadTestFromTestCase，可以自动地获取
     if __name__ == "__main__":
         import sys
         suite = unittest.TestSuite()
+
+unittest模块可以通过命令行的的方式运行测试的modules，class，以及单个具体的test method。
+
+    python -m unittest test_module1 test_module2
+    python -m unittest test_module.TestClass
+    python -m unittest test_module.TestClass.test_method
+
+参数`-v`显示测试详情：
+  
+    python -m unittest -v test_module1 test_module2
+    
+如果不知道怎么使用命令行的话，使用help:  
+    
+    python -m unittest -h
