@@ -10,19 +10,6 @@ solr(7)：Field
 * stored：true表示该域会完成的保存在磁盘中，搜索结果中可以查看得到
 * multiValued：true表示多值域，它可以有多个值，比如一篇文章可以有多个标签，那么标签域就可以设置成多值域。
 
-####copyfield
-可以实现一个字段的多次使用，比如：
-
-说的简单一点，比如现在你要查询有"Java"的博客， 那么你肯定要查内容，标题是否包含Java，但是solr不能像SQL那样，where tittle like '%Java%'  or  content like '%Java%'.   这个时候copyField就派上用场了， 定义一个新字段，将title和content 复制到这个新字段，索引的时候，直接从这个新字段查询，这样就达到目地了。  这便是copyField的典型应用场景 。注意：如果dest由多个source构成，就需要将其指定为multiValued
-    
-    <field name="title"/>
-    <field name="content"/>
-    <field name="tc" multiValued="true"/>
-    <copyFeild source="title" dest="tc" maxChars="3000"/>
-    <copyFeild source="content" dest="tc" maxChars="3000"/>
-
-现在就可以通过指定tc来搜索包括title、content在内的关键字了。
-
 ####multiValued
 当某个文档内容一个字段多个值，比如一条微博可以有多个链接地址：    
 
@@ -45,6 +32,19 @@ solr(7)：Field
            multiValued="true"/> 
 
 这样搜索`link:" http://manning.com/"`时，Solr会在link域中查找所有的值。  
+
+####copyfield
+可以实现一个字段的多次使用，比如：
+
+说的简单一点，比如现在你要查询有"Java"的博客， 那么你肯定要查内容，标题是否包含Java，但是solr不能像SQL那样，where tittle like '%Java%'  or  content like '%Java%'.   这个时候copyField就派上用场了， 定义一个新字段，将title和content 复制到这个新字段，索引的时候，直接从这个新字段查询，这样就达到目地了。  这便是copyField的典型应用场景 。注意：如果dest由多个source构成，就需要将其指定为multiValued
+    
+    <field name="title"/>
+    <field name="content"/>
+    <field name="tc" multiValued="true"/>
+    <copyFeild source="title" dest="tc" maxChars="3000"/>
+    <copyFeild source="content" dest="tc" maxChars="3000"/>
+
+现在就可以通过指定tc来搜索包括title、content在内的关键字了。
 
 ####dynamicField
 动态字段（Dynamic fields）允许 solr 索引没有在 schema 中明确定义的字段，假设产品已经上线，现在新的需求来了，需要一个新的字段，但是schema中事先是不可能知道这个字段叫什么的，此时动态字段就很有用了。动态字段和常规字段类似，除了它名字中包含一个通配符外，在索引文档时，一个字段如果在常规字段中没有匹配时，将到动态字段中匹配。  
