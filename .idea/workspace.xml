@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="27f5b378-75bc-4662-9e1e-12f0bc0f2541" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/android/android-l-recyclerview-and-cardview-tutorial.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/android/android_app_integrate_avos_push.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/android/material_design.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/general/chrome_extension.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/general/importnew_app.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/general/phabricator_install.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/java/gradle.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/java/solr/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/java/solr/solr34.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/java/solr/solr35.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/java/solr/solr36.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/java/solr/solr5_0_instroduce.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/mongodb/mongodb_practice.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/mongodb/replset.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/mysql/transation.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/celery1.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/datetime-timestamp.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/dict_implement.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/enum.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/guide-python-static-class-abstract-methods.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/guide-python-static-class-abstract-methods2.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/log.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/mock.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/mongo-connetor.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/python_mock.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/sentry.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/tornado/ioloop.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/what-does-the-yield-keyword-do-in-python.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/write-2x-3x-compatible-code.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/python/writing_2.x_3.x_compatible_code" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/codis.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/memory.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/persistence.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/redis-slave.conf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/redis.conf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/twemproxy.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/redis/untitled.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/rq/mq.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/rq/my_module.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/rq/rq.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/rq/rq_getting_start.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/rq/rq_worker.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/system/notification.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/note/test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/java/solr/solr6.md" afterPath="$PROJECT_DIR$/note/java/solr/solr6.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/descriptor.md" afterPath="$PROJECT_DIR$/note/python/descriptor.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/sqlalchemy.md" afterPath="$PROJECT_DIR$/note/python/sqlalchemy.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/git/git.md" afterPath="$PROJECT_DIR$/note/git/git.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/git/hg.md" afterPath="$PROJECT_DIR$/note/git/hg.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/java/README.md" afterPath="$PROJECT_DIR$/note/java/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/README.md" afterPath="$PROJECT_DIR$/note/python/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/celery.md" afterPath="$PROJECT_DIR$/note/python/celery.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/coroutine.md" afterPath="$PROJECT_DIR$/note/python/coroutine.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/stringio.md" afterPath="$PROJECT_DIR$/note/python/stringio.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/testing.md" afterPath="$PROJECT_DIR$/note/python/testing.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/python/unit_test.md" afterPath="$PROJECT_DIR$/note/python/unit_test.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/recommendation/0.md" afterPath="$PROJECT_DIR$/note/recommendation/0.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/redis/data-struct.md" afterPath="$PROJECT_DIR$/note/redis/data-struct.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/redis/introduce.md" afterPath="$PROJECT_DIR$/note/redis/introduce.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/note/vim/vimrc.md" afterPath="$PROJECT_DIR$/note/vim/vimrc.md" />
+    </list>
+    <ignored path="note.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="note" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.8269581">
+              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/README.md" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="10" />
+    <option name="y" value="20" />
+    <option name="width" value="1346" />
+    <option name="height" value="688" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="note" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="note" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="django_blog" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="note" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="django_blog" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="apps" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="note" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="note" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../django_blog" />
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="27f5b378-75bc-4662-9e1e-12f0bc0f2541" name="Default" comment="" />
+      <created>1447587868317</created>
+      <option name="number" value="Default" />
+      <updated>1447587868317</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="10" y="20" width="1346" height="688" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24962406" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8269581">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

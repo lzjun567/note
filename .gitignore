@@ -1,3 +1,4 @@
 *.swp
 */tags
 *.pyc
+*.rdb

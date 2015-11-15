@@ -1,6 +1,5 @@
 ####什么是描述符（descriptor）
-简单来讲，描述符就是一个Python对象，但这个对象比较特殊，特殊性在于其**属性**的访问方式不再像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法包括`__get__`、`__set__`、`__delete__`。定义了其中任意一个方法的对象都叫描述符。举个例子：  
-**普通对象**  
+简单来讲，描述符就是一个Python对象，但这个对象比较特殊，特殊性在于其**属性**的访问方式不再像普通对象那样访问，它通过一种叫描述符协议的方法来访问。这些方法包括`__get__`、`__set__`、`__delete__`。定义了其中任意一个方法的对象都叫描述符。举个例子：下面是一个**普通对象**  
 
     class Parent(object):
         name = 'p'
@@ -9,9 +8,10 @@
         name = "zs"
     
     zhangsan = Person()
-    zhangsan.name = "zhangsan"
-    print zhangsan.name
+    zhangsan.name = "zhangsan"  # set
+    print zhangsan.name         # get
     #>> zhangsan
+    del zhangsan.name           # delete
     
 普通的Python对象操作（get，set，delete）属性时都是在这个对象的`__dict__`基础之上进行的。比如上例中它在访问属性`name`的方式是通过如下顺序去查找，直到找到该属性位置，如果在父类中还没找到那么就抛异常了。  
 
@@ -25,8 +25,7 @@
     print zhangsan.name
     #>> lisi
 
-
-**描述符**  
+####描述符  
 
     class DescriptorName(object):
         def __init__(self, name):
@@ -72,7 +71,8 @@
         question = models.CharField(max_length=200)
         pub_date = models.DateTimeField('date published') 
 
-上面的例子是基于类的方式来创建描述符，你还可以通过property()函数来创建描述符，例如：  
+####property()
+上面的例子是基于类的方式来创建描述符，除此之外，你还可以通过property()函数来创建描述符，例如：  
 
     class Person(object):
     
@@ -156,7 +156,7 @@ property()函数返回的是一个描述符对象，它可接收四个参数：`
 
 留心的你发现property里面还有getter，setter，deleter方法，那他们是做什么用的呢？来看看第三种创建描述符的方法。  
 
-#####使用@property装饰器
+####@property装饰器
 
     class Person(object):
     
@@ -215,21 +215,14 @@ property()函数返回的是一个描述符对象，它可接收四个参数：`
     <bound method Foo.my_function of <__main__.Foo object at 0x02226350>>
 
 `my_function`函数实现了`__get__`方法。描述符也被大量用在各种框架中，比如：django的[paginator.py](https://github.com/django/django/blob/master/django/core/paginator.py)模块，django的model其实也使用了描述符。  
+python 函数默认是一个描述符.调用 my_instance.my_method会重载为`Myclass.__dict__['my_method'].__get__(myinstance, MyClass)`  
 
-
-
-
-
-
-
-python 函数默认是一个描述符.调用 my_instance.my_method会重载为Myclass.__dict__['my_method'].__get__(myinstance, MyClass).
-
-
-http://docs.python.org/2/howto/descriptor.html#properties
-http://stackoverflow.com/questions/17330160/python-how-does-decorator-property-work
-https://pyzh.readthedocs.org/en/latest/Descriptor-HOW-TO-Guide.html
-http://www.ibm.com/developerworks/cn/opensource/os-pythondescriptors/
-https://blog.tonyseek.com/post/notes-about-python-descriptor/
-https://speakerdeck.com/mitsuhiko/basket-of-random-python-snippets
-http://docs.python.org/2/howto/descriptor.html
-http://utcc.utoronto.ca/~cks/space/blog/python/AttributeLookupOrder
+参考：  
+http://docs.python.org/2/howto/descriptor.html#properties  
+http://stackoverflow.com/questions/17330160/python-how-does-decorator-property-work  
+https://pyzh.readthedocs.org/en/latest/Descriptor-HOW-TO-Guide.html  
+http://www.ibm.com/developerworks/cn/opensource/os-pythondescriptors/  
+https://blog.tonyseek.com/post/notes-about-python-descriptor/  
+https://speakerdeck.com/mitsuhiko/basket-of-random-python-snippets  
+http://docs.python.org/2/howto/descriptor.html  
+http://utcc.utoronto.ca/~cks/space/blog/python/AttributeLookupOrder  

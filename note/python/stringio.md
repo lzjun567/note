@@ -1,16 +1,23 @@
-StringIO---像文件一样读写字符串
+StringIO
 ===============================
-有些API仅接受文件对象，但是你只有一个字符串，比如使用gzip模块压缩字符串的时候，StringIO就可以派上用场了 
+StringIO是一个类文件（file-like）对象，真正的文件对象最终会映射到磁盘，而StringIO是一个和file对象有类似行为的内存文件对象。当有些操作要求是文件对象时，而你并不希望给出真实的文件对象时，此时你可以使用StringIO来替换。比如：GzipFile构造方法接收参数类型就是文件类型。StringIO就可以派上用场了 
 
     import gzip
     import StringIO
 
-    stringio = StringIO.StringIO()
-    gzip_file = gzip.GzipFile(fileobj=stringio, mode='w')
+    file = StringIO.StringIO()
+    gzip_file = gzip.GzipFile(fileobj=file, mode='w')
     gzip_file.write('hello world')
     gzip_file.close()
 
     print stringio.getvalue()  #此方法必须是在stringio.close()调用前，否则ValueError
+
+再比如：  
+    
+    import StringIO
+    MESSAGE =  “this is amazing game”
+    file = StringIO.StringIO(MESSAGE)
+    print file.read()
 
 ###cStringIO：性能更高的StringIO
 cStringIO是一个速度更快的StringIO，其接口与StringIO基本类似，但是有以下区别：  
@@ -27,7 +34,7 @@ cStringIO是一个速度更快的StringIO，其接口与StringIO基本类似，�
         import cStringIO
         cs = cStringIO.StringIO(u'helloworld')
         print type(cs) #<type 'cStringIO.StringI'>
-        cs.size = 10   #此处会报错，因为cStringIO.StringI没有属性size
+        cs.size = 10   #此处会报错，因为cStringIO.StringIO没有属性size
         print cs.getvalue()
 2. cStringIO不接收中文unicode字符
 

@@ -1,7 +1,6 @@
+这个我的vim的配置，我主要用来做Python开发  
 
-    "注：双引号表示注释
-    "这个我的vim的配置，我主要用来做Python开发
-    
+    "vim用双引号表示注释
     "默认文件编码
     set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
     set fileencoding=utf-8
@@ -39,7 +38,7 @@
     set backspace=2  "允许退格键删除字符
     set ignorecase  "搜索忽略大小写
     
-    "禁掉箭头移动功能
+    "禁掉箭头移动功能，勤用hjkl
     nnoremap <up> <nop>
     nnoremap <down> <nop>
     nnoremap <left> <nop>
