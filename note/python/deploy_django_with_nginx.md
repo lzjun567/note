@@ -1,12 +1,11 @@
-Django应用部署(nginx、gunicorn、virtualenv、supervisor)
-====================================================
-[Django](http://djangoproject.org)在python语言中是最受欢迎的全栈式web框架，过去部署Django应用一般采用Apache+mod_wsgi，但是随着Nginx出色的性能表现，Django也有了更先进的部署方式，比较常用的一种部署方案是Nginx+Gunicorn。 接下来我会详细介绍一个完整的符合生产条件的部署过程及组件，这些组件全部属于开源实现。  
+[Django](http://djangoproject.org)是Python语言中最受欢迎的全栈式Web框架之一，过去部署Django应用一般采用Apache+mod_wsgi，但是由于有了Nginx出色的性能表现，Django也有了更先进的部署方式，比较常用的一种部署方案是Nginx+Gunicorn。 接下来我会详细完整地介绍一个符合生产条件标准的部署过程。  
 ####前提条件
-我假设你对Linux有基本的了解,而且拥有一台root权限的主机.我使用的服务器是Ubuntu12.04.你也可以选择其他Linux发行版(如:CentOS、Fedora)，相应的安装包管理方式分是`apt-get`和`yum`.如果你手头没有服务器,那么我推荐使用非常便宜的VPS服务器[DigitalOcean](https://www.digitalocean.com/?refcode=af4cff8f42bc)。最低$0.05/小时的费用。  
-####系统更新
+假设你对Linux有基本的了解，而且拥有一台root权限的主机。我使用的服务器是Ubuntu12.04。你也可以选择其他Linux发行版(如:CentOS、Fedora)，如果你手头没有服务器，那么我推荐使用非常便宜的VPS服务器[DigitalOcean](https://www.digitalocean.com/?refcode=af4cff8f42bc)，最低$0.05/小时的费用，使用我的[Refer](https://www.digitalocean.com/?refcode=af4cff8f42bc)注册，即可获得$10免费使用低配服务器两个月。
+####更新系统
 
     $ sudo apt-get update
     $ sudo apt-get upgrade
+    $ sudo apt-get install python-dev
 ####安装MySQL
 
     $ sudo apt-get install mysql-server
@@ -29,12 +28,11 @@ Django应用部署(nginx、gunicorn、virtualenv、supervisor)
 
     #使所有操作生效
     flush privileges
-####安装virtualenv,为app创建一个独立的python环境
-[Virtualenv](http://virtualenv.org)可以在系统中创建一个独立的python环境,多个应用彼此不受影响,这样不同的应用使用的依赖库就不会相互冲突(比如一个应用是基于Django1.5,另一个应用可以用virtualenv创建新的python环境来使用Django1.6).当然它的安装也很简单  
+####安装Virtualenv
+[Virtualenv](http://foofish.net/blog/88/virtualenv)可以在系统中创建一个独立的Python环境，多个应用之间彼此不受影响，这样不同的应用使用的依赖库就不会相互冲突(比如一个应用是基于Django1.5，另一个应用可以用Django1.6)。  
     
-    sudo apt-get install python-virtualenv
-#####为app创建并且激活一个python环境
-我们把应用创建在/webapps目录下面,  
+    $ pip install virtualenv
+我们把应用虚拟环境创建在/webapps目录下面,  
 
     $ cd /webapps/
     $ virtualenv hello_django
@@ -44,32 +42,10 @@ Django应用部署(nginx、gunicorn、virtualenv、supervisor)
     Installing Pip...........................................done.
 
     $ cd hello_django
-    $ source bin/activate
-    (hello_django) $                #注意`$`符号前的hello_django, 此时表明你已经在这个新的python执行环境中
-
-现在python环境激活了,你就可以在这个环境中安装django等其他库  
-
-    (hello_django) $ pip install django
-
-    Downloading/unpacking django
-      Downloading Django-1.6.1.tar.gz (6.6MB): 6.6MB downloaded
-      Running setup.py egg_info for package django
-        
-        warning: no previously-included files matching '__pycache__' found under directory '*'
-        warning: no previously-included files matching '*.py[co]' found under directory '*'
-    Installing collected packages: django
-      Running setup.py install for django
-        changing mode of build/scripts-2.7/django-admin.py from 644 to 755
-        
-        warning: no previously-included files matching '__pycache__' found under directory '*'
-        warning: no previously-included files matching '*.py[co]' found under directory '*'
-        changing mode of /usr/local/bin/django-admin.py to 755
-    Successfully installed django
-    Cleaning up...
-    
-接下来就创建一个空的django项目  
-    
-    (hello_django) $ django-admin.py startproject hello
+    $ source bin/activate    # 激活
+    (hello_django) $         # 注意`$`符号前的hello_django表明你已经在这个新的python虚拟环境中
+    (hello_django) $ pip install django  # 安装django
+    (hello_django) $ django-admin.py startproject hello # 创建一个空的django项目hello  
 
 用开发模式测试一下项目是否可以正常运行
 
@@ -83,8 +59,9 @@ Django应用部署(nginx、gunicorn、virtualenv、supervisor)
     Django version 1.6.1, using settings 'hello.settings'
     Starting development server at http://localhost:80/
     Quit the server with CONTROL-C.
-此时你应该可以正常访问:http://localhost了.     
-####配置MySQL配合Django工作
+此时你应该可以正常访问:http://localhost了。
+
+####更新settings文件
 
 Django 使用MySQL作为后端存储需要使用`MySQL-python`数据库适配器，但是它需要依赖本地扩展库`python-dev`，`libmysqlclient-dev`，所以先安装依赖库  
 
@@ -109,33 +86,21 @@ django初始化数据库，默认Django会创建一些数据表
     (hello_dango) $ python manage.py syncdb
 
 ####为应用创建系统用户
-虽然DJango有完善的安全追踪记录，但是如果应用对服务器资源的访问限制在自己的范围内，可以避免无谓的入侵危害，因此我们的web应用应该使用有限制权限的用户来运行这个web应用。  
+虽然Django有完善的安全追踪记录，但是如果应用对服务器资源的访问限制在自己的范围内，可以避免无谓的入侵危害，因此我们的web应用应该使用有限制权限的用户来运行这个web应用。  
 
 为应用创建一个用户，名字叫做`hello`，附给系统组叫`webapps`。  
 
     $ sudo groupadd --system webapps
     $ sudo useradd --system --gid webapps --home /webapps/hello_django hello 
-####Gunicorn
+####安装Gunicorn
 在生产环境下我们就不应该使用Django自带的单线程的开发服务器，[Gunicorn](http://gunicorn.org)就是很好的选择。  
 
     (hello_django) $ pip install gunicorn
 
-    Downloading/unpacking gunicorn
-      Downloading gunicorn-0.17.4.tar.gz (372Kb): 372Kb downloaded
-      Running setup.py egg_info for package gunicorn
-    
-    Installing collected packages: gunicorn
-      Running setup.py install for gunicorn
-    
-        Installing gunicorn_paster script to /webapps/hello_django/bin
-        Installing gunicorn script to /webapps/hello_django/bin
-        Installing gunicorn_django script to /webapps/hello_django/bin
-    Successfully installed gunicorn
-    Cleaning up...
 安装成功后，现在你可以通过一下命令测试下你的django应用能否运行在gunicorn上面。  
 
-    (hello_django) $ gunicron hello.wsgi:application --bind 0.0.0.0:8001
-现在你应该可以访问Gunicron服务器从http://localhost:8001 , Gunicron安装好后，接下来再写一个bash脚本做一些配置使之用起来更方便。 文件保存为`bin/gunicorn_start.sh`
+    (hello_django) $ gunicorn hello.wsgi:application --bind 0.0.0.0:8001
+现在你应该可以从http://localhost:8001 访问Gunicorn服务器。Gunicorn安装好后，接下来再写一个bash脚本做一些配置使之用起来更方便。 文件保存为`bin/gunicorn_start.sh`
 
     #!/bin/bash
     NAME='hello_app'                                   #应用的名称
@@ -143,11 +108,12 @@ django初始化数据库，默认Django会创建一些数据表
     SOCKFILE=/webapps/hello_django/run/gunicorn.sock   #使用这个sock来通信
     USER=hello                                         #运行此应用的用户
     GROUP=webapps                                      #运行此应用的组
-    NUM_WORKERS=3                                      #gunicron使用的工作进程数
+    NUM_WORKERS=3                                      #gunicorn使用的工作进程数
     DJANGO_SETTINGS_MODULE=hello.settings              #django的配置文件
     DJANGO_WSGI_MODULE=hello.wsgi                      #wsgi模块
     
     echo "starting $NAME as `whoami`"
+    
     #激活python虚拟运行环境
     cd $DJANGODIR
     source ../bin/activate
@@ -190,22 +156,14 @@ django初始化数据库，默认Django会创建一些数据表
     2014-01-17 15:59:25 [10736] [INFO] Booting worker with pid: 10736
     2014-01-17 15:59:25 [10737] [INFO] Booting worker with pid: 10737
     
-    ^C (CONTROL-C to kill Gunicorn)
-    
-    2014-01-17 15:59:28 [10736] [INFO] Worker exiting (pid: 10736)
-    2014-01-17 15:59:28 [10735] [INFO] Worker exiting (pid: 10735)
-    2014-01-17 15:59:28 [10724] [INFO] Handling signal: int
-    2014-01-17 15:59:28 [10737] [INFO] Worker exiting (pid: 10737)
-    2014-01-17 15:59:28 [10724] [INFO] Shutting down: Master
-    $ exit
+* --workers 设置的个数规则是：2*CPUs+1。因此单核CPU机器的进程数设置为3个。  
+* --name 默认是`gunicorn`，置顶后，可以通过`top`或`ps`查看到，唯一标识其进程。  
 
---workers 设置的个数规则是：2*CPUs+1。因此单核CPU机器的进程数设置为3个。  
---name 默认是`gunicorn`，置顶后，可以通过`top`或`ps`查看到，唯一标识其进程。  
-####s使用Supervisor启动、监控
-`gunicorn_start`脚本现在准备就绪，我们需要确保系统能够自动启动或者重启，因为系统可能会由于某些原因导致异常终止，这个任务就交给supervisor，它的安装也非常简单：  
+####使用Supervisor启动、监控应用
+脚本现在准备就绪，我们需要确保系统能够自动启动或者重启，因为系统可能会由于某些原因导致异常终止，这个任务就交给supervisor，它的安装也非常简单：  
 
     $ sudo apt-get insatll supervisor
-安装后，在`/etc/supervisor/conf.d/`目录下创建配置文件`/etc/supervisor/conf.d/hello.conf`，用来启动监视应用程序。  
+安装后，在`/etc/supervisor/conf.d/`目录下创建配置文件`/etc/supervisor/conf.d/hello.conf`，用来启动、监视应用程序。  
 
     [program:hello]
     command = /webapps/hello_django/bin/gunicorn_start.sh                 ; Command to start app
@@ -213,7 +171,7 @@ django初始化数据库，默认Django会创建一些数据表
     stdout_logfile = /webapps/hello_django/logs/gunicorn_supervisor.log   ; Where to write log messages
     redirect_stderr = true  
 
-创建文件存储日子：  
+创建文件存储日志：  
 
     $ mkdir -p /webapps/hello/logs
     $ touch /webapps/hello_django/logs/gunicorn_supervisor.log
@@ -237,20 +195,14 @@ django初始化数据库，默认Django会创建一些数据表
     hello:started
 现在应用可以在系统重启或者某些原因崩溃后自动重启了。  
 
-####Nginx
-配置Nginx  
+####配置Nginx  
+Nginx作为反向代理程序
 
     $ sudo apt-get install nginx
     $ sudo /etc/init.d/nginx start
-#####创建一个Nginx虚拟服务器服务于Django
-每个Nginx虚拟服务器应该是通过一个在`/etc/nginx/sites-available`目录下的文件描述的，为了使之生效需要在`/etc/nginx/sites-enbled`做一个符号连接  
-创建配置文件`/etc/nginx/sites-available/hello`，内容如下：  
+每个Nginx虚拟服务器应该是通过一个在`/etc/nginx/sites-available`目录下的文件描述的，为了使之生效需要在`/etc/nginx/sites-enbled`做一个符号连接。创建配置文件`/etc/nginx/sites-available/hello`，内容如下：  
 
     upstream hello_app_server {
-      # fail_timeout=0 means we always retry an upstream even if it failed
-      # to return a good HTTP response (in case the Unicorn master nukes a
-      # single worker for timing out).
-     
       server unix:/webapps/hello_django/run/gunicorn.sock fail_timeout=0;
     }
      
@@ -273,31 +225,12 @@ django初始化数据库，默认Django会创建一些数据表
         }
      
         location / {
-            # an HTTP header important enough to have its own Wikipedia entry:
-            #   http://en.wikipedia.org/wiki/X-Forwarded-For
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
      
-            # enable this if and only if you use HTTPS, this helps Rack
-            # set the proper protocol for doing redirects:
-            # proxy_set_header X-Forwarded-Proto https;
-     
-            # pass the Host: header from the client right along so redirects
-            # can be set properly within the Rack application
             proxy_set_header Host $http_host;
      
-            # we don't want nginx trying to do something clever with
-            # redirects, we set the Host: header above already.
             proxy_redirect off;
      
-            # set "proxy_buffering off" *only* for Rainbows! when doing
-            # Comet/long-poll stuff.  It's also safe to set if you're
-            # using only serving fast clients with Unicorn + nginx.
-            # Otherwise you _want_ nginx to buffer responses to slow
-            # clients, really.
-            # proxy_buffering off;
-     
-            # Try to serve static files from nginx, no point in making an
-            # *application* server like Unicorn/Rainbows! serve static files.
             if (!-f $request_filename) {
                 proxy_pass http://hello_app_server;
                 break;
@@ -378,9 +311,5 @@ django初始化数据库，默认Django会创建一些数据表
     │   └── gunicorn.sock 
     └── static                       <= 项目的静态资源目录
 
-此文参考[这里](http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/)，所有步骤经过自己操作验证通过，如果你在配置过程中有任何疑问，毫不犹豫给我留言。  
-
-
-
-
+所有步骤经过自己操作验证通过，如果你在配置过程中有任何疑问，毫不犹豫给我留言。
 

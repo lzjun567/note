@@ -72,14 +72,18 @@
 ####memcached
 1. [入门安装篇](./note/memcached/introduce_install.md)  
 2. [命令介绍篇](./note/memcached/telnet_command.md)
-3. 
-4. 
 
 ####redis
 1. [入门篇](./note/redis/introduce.md)
 
+####RQ
+1. [RQ简介](./note/rq/rq_getting_start.md)
+2. [RQ Queue](./note/rq/rq.md)
+3. [RQ Worker](./note/rq/rq_worker.md)
+
 
 ####sphinx/coreseek
 1. [sphinx笔记](./note/python/sphinx/introduce.md)  
+
 不定时更新 
 
