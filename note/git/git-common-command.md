@@ -59,6 +59,48 @@ Git已经成为程序员日常工具之一，就像普通人每天要吃饭睡�
 	# 重做上一次commit，并包括指定文件的新变化
 	$ git commit --amend [file1] [file2] ...
 
+####分支
+	
+	# 列出所有本地分支
+	$ git branch
+
+	# 列出所有远程分支
+	$ git branch -r
+
+	# 列出所有本地分支和远程分支
+	$ git branch -a
+
+	# 新建一个分支，但依然停留在当前分支
+	$ git branch [branch-name]
+
+	# 新建一个分支，并切换到该分支
+	$ git checkout -b [branch]
+
+	# 新建一个分支，指向指定commit
+	$ git branch [branch] [commit]
+
+	# 新建一个分支，与指定的远程分支建立追踪关系
+	$ git branch --track [branch] [remote-branch]
+
+	# 切换到指定分支，并更新工作区
+	$ git checkout [branch-name]
+
+	# 建立追踪关系，在现有分支与指定的远程分支之间
+	$ git branch --set-upstream [branch] [remote-branch]
+
+	# 合并指定分支到当前分支
+	$ git merge [branch]
+
+	# 选择一个commit，合并进当前分支
+	$ git cherry-pick [commit]
+
+	# 删除分支
+	$ git branch -d [branch-name]
+
+	# 删除远程分支
+	$ git push origin --delete [branch-name]
+	$ git branch -dr [remote/branch]
+
 ####设置
 git的配置文件是.gitconfig，支持全局配置和项目配置，全部配置对所有项目有效，用 `--global`选择指定。
 	
