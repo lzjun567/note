@@ -60,3 +60,29 @@
 我要删除6630这个commit
         
 
+git push 到远程分支的时候报莫名其妙的错误：
+
+    git push origin feature/3.1
+
+    Counting objects: 8, done.
+    Delta compression using up to 4 threads.
+    Compressing objects: 100% (7/7), done.
+    Writing objects: 100% (8/8), 652 bytes | 0 bytes/s, done.
+    Total 8 (delta 6), reused 3 (delta 1)
+    remote: error: cannot lock ref 'refs/heads/feature/3.1': Unable to create '/ndiskd/repositories/li/liuzhijun/beiy           unbao.git/refs/heads/feature/3.1.lock': File exists.
+    remote:
+    remote: If no other git process is currently running, this probably means a
+    remote: git process crashed in this repository earlier. Make sure no other git
+    remote: process is running and remove the file manually to continue.
+    To git@git.oschina.net:liuzhijun/xxx.git
+     ! [remote rejected] feature/3.1 -> feature/3.1 (failed to update ref)
+
+解决办法是把远程分支删除，再添加进来
+    
+    $ git remote -v
+    origin  git@git.oschina.net:liuzhijun/xxx.git (fetch)
+    origin  git@git.oschina.net:liuzhijun/xxx.git (push)
+
+    $ git remote rm origin
+
+    $ git remote add origin  git@git.oschina.net:liuzhijun/xxx.git
