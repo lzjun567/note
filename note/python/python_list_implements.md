@@ -201,3 +201,6 @@ free\_list是PyListObject对象的缓冲池，其大小为80，那么PyListObjec
 
 * [listobject.h](https://github.com/lzjun567/python2.7/blob/master/Include/listobject.h)
 * [listobject.c](https://github.com/lzjun567/python2.7/blob/master/Objects/listobject.c)
+* [Python整数对象实现原理](http://foofish.net/blog/89/python_int_implement)
+* [Python字符串实现原理](http://foofish.net/blog/90/python_str_inplements)
+* [Python字典对象实现原理](http://foofish.net/blog/92/python_dict_implements)
