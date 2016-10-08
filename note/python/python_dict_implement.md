@@ -1,6 +1,10 @@
 Python 字典数据类型（dict）源码分析
 ================================
+<<<<<<< HEAD
+字典类型是Python中最常用的数据类型之一，它是一个键值对的集合，字典通过键来索引相应的值，理论上它的查询复杂度是 O(1) ：   
+=======
 字典类型是Python中最常用的数据类型之一，它是一个键值对的集合，字典通过键来索引，关联到相对的值，理论上它的查询复杂度是 O(1) ：   
+>>>>>>> 8830afd4298ce03a3fec5980df8ffdcbd3665d2e
     
     >>> d = {'a': 1, 'b': 2}
     >>> d['c'] = 3
@@ -9,7 +13,11 @@ Python 字典数据类型（dict）源码分析
 在[字符串的实现原理](http://foofish.net/blog/91/python-str-implements)文章中，曾经出现过字典对象用于intern操作，那么字典的内部结构是怎样的呢？PyDictObject对象就是dict的内部实现。
 
 ####哈希表 (hash tables)
+<<<<<<< HEAD
+哈希表（也叫散列表），根据键值对(Key-value)而直接进行访问的数据结构。它通过把key和value映射到表中一个位置来访问记录，这种查询速度非常快，更新也快。而这个映射函数叫做哈希函数，存放值的数组叫做哈希表。 哈希函数的实现方式决定了哈希表的搜索效率。具体操作过程是：   
+=======
 哈希表（也叫散列表），根据关键值对(Key-value)而直接进行访问的数据结构。它通过把key和value映射到表中一个位置来访问记录，这种查询速度非常快，更新也快。而这个映射函数叫做哈希函数，存放值的数组叫做哈希表。 哈希函数的实现方式决定了哈希表的搜索效率。具体操作过程是：   
+>>>>>>> 8830afd4298ce03a3fec5980df8ffdcbd3665d2e
 
 1. 数据添加：把key通过哈希函数转换成一个整型数字，然后就将该数字对数组长度进行取余，取余结果就当作数组的下标，将value存储在以该数字为下标的数组空间里。  
 2. 数据查询：再次使用哈希函数将key转换为对应的数组下标，并定位到数组的位置获取value。
@@ -230,4 +238,11 @@ PyDictObject对象缓冲池和PyListObject对象缓冲池的原理是类似的�
         Py_TRASHCAN_SAFE_END(mp)
     }
 
+<<<<<<< HEAD
+参考：  
+* [Python整数对象实现原理](http://foofish.net/blog/89/python_int_implement)
+* [Python字符串实现原理](http://foofish.net/blog/90/python_str_inplements)
+* [Python列表对象实现原理](http://foofish.net/blog/91/python-list-implements)
+=======
 
+>>>>>>> 8830afd4298ce03a3fec5980df8ffdcbd3665d2e
