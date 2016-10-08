@@ -244,3 +244,62 @@ nginx -t -c <path-to-nginx.conf>
 
 http://div.io/topic/1395
 
+
+
+###正向代理
+正向代理隐藏了真实的客户端，服务端不知道真实的客户端是谁，客户端请求的服务都被代理服务器代替客户端来请求，比如翻墙软件都是用的正向代理，客户端需要请求www.google.com，但是被墙了，于是我在中间加一个代理，让代理帮我去请求google.com，然后返回。
+![proxy](http://upload-images.jianshu.io/upload_images/637398-e261acb618ffa93d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+###反向代理
+![reverse-proxy](http://upload-images.jianshu.io/upload_images/637398-d5568cb9dc8d470b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+反向代理隐藏了真实的服务端，当我们请求baidu.com的时候，鬼知道他们用了多少台服务器在后面，但是我们不需要关心他们的服务部署在哪台服务器，我们只需要知道反向代理服务器是谁就行了。代理服务器会帮我们把请求转到真实的服务器那里去。负载均衡就是一个很好的例子。
+
+
+# Nginx配置中的 root 与 alias 指令的区别
+
+root和alias都可以定义在location模块中，都是用来指定请求资源的真实路径，比如：
+    
+    location /i/ {
+        root /data/w3;
+    }
+请求 http://foofish.net/i/top.gif 这个网址时，那么在服务器里面对应的真正的资源是 /data/w3/i/top.gif文件，注意真实的路径是root指定的值加上location指定的值。
+    
+而 alias 正如其名，alias指定的路径是location的别名，不管location的值怎么写，资源的真实路径都是 alias 指定的路径，比如：
+    
+    location /i/ {
+        alias /data/w3/images/;
+    }
+同样请求http://foofish.net/i/top.gif时，在服务器查找的资源路径是：/data/w3/images/top.gif，也就是说不管location的值怎么指定，只要alias设置的/data/w3/images/，就会在/data/w3/images/目录找，比如：  
+     
+     location /i/xxx/ {
+        alias /data/w3/images/;
+    }
+请求http://foofish.net/i/xxx/top.gif，查找的资源路径还是 /data/w3/images/top.gif。
+
+
+
+
+Nginx 配置文件 server 中指定两个 location 执行，分别为root 和 alias 指令：
+   
+    location /test/ {
+              root /www/test;
+    }
+按照这种配置，则访问 /test/ 目录下的文件时，nginx 会去 /www/test/test/ 目录下找文件：
+
+    location /test/ {
+               alias /www/test/;
+    }
+按照上述配置，则访问 /test/ 目录里面的文件时，nginx 会去 /www/test/ 目录找文件：
+ 
+
+
+http://nginx.org/en/docs/http/ngx_http_core_module.html#root
+
+http://nginx.org/en/docs/http/ngx_http_core_module.html#alias
+
+
+2.  alias 是一个目录别名的定义，root 则是最上层目录的定义。
+3.  另一个区别是 alias 后面必须要用 “/” 结束，否则会找不到文件，而 root 则对 ”/” 可有可无。
+4.  误区：认为 root 是指 /www/test目录下，而应该是 /www/test/test 目录 。
