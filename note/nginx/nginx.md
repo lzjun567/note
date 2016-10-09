@@ -1,3 +1,103 @@
+<<<<<<< HEAD
+# Nginx
+Nignx是静态WEB服务器、反向代理服务器、邮件服务器。支持SSL、Virtual Host、URL Rewrite、HTTP Basic Auth、 Gzip功能。Nginx的负载均衡策略主要包括：轮询、加权轮询、和IP hash三种，还可以通过第三方模块实现，比如：url hash、fair。  
+
+###准备工作
+
+Nginx的一些模块需要依赖第三方库，pcre（支持rewrite模块用于正则表达式处理）、zlib（支持gzip模块，对HTTP的响应内容压缩）、openssl（支持ssl模块，HTTPS请求）  
+
+    # CentOS 安装依赖库
+    sudo yum -y install gcc gcc-c++ automake pcre pcre-devel zlib zlib-devel open openssl-devel
+
+    # Ubuntu 安装依赖库
+    sudo apt-get install libpcre3 libpcre3-dev libpcrecpp0 libssl-dev zlib1g-dev 
+
+
+    wget http://nginx.org/download/nginx-1.10.0.tar.gz
+    tar -zxvf nginx-1.10.0.tar.gz
+    cd nginx-1.10.0
+    .configure --prefix=your path  # 指定安装目录，默认安装目录为 /usr/local/nginx
+    make
+    make install
+
+    ./configure --user=nginx --group=nginx --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body --http-proxy-temp-path=/var/lib/nginx/tmp/proxy --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi --pid-path=/var/run/nginx.pid --lock-path=/var/lock/subsys/nginx --with-http_ssl_module --with-http_realip_module --with-http_addition_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_perl_module --with-mail --with-mail_ssl_module --with-cc-opt='-m32 -march=i386' --with-openssl=/root/openssl-0.9.8o --with-pcre --with-pcre=/root/pcre-8.10 --with-zlib=/root/zlib-1.2.5 --with-http_geoip_module
+
+
+    ./configure --user=nginx --group=nginx --prefix=/usr/local/nginx --sbin-path=/usr/local/sbin/nginx --conf-path=/usr/local/nginx/nginx.conf --error-log-path=/usr/local/nginx/logs/error.log --http-log-path=/usr/local/nginx/logs/access.log --pid-path=/usr/local/nginx/logs/nginx.pid --with-http_ssl_module --with-http_realip_module --with-http_addition_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_perl_module --with-mail --with-mail_ssl_module --with-openssl=/home/liuzj/openssl-1.0.2f --with-pcre --with-pcre=/home/liuzj/pcre-8.39 --with-zlib=/home/liuzj/zlib-1.2.8 --with-http_geoip_module
+
+
+    --prefix=/usr/local/nginx --pid-path=/usr/local/nginx/logs/nginx.pid --sbin-path=/usr/local/sbin/nginx --conf-path=/usr/local/nginx/nginx.conf --with-md5=/usr/lib64 --with-sha1=/usr/lib64 --with-http_ssl_module --with-http_dav_module --with-pcre=/home/liuzj/pcre-8.39 --with-zlib=/home/liuzj/zlib-1.2.8 --with-openssl=/home/liuzj/openssl-1.0.2f --without-mail_pop3_module --without-mail_imap_module --without-mail_smtp_module --without-select_module --without-poll_module --user=nginx --group=nginx
+
+1.安装PCRE库
+
+$ cd /usr/local/
+$ wget http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.38.tar.gz
+$ tar -zxvf pcre-8.36.tar.gz
+$ cd pcre-8.36
+$ ./configure
+$ make
+$ make install
+
+2.安装zlib库
+
+$ cd /usr/local/ 
+$ wget http://zlib.net/zlib-1.2.8.tar.gz
+$ tar -zxvf zlib-1.2.8.tar.gz
+$ cd zlib-1.2.8
+$ ./configure
+$ make
+$ make install
+
+3.安装ssl
+
+$ cd /usr/local/
+$ wget http://www.openssl.org/source/openssl-1.0.1j.tar.gz
+$ tar -zxvf openssl-1.0.1j.tar.gz
+$ ./config
+$ make
+$ make install
+
+
+https://www.nginx.com/resources/admin-guide/installing-nginx-open-source/
+
+
+http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.38.tar.gz
+
+
+###启停Nginx
+Nginx默认安装在/usr/local/nginx目录，Nginx二进制执行文件路径为/usr/local/nginx/sbin/nginx
+    
+    /usr/local/nginx/sbin/nginx -h  #查看帮助文档
+    
+    /usr/local/nginx/sbin/nginx     # 启动nginx, -c 可以指定配置文件，默认读取/usr/local/nginx/conf/nginx.conf文件
+
+    /usr/local/nginx/sbin/nginx -t  # 测试配置信息是否有误
+
+    /usr/local/nginx/sbin/nginx -v  # 显示版本信息
+
+    /usr/local/nginx/sbin/nginx -V  # 显示编译阶段的参数
+
+    /usr/local/nginx/sbin/nginx -s stop # 强制停止nginx，与 kill 命令一样
+
+    /usr/local/nginx/sbin/nginx -s quit # 首先关闭监听端口，停止接收新的请求，然后处理完当前所有请求在结束Nginx进程
+
+    /usr/local/nginx/sbin/nginx -s reload  # 重新加载配置文件
+
+###Nginx配置
+Nginx通过一个master进程管理多个worker进程，worker进程数目与服务器的CPU核数对等，worker进程是真正处理HTTP服务的进程，而master负责监控管理worker进程。
+
+
+
+Nginx配置
+========
+#####全局配置指令
+user ：worker_processes 执行的用户，group忽略时，和user是一样的  
+worker_processes：
+error_log
+pid:
+==================
+=======
+>>>>>>> d9fba44c7ad9d4e980cc40d469c32ef2923100d1
 
 ./configure --prefix=/usr/local/nginx --sbin-path=/usr/local/sbin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --pid-path=/run/nginx.pid --lock-path=/run/lock/subsys/nginx --user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_ssl_module  --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_image_filter_module --with-http_geoip_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_stub_status_module --with-http_perl_module --with-mail --with-mail_ssl_module --with-pcre 
 
@@ -144,3 +244,62 @@ nginx -t -c <path-to-nginx.conf>
 
 http://div.io/topic/1395
 
+
+
+###正向代理
+正向代理隐藏了真实的客户端，服务端不知道真实的客户端是谁，客户端请求的服务都被代理服务器代替客户端来请求，比如翻墙软件都是用的正向代理，客户端需要请求www.google.com，但是被墙了，于是我在中间加一个代理，让代理帮我去请求google.com，然后返回。
+![proxy](http://upload-images.jianshu.io/upload_images/637398-e261acb618ffa93d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+###反向代理
+![reverse-proxy](http://upload-images.jianshu.io/upload_images/637398-d5568cb9dc8d470b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+反向代理隐藏了真实的服务端，当我们请求baidu.com的时候，鬼知道他们用了多少台服务器在后面，但是我们不需要关心他们的服务部署在哪台服务器，我们只需要知道反向代理服务器是谁就行了。代理服务器会帮我们把请求转到真实的服务器那里去。负载均衡就是一个很好的例子。
+
+
+# Nginx配置中的 root 与 alias 指令的区别
+
+root和alias都可以定义在location模块中，都是用来指定请求资源的真实路径，比如：
+    
+    location /i/ {
+        root /data/w3;
+    }
+请求 http://foofish.net/i/top.gif 这个网址时，那么在服务器里面对应的真正的资源是 /data/w3/i/top.gif文件，注意真实的路径是root指定的值加上location指定的值。
+    
+而 alias 正如其名，alias指定的路径是location的别名，不管location的值怎么写，资源的真实路径都是 alias 指定的路径，比如：
+    
+    location /i/ {
+        alias /data/w3/images/;
+    }
+同样请求http://foofish.net/i/top.gif时，在服务器查找的资源路径是：/data/w3/images/top.gif，也就是说不管location的值怎么指定，只要alias设置的/data/w3/images/，就会在/data/w3/images/目录找，比如：  
+     
+     location /i/xxx/ {
+        alias /data/w3/images/;
+    }
+请求http://foofish.net/i/xxx/top.gif，查找的资源路径还是 /data/w3/images/top.gif。
+
+
+
+
+Nginx 配置文件 server 中指定两个 location 执行，分别为root 和 alias 指令：
+   
+    location /test/ {
+              root /www/test;
+    }
+按照这种配置，则访问 /test/ 目录下的文件时，nginx 会去 /www/test/test/ 目录下找文件：
+
+    location /test/ {
+               alias /www/test/;
+    }
+按照上述配置，则访问 /test/ 目录里面的文件时，nginx 会去 /www/test/ 目录找文件：
+ 
+
+
+http://nginx.org/en/docs/http/ngx_http_core_module.html#root
+
+http://nginx.org/en/docs/http/ngx_http_core_module.html#alias
+
+
+2.  alias 是一个目录别名的定义，root 则是最上层目录的定义。
+3.  另一个区别是 alias 后面必须要用 “/” 结束，否则会找不到文件，而 root 则对 ”/” 可有可无。
+4.  误区：认为 root 是指 /www/test目录下，而应该是 /www/test/test 目录 。
